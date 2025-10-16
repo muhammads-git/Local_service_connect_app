@@ -1,0 +1,27 @@
+# Virtual environment
+lsc_env/
+venv/
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# IDE settings
+.vscode/
+.idea/
+
+# Database files
+*.db
+*.sqlite3
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Flask specific
+instance/
+
+
+# .env
+.env
