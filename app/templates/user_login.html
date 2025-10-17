@@ -3,11 +3,11 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="{{ url_for('static',filename=flashstyle.css)}}">
-   
+   <link rel="stylesheet" href="{{ url_for('static',filename='flashstyle.css')}}">
 </head>
 <body>
    <center>
+      <!-- flash messages -->
       {% with messages = get_flashed_messages(with_categories=true) %}
          {% if messages %}
             <div class="flash-container">
@@ -17,16 +17,15 @@
             </div>
          {% endif %}
       {% endwith %}
-      
-      <form action="{{ url_for('auths_bp.user_register')}}" method="POST">
-         {{ user_form.hidden_tag() }}
+
+      <form action="{{ url_for('user_login')}}" method="POST">
          {{ user_form.user_name.label() }} <br> {{ user_form.user_name() }} <br>
-         {{ user_form.user_email.label() }} <br> {{ user_form.user_email() }} <br>
          {{ user_form.user_password.label() }} <br> {{ user_form.user_password() }} <br>
-         {{ user_form.confirm_password.label() }} <br> {{ user_form.confirm_password() }} <br><br>
-         {{ user_form.submit() }} 
-      <!-- form -->
+         {{ user_form.submit() }}
+
       </form>
+      
    </center>
+   
 </body>
 </html>

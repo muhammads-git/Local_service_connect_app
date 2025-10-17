@@ -1,0 +1,41 @@
+.flash-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.flash {
+  margin-bottom: 10px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 15px;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  animation: fadeInOut 4s ease forwards;
+}
+
+.flash.success {
+  background-color: #28a745;
+}
+
+.flash.error {
+  background-color: #dc3545;
+}
+
+.flash.warning {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.flash.info {
+  background-color: #17a2b8;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
