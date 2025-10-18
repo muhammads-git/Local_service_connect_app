@@ -78,7 +78,6 @@ def user_login():
       # if 
       if user:
          hash_password = user[3] # index 3 means col 3 is passwords col
-         print(user)
          if bcyrpt.check_password_hash(hash_password,user_password):
             session['user_id'] = user[0]  # create session 
             session['username'] = user[1]

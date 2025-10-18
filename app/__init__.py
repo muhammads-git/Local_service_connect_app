@@ -17,9 +17,11 @@ def create_app():
    # register auths blueprint
    from app.routess.auths import auths_bp
    from app.routess.dashboards import dashboards_bp
+   from app.routess.admins_panel import admins_bp
 
    app.register_blueprint(auths_bp)   
    app.register_blueprint(dashboards_bp)
+   app.register_blueprint(admins_bp)
 
 
    # connect instance with app

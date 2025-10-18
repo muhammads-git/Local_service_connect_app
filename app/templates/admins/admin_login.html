@@ -3,8 +3,7 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="{{ url_for('static', filename='flashstyle.css') }}">
-
+   <title>Are you Really an Admin</title>
 </head>
 <body>
    <center>
@@ -19,14 +18,14 @@
          {% endif %}
       {% endwith %}
 
-      <form action="{{ url_for('auths_bp.user_login') }}" method="POST">
-         {{ user_form.hidden_tag() }}
-         {{ user_form.user_name.label() }} <br> {{ user_form.user_name() }} <br>
-         {{ user_form.user_password.label() }} <br> {{ user_form.user_password() }} <br>
-         {{ user_form.submit() }}
-
+      <form action="{{ url_for('admins_bp.admin_login') }}" method="POST">
+         {{ admin_form.hidden_tag() }}
+         {{ admin_form.username.label() }} <br> {{ admin_form.username() }} <br>
+         {{ admin_form.email.label() }} <br> {{ admin_form.email() }} <br>
+         {{ admin_form.password.label() }} <br> {{ admin_form.password() }} <br>
+         {{ admin_form.secret_key.label() }} <br> {{ admin_form.secret_key() }} <br>
+         {{ admin_form.submit() }}
       </form>
-      
    </center>
    
 </body>

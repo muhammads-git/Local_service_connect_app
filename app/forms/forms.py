@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import Length,Email,DataRequired,InputRequired,EqualTo
-from wtforms import SearchField,StringField,PasswordField,SubmitField,EmailField,SelectField,TextAreaField
+from wtforms import SearchField,StringField,PasswordField,SubmitField,EmailField,SelectField,TextAreaField,IntegerField
 
 # user
 class User_RegisterForms(FlaskForm):
@@ -36,10 +36,7 @@ class Provider_RegisterForm(FlaskForm):
    #  ], validators=[InputRequired()])
    
    phone = StringField('Phone Number', validators=[InputRequired(), Length(min=10, max=15)])  # starts form 0 
-   
    submit = SubmitField('Register As Provider')
-
-
 
 
 
@@ -47,15 +44,24 @@ class Provider_RegisterForm(FlaskForm):
    # User
 class User_LoginForm(FlaskForm):
    user_name = StringField('Full Name',validators=[InputRequired(),Length(min=6,max=20)])
-   user_password = PasswordField('Password',validators=[DataRequired(),Length(min=6,max=20)])
-   submit=SubmitField('Login As a User')
+   user_password = PasswordField('Password',validators=[InputRequired(),Length(min=6,max=20)])
+   submit= SubmitField('Login As a User')
 
    # Provider
 class Provider_LoginForm(FlaskForm):
    provider_name = StringField('Full Name',validators=[InputRequired(),Length(min=6,max=20)])
-   provider_password = PasswordField('Password',validators=[DataRequired(),Length(min=6,max=20)])
-   submit=SubmitField('Login As a Provider')
+   provider_password = PasswordField('Password',validators=[InputRequired(),Length(min=6,max=20)])
+   submit= SubmitField('Login As a Provider')
 
+
+# admin form
+
+class Admin_LoginForm(FlaskForm):
+   username = StringField('Username',validators=[InputRequired(),Length(min=6,max=20)])
+   email = EmailField('Email',validators=[InputRequired(),Email()])
+   password = PasswordField('Password',validators=[InputRequired(),Length(min=6,max=20)])
+   secret_key =IntegerField('Secret-Key',validators=[InputRequired()])
+   submit = SubmitField('I am Admin')
 
 
 
