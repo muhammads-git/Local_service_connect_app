@@ -17,11 +17,11 @@
 }
 
 .flash.success {
-  background-color: #28a745;
+  background-color: #19b13c;
 }
 
 .flash.error {
-  background-color: #dc3545;
+  background-color: #ac1d2b;
 }
 
 .flash.warning {

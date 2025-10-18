@@ -14,10 +14,13 @@ def create_app():
    app.config.from_object(Development)
 
 
-
    # register auths blueprint
-   from app.routess.routes import auths_bp
+   from app.routess.auths import auths_bp
+   from app.routess.dashboards import dashboards_bp
+
    app.register_blueprint(auths_bp)   
+   app.register_blueprint(dashboards_bp)
+
 
    # connect instance with app
    mysql.init_app(app) # msyql

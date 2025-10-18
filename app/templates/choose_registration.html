@@ -3,12 +3,13 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Choose Registration</title>
 </head>
 <body>
    <center>
-         <a href="{{ url_for('auths_bp.user_register')}}">User Registratioin</a>
-         <a href="{{ url_for('auths_bp.provider_register')}}">Provider Registration</a>
-
+      <h2>Choose Registration Type</h2>
+      <a href="{{ url_for('auths_bp.user_register') }}">👤 User Registration</a><br><br>
+      <a href="{{ url_for('auths_bp.provider_register') }}">🛠️ Provider Registration</a>
    </center>
 </body>
 </html>

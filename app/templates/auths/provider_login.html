@@ -3,10 +3,11 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="{{ url_for('static',filename=flashstyle.css)}}">   
+   <link rel="stylesheet" href="{{ url_for('static',filename='flashstyle.css')}}">
 </head>
 <body>
    <center>
+      <!-- flash messages -->
       {% with messages = get_flashed_messages(with_categories=true) %}
          {% if messages %}
             <div class="flash-container">
@@ -16,19 +17,14 @@
             </div>
          {% endif %}
       {% endwith %}
-
-      <form action="{{ url_for('auths_bp.provider_register')}}" method="POST">
+      
+      <form action="{{ url_for('auths_bp.provider_login') }}" method="POST">
          {{ provider_form.hidden_tag() }}
          {{ provider_form.provider_name.label() }} <br> {{ provider_form.provider_name() }} <br>
-         {{ provider_form.provider_email.label() }} <br> {{ provider_form.provider_email() }} <br>
          {{ provider_form.provider_password.label() }} <br> {{ provider_form.provider_password() }} <br>
-         {{ provider_form.confirm_password.label() }} <br> {{ provider_form.confirm_password() }} <br>
-         {{ provider_form.profession.label() }} <br> {{ provider_form.profession() }} <br>
-         {{ provider_form.profession_desc.label() }} <br> {{ provider_form.profession_desc(rows=4,cols=50,class="form-control")}} <br>
-         {{ provider_form.phone.label() }} <br> {{ provider_form.phone() }} <br>
          {{ provider_form.submit() }}
       </form>
-
    </center>
+   
 </body>
 </html>

@@ -3,7 +3,8 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="{{ url_for('static',filename='flashstyle.css')}}">
+   <link rel="stylesheet" href="{{ url_for('static', filename='flashstyle.css') }}">
+
 </head>
 <body>
    <center>
@@ -18,7 +19,7 @@
          {% endif %}
       {% endwith %}
 
-      <form action="{{ url_for('user_login')}}" method="POST">
+      <form action="{{ url_for('auths_bp.user_login') }}" method="POST">
          {{ user_form.user_name.label() }} <br> {{ user_form.user_name() }} <br>
          {{ user_form.user_password.label() }} <br> {{ user_form.user_password() }} <br>
          {{ user_form.submit() }}

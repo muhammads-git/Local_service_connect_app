@@ -15,13 +15,13 @@ class Provider_RegisterForm(FlaskForm):
    provider_name = StringField('Username',validators=[InputRequired(),Length(min=6,max=20)])
    provider_email = EmailField('Email',validators=[InputRequired(),Email()])
    provider_password = PasswordField('Password',validators=[InputRequired(),Length(min=6,max=20)])
-   confirm_password = PasswordField('Confirm Password',validators=[InputRequired(),EqualTo(provider_password)])
+   confirm_password = PasswordField('Confirm Password',validators=[InputRequired(),EqualTo('provider_password',message='Password must match.')])
    profession = SelectField('Profession', choices=[
         ('plumber', 'Plumber'),
         ('electrician', 'Electrician'),
         ('cleaner', 'Cleaner'),
-        ('carpenter', 'Carpenter'),
-        ('painter', 'Painter'),
+        ('mechanic', 'Mechanic'),
+        ('technician', 'Technician'),
     ], validators=[InputRequired()])
    profession_desc = TextAreaField('Description',validators=[InputRequired(),Length(max=500,message='Description must be under 500')])
    
@@ -54,7 +54,7 @@ class User_LoginForm(FlaskForm):
 class Provider_LoginForm(FlaskForm):
    provider_name = StringField('Full Name',validators=[InputRequired(),Length(min=6,max=20)])
    provider_password = PasswordField('Password',validators=[DataRequired(),Length(min=6,max=20)])
-   submit=SubmitField('Login As a User')
+   submit=SubmitField('Login As a Provider')
 
 
 
