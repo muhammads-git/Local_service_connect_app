@@ -56,11 +56,19 @@ class Provider_LoginForm(FlaskForm):
 
 # admin form
 
+class Admin_RegisterForm(FlaskForm):
+   username = StringField('Username',validators=[InputRequired(),Length(min=6,max=20)])
+   email = EmailField('Email',validators=[InputRequired(),Email()])
+   password = PasswordField('Password',validators=[InputRequired(),Length(min=6,max=20)])
+   submit = SubmitField('Register as Admin')
+
+
+
 class Admin_LoginForm(FlaskForm):
    username = StringField('Username',validators=[InputRequired(),Length(min=6,max=20)])
    email = EmailField('Email',validators=[InputRequired(),Email()])
    password = PasswordField('Password',validators=[InputRequired(),Length(min=6,max=20)])
-   secret_key =IntegerField('Secret-Key',validators=[InputRequired()])
+   secret_key =IntegerField('Secret Key',validators=[InputRequired()])
    submit = SubmitField('I am Admin')
 
 

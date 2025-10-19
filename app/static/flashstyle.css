@@ -27,6 +27,10 @@
 .flash.warning {
   background-color: #ffc107;
   color: #333;
+
+.flash.danger {
+  background-color: #ac1d2b;
+  }
 }
 
 .flash.info {

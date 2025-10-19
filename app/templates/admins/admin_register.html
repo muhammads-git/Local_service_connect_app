@@ -4,7 +4,6 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="stylesheet" href="{{ url_for('static',filename='flashstyle.css')}}">  
-   <title>Admin Dashboard</title>
 </head>
 <body>
    <center>
@@ -18,11 +17,15 @@
             </div>
          {% endif %}
       {% endwith %}
-         
-      <!--  -->
-      <h1>Total Number of Users: {{ total_users }}</h1>
-      <h1>Total Number of Providers: {{ total_providers }}</h1>
 
+      <form action="{{ url_for('admins_bp.admin_register') }}" method="POST">
+         {{ admin_form.hidden_tag() }}
+         {{ admin_form.username.label() }} <br> {{ admin_form.username() }} <br>
+         {{ admin_form.email.label() }} <br> {{ admin_form.email() }} <br>
+         {{ admin_form.password.label() }} <br> {{ admin_form.password() }} <br>
+         {{ admin_form.submit() }}
+      </form>
+      <a href="{{ url_for('admins_bp.admin_login') }}">Login</a>
    </center>
    
 </body>
