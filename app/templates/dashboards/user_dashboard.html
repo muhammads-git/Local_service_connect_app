@@ -7,7 +7,24 @@
 </head>
 <body>
    <center>
-      <p>User dashboard</p>
+      <p>SERVICES WE HAVE</p>
+      <form action="{{ url_for('dashboards_bp.user_dashboard') }}">
+            <table>
+               <tr>
+                  <th>NAME</th>
+                  <th>SERVICES</th>
+                  <th>EXPERTIESE</th>
+               </tr>
+               <tr>
+            {% for data in service_providers_data %}
+                  <td>{{data[0] }}</td>
+                  <td>{{ data[1] }}</td>
+                  <td>{{ data[2] }}</td>
+               </tr>
+               {% endfor %}
+            </table>
+      </form>
+
 
    </center>
 </body>

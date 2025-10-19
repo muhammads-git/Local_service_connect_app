@@ -1,5 +1,6 @@
 from flask import redirect,render_template,url_for,session,flash,get_flashed_messages
 from flask import Blueprint
+from app.__init__ import mysql
 
 # initialize Blueprints instance
 dashboards_bp = Blueprint('dashboards_bp', __name__, url_prefix='/dashboard')
@@ -10,7 +11,15 @@ def user_dashboard():
    if 'user_id' not in session:
       return redirect(url_for('auths_bp.user_login'))
    
-   return render_template('dashboards/user_dashboard.html',username=session['username'])
+   print(session.get('role'))
+   print(session.get('username'))
+   # dashboard
+   cursor = mysql.connection.cursor()
+   cursor.execute('SELECT username AS NAME, profession AS SERVICE, profession_desc AS Expertiese FROM service_providers')
+   service_providers_data = cursor.fetchall()
+   cursor.close()
+
+   return render_template('dashboards/user_dashboard.html',username=session['username'],service_providers_data=service_providers_data)
 
 
 @dashboards_bp.route('/provider')
