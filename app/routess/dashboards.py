@@ -15,7 +15,19 @@ def user_dashboard():
    print(session.get('username'))
    # dashboard
    cursor = mysql.connection.cursor()
-   cursor.execute('SELECT username AS NAME, profession AS SERVICE, profession_desc AS Expertiese FROM service_providers')
+
+   query = """
+        SELECT 
+            sp.id,
+            sp.username,
+            sp.profession,
+            sp.profession_desc,
+            r.rating AS avg_rating
+        FROM service_providers sp
+        LEFT JOIN reviews r ON sp.id = r.provider_id;
+    """
+   
+   cursor.execute(query)
    service_providers_data = cursor.fetchall()
    cursor.close()
 
