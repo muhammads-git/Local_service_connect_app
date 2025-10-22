@@ -90,6 +90,11 @@ def user_login():
    return render_template('auths/user_login.html',user_form=user_form)
 
 
+# user loguot
+@auths_bp.route('/user_logout')
+def user_logout():
+   session.clear()
+   return redirect(url_for('auths_bp.user_login'))
 
 @auths_bp.route('/provider_login',methods=['POST','GET'])
 def provider_login():
