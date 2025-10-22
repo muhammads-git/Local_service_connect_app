@@ -14,7 +14,7 @@
          {% set top_provider = service_providers_data[0] %}  <!-- First element -->
          <h2>{{ top_provider[1] }}</h2>  <!-- Name -->
          <p>Profession: {{ top_provider[2] }}</p>
-         <p>Rating: {{ "%.if"|format(top_provider[2]) }}</p>
+         <!-- <p>Rating: {{ "%.1f"|format(top_provider[2] | float)  }}</p> -->
       {% else %}
          <p>No rated providers yet</p>
       {% endif %}
