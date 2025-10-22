@@ -11,28 +11,47 @@ def user_dashboard():
    if 'user_id' not in session:
       return redirect(url_for('auths_bp.user_login'))
    
-   print(session.get('role'))
-   print(session.get('username'))
    # dashboard
    cursor = mysql.connection.cursor()
 
-   query = """
-        SELECT 
-            sp.id,
-            sp.username,
-            sp.profession,
-            sp.profession_desc,
-            r.rating AS avg_rating
-        FROM service_providers sp
-        LEFT JOIN reviews r ON sp.id = r.provider_id;
-    """
-   
-   cursor.execute(query)
+   cursor.execute("""
+    SELECT 
+        sp.id,
+        sp.username, 
+        sp.profession,
+        sp.profession_desc,
+        AVG(r.rating) as avg_rating  -- Use AVG to get single rating per provider
+    FROM service_providers sp
+    JOIN reviews r ON sp.id = r.provider_id
+    GROUP BY sp.id, sp.username, sp.profession, sp.profession_desc
+    ORDER BY avg_rating DESC
+   """)
    service_providers_data = cursor.fetchall()
    cursor.close()
 
-   return render_template('dashboards/user_dashboard.html',username=session['username'],service_providers_data=service_providers_data)
+   # get the top rated
+   cursor =mysql.connection.cursor()
+   cursor.execute("""
+   SELECT 
+                  sp.username,
+                  sp.profession,
+                  CAST(AVG(r.rating) AS DECIMAL(3,1)) as avg_rating
+         FROM service_providers sp
+         JOIN reviews r ON sp.id = r.provider_id
+         GROUP BY sp.username, sp.profession
+         ORDER BY avg_rating DESC
+         LIMIT 1
+   """)
+   top_rated = cursor.fetchall()
 
+
+
+   return render_template('dashboards/user_dashboard.html',username=session['username'],service_providers_data=service_providers_data,top_rated=top_rated)
+
+@dashboards_bp.route('/book_service',methods=['GET','POST'])
+def book_service():
+   return 'booked service'
+######
 
 @dashboards_bp.route('/provider')
 def provider_dashboard():
