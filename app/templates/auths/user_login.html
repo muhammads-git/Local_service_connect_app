@@ -1,33 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="{{ url_for('static', filename='flashstyle.css') }}">
+{% extends "base.html" %}
 
-</head>
-<body>
-   <center>
-      <!-- flash messages -->
-      {% with messages = get_flashed_messages(with_categories=true) %}
-         {% if messages %}
-            <div class="flash-container">
-         {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-         {% endfor %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mb-4">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'info' }} border-0 rounded-1">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Login Form -->
+            <div class="card border-0 shadow-sm rounded-2">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <h4 class="fw-semibold text-dark mb-2">Sign in to your account</h4>
+                        <p class="text-muted fs-6">Enter your credentials to continue</p>
+                    </div>
+
+                    <form action="{{ url_for('auths_bp.user_login') }}" method="POST">
+                        {{ user_form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ user_form.user_name.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ user_form.user_name(class="form-control rounded-1 border-1 py-2", placeholder="Enter username") }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ user_form.user_password.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ user_form.user_password(class="form-control rounded-1 border-1 py-2", placeholder="Enter password") }}
+                        </div>
+                        
+                        {{ user_form.submit(class="btn btn-primary w-100 rounded-1 py-2 fw-medium") }}
+                    </form>
+
+                    <div class="text-center mt-4 pt-3 border-top">
+                        <p class="text-muted small mb-0">
+                            Don't have an account? 
+                            <a href="{{ url_for('auths_bp.user_register') }}" class="text-primary text-decoration-none fw-medium">Sign up</a>
+                        </p>
+                    </div>
+                </div>
             </div>
-         {% endif %}
-      {% endwith %}
-
-      <form action="{{ url_for('auths_bp.user_login') }}" method="POST">
-         {{ user_form.hidden_tag() }}
-         {{ user_form.user_name.label() }} <br> {{ user_form.user_name() }} <br>
-         {{ user_form.user_password.label() }} <br> {{ user_form.user_password() }} <br>
-         {{ user_form.submit() }}
-
-      </form>
-      
-   </center>
-   
-</body>
-</html>
+        </div>
+    </div>
+</div>
+{% endblock %}

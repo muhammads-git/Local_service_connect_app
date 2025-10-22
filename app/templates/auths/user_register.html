@@ -1,34 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="{{ url_for('static',filename='flashstyle.css')}}">
-   
-</head>
-<body>
-   <center>
-      <!-- flash messages -->
-      {% with messages = get_flashed_messages(with_categories=true) %}
-         {% if messages %}
-            <div class="flash-container">
-         {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-         {% endfor %}
-            </div>
-         {% endif %}
-      {% endwith %}
+{% extends "base.html" %}
 
-      <form action="{{ url_for('auths_bp.user_register')}}" method="POST">
-         {{ user_form.hidden_tag() }}
-         {{ user_form.user_name.label() }} <br> {{ user_form.user_name() }} <br>
-         {{ user_form.user_email.label() }} <br> {{ user_form.user_email() }} <br>
-         {{ user_form.user_password.label() }} <br> {{ user_form.user_password() }} <br>
-         {{ user_form.confirm_password.label() }} <br> {{ user_form.confirm_password() }} <br><br>
-         {{ user_form.submit() }} 
-      <!-- form -->
-      </form>
-      <a href="{{ url_for('auths_bp.user_login') }}">If you have an account Log-In</a>
-   </center>
-</body>
-</html>
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mb-4">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'info' }} border-0 rounded-1">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Register Form -->
+            <div class="card border-0 shadow-sm rounded-2">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <h4 class="fw-semibold text-dark mb-2">Create your account</h4>
+                        <p class="text-muted fs-6">Join thousands of service providers and customers</p>
+                    </div>
+
+                    <form action="{{ url_for('auths_bp.user_register')}}" method="POST">
+                        {{ user_form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ user_form.user_name.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ user_form.user_name(class="form-control rounded-1 border-1 py-2", placeholder="Choose username") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ user_form.user_email.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ user_form.user_email(class="form-control rounded-1 border-1 py-2", placeholder="Enter email") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ user_form.user_password.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ user_form.user_password(class="form-control rounded-1 border-1 py-2", placeholder="Create password") }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ user_form.confirm_password.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ user_form.confirm_password(class="form-control rounded-1 border-1 py-2", placeholder="Confirm password") }}
+                        </div>
+                        
+                        {{ user_form.submit(class="btn btn-primary w-100 rounded-1 py-2 fw-medium") }}
+                    </form>
+
+                    <div class="text-center mt-4 pt-3 border-top">
+                        <p class="text-muted small mb-0">
+                            Already have an account? 
+                            <a href="{{ url_for('auths_bp.user_login') }}" class="text-primary text-decoration-none fw-medium">Sign in</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

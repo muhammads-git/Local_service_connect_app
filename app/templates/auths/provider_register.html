@@ -1,36 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="{{ url_for('static',filename='flashstyle.css')}}">   
-</head>
-<body>
-   <center>
-      <!-- flash messages -->
-      {% with messages = get_flashed_messages(with_categories=true) %}
-         {% if messages %}
-            <div class="flash-container">
-         {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-         {% endfor %}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mb-4">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'info' }} border-0 rounded-1">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Provider Register Form -->
+            <div class="card border-0 shadow-sm rounded-2">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <div class="bg-info rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">
+                            <i class="bi bi-person-plus text-white fs-5"></i>
+                        </div>
+                        <h4 class="fw-semibold text-dark mb-2">Become a Service Provider</h4>
+                        <p class="text-muted fs-6">Join our platform and grow your business</p>
+                    </div>
+
+                    <form action="{{ url_for('auths_bp.provider_register') }}" method="POST">
+                        {{ provider_form.hidden_tag() }}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ provider_form.provider_name.label(class="form-label small fw-medium text-dark mb-2") }}
+                                {{ provider_form.provider_name(class="form-control rounded-1 border-1 py-2", placeholder="Choose username") }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ provider_form.provider_email.label(class="form-label small fw-medium text-dark mb-2") }}
+                                {{ provider_form.provider_email(class="form-control rounded-1 border-1 py-2", placeholder="Enter email") }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ provider_form.provider_password.label(class="form-label small fw-medium text-dark mb-2") }}
+                                {{ provider_form.provider_password(class="form-control rounded-1 border-1 py-2", placeholder="Create password") }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ provider_form.confirm_password.label(class="form-label small fw-medium text-dark mb-2") }}
+                                {{ provider_form.confirm_password(class="form-control rounded-1 border-1 py-2", placeholder="Confirm password") }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ provider_form.profession.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ provider_form.profession(class="form-control rounded-1 border-1 py-2", placeholder="e.g., Plumber, Electrician") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ provider_form.profession_desc.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ provider_form.profession_desc(rows=3, class="form-control rounded-1 border-1 py-2", placeholder="Describe your services and expertise") }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ provider_form.phone.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ provider_form.phone(class="form-control rounded-1 border-1 py-2", placeholder="Phone number") }}
+                        </div>
+                        
+                        {{ provider_form.submit(class="btn btn-info w-100 rounded-1 py-2 fw-medium text-white") }}
+                    </form>
+
+                    <div class="text-center mt-4 pt-3 border-top">
+                        <p class="text-muted small mb-0">
+                            Already have an account? 
+                            <a href="{{ url_for('auths_bp.provider_login') }}" class="text-info text-decoration-none fw-medium">Sign in</a>
+                        </p>
+                    </div>
+                </div>
             </div>
-         {% endif %}
-      {% endwith %}
-
-      <form action="{{ url_for('auths_bp.provider_register') }}" method="POST">
-         {{ provider_form.hidden_tag() }}
-         {{ provider_form.provider_name.label() }} <br> {{ provider_form.provider_name() }} <br>
-         {{ provider_form.provider_email.label() }} <br> {{ provider_form.provider_email() }} <br>
-         {{ provider_form.provider_password.label() }} <br> {{ provider_form.provider_password() }} <br>
-         {{ provider_form.confirm_password.label() }} <br> {{ provider_form.confirm_password() }} <br>
-         {{ provider_form.profession.label() }} <br> {{ provider_form.profession() }} <br>
-         {{ provider_form.profession_desc.label() }} <br> {{ provider_form.profession_desc(rows=4,cols=50,class="form-control")}} <br>
-         {{ provider_form.phone.label() }} <br> {{ provider_form.phone() }} <br>
-         {{ provider_form.submit() }}
-      </form>
-      <a href="{{ url_for('auths_bp.provider_login') }}">If you have an account Log-In</a>
-
-   </center>
-</body>
-</html>
+        </div>
+    </div>
+</div>
+{% endblock %}

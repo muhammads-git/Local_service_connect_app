@@ -1,15 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="{{ url_for('static', filename='flashstyle.css') }}">
-</head>
-<body>
-   <center>
-      <h1>Welcome, {{ provider_name }}</h1>
+{% extends "base.html" %}
 
-   </center>
-   
-</body>
-</html>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-hover border-0">
+            <div class="card-header bg-warning text-dark text-center">
+                <h3 class="mb-0"><i class="bi bi-tools"></i> Provider Dashboard</h3>
+            </div>
+            <div class="card-body text-center p-5">
+                <h2 class="text-primary">Welcome, {{ provider_name }}!</h2>
+                <p class="lead text-muted">Manage your services and connect with customers</p>
+                
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <h4>0</h4>
+                                <p>Total Bookings</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h4>0</h4>
+                                <p>Completed Jobs</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h4>0.0</h4>
+                                <p>Your Rating</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

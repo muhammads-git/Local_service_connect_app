@@ -1,15 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Choose Registration</title>
-</head>
-<body>
-   <center>
-      <h2>Choose Registration Type</h2>
-      <a href="{{ url_for('auths_bp.user_register') }}">👤 User Registration</a><br><br>
-      <a href="{{ url_for('auths_bp.provider_register') }}">🛠️ Provider Registration</a>
-   </center>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+            <div class="card border-0 shadow-sm rounded-2">
+                <div class="card-body text-center p-5">
+                    <h4 class="fw-semibold text-dark mb-4">Join ServiceConnect</h4>
+                    <p class="text-muted mb-4">Choose how you want to use our platform</p>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card border-1 rounded-2 h-100">
+                                <div class="card-body p-4">
+                                    <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                        <i class="bi bi-person text-white fs-4"></i>
+                                    </div>
+                                    <h6 class="fw-semibold text-dark mb-2">I need services</h6>
+                                    <p class="text-muted small mb-3">Find and book trusted local service providers</p>
+                                    <a href="{{ url_for('auths_bp.user_register') }}" class="btn btn-primary btn-sm rounded-1 px-4">User Sign Up</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="card border-1 rounded-2 h-100">
+                                <div class="card-body p-4">
+                                    <div class="bg-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                        <i class="bi bi-tools text-dark fs-4"></i>
+                                    </div>
+                                    <h6 class="fw-semibold text-dark mb-2">I provide services</h6>
+                                    <p class="text-muted small mb-3">Offer your skills and grow your business</p>
+                                    <a href="{{ url_for('auths_bp.provider_register') }}" class="btn btn-warning btn-sm rounded-1 px-4 text-dark">Provider Sign Up</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-3 border-top">
+                        <p class="text-muted small mb-0">
+                            Already have an account? 
+                            <a href="{{ url_for('auths_bp.user_login') }}" class="text-primary text-decoration-none fw-medium">Sign in here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
