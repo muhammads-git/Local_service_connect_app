@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import Length,Email,DataRequired,InputRequired,EqualTo
-from wtforms import SearchField,StringField,PasswordField,SubmitField,EmailField,SelectField,TextAreaField,IntegerField
-
+from wtforms import SearchField,StringField,PasswordField,SubmitField,EmailField,SelectField,TextAreaField,IntegerField,DateTimeField
+from datetime import datetime # for DateField
 # user
 class User_RegisterForms(FlaskForm):
    user_name = StringField('Full Name',validators=[InputRequired(),Length(min=6,max=20)])
@@ -72,4 +72,19 @@ class Admin_LoginForm(FlaskForm):
    submit = SubmitField('I am Admin')
 
 
+####
+class BookingForm(FlaskForm):
+   date_time = DateTimeField('Date & Time', validators=[InputRequired()],format='%Y-%m-%d %H:%M', default=datetime.now())
+   address = TextAreaField('Address', validators=[InputRequired(),Length(max=50)])
 
+   service_type = SelectField('Select',choices=[     
+         ('plumbing', 'Plumbing'),
+        ('electric', 'Electric'),
+        ('cleaning', 'Cleaning'),
+        ('mechanical', 'Mechanical'),
+        ('technical', 'Technical'),])
+   
+   description=TextAreaField('Description', validators=[InputRequired(),Length(max=500)])
+   contact = StringField('Contact', validators=[InputRequired(), Length(min=10,max=15)])
+
+   submit = SubmitField('Book Service')

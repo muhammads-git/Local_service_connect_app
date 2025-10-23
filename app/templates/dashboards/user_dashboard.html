@@ -86,7 +86,9 @@
                                         {% endif %}
                                     </td>
                                     <td class="py-3 text-end">
-                                        <button class="btn btn-primary btn-sm rounded-1 px-3 py-1 small">Book</button>
+                                        <a href="{{ url_for('dashboards_bp.book_service', provider_id=data[0]) }}">
+                                          <button class="btn btn-primary btn-sm rounded-1 px-3 py-1 small">Book</button>
+                                        </a>
                                     </td>
                                 </tr>
                                 {% endfor %}

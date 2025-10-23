@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-5">
+            <!-- Header -->
+            <div class="card border-0 shadow-sm rounded-2 mb-4">
+                <div class="card-body text-center py-4">
+                    <h4 class="fw-semibold text-dark mb-2">Book Service</h4>
+                    <p class="text-muted mb-1">You're booking: <span class="fw-medium text-primary">{{ provider_name }}</span></p>
+                    <p class="text-muted mb-0">Service: <span class="fw-medium">{{ provider_profession }}</span></p>
+                </div>
+            </div>
+
+            <!-- Booking Form -->
+            <div class="card border-0 shadow-sm rounded-2">
+                <div class="card-body p-4">
+                    <form action="{{ url_for('dashboards_bp.create_booking')}}" method="POST">
+                        {{ booking_form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ booking_form.date_time.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ booking_form.date_time(class="form-control rounded-1 border-1 py-2") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ booking_form.address.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ booking_form.address(class="form-control rounded-1 border-1 py-2", rows="3", placeholder="Enter your full address") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ booking_form.service_type.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ booking_form.service_type(class="form-control rounded-1 border-1 py-2") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ booking_form.description.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ booking_form.description(class="form-control rounded-1 border-1 py-2", rows="3", placeholder="Describe what service you need") }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ booking_form.contact.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ booking_form.contact(class="form-control rounded-1 border-1 py-2", placeholder="Your phone number") }}
+                        </div>
+                        
+                        {{ booking_form.submit(class="btn btn-primary w-100 rounded-1 py-2 fw-medium") }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
