@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import Length,Email,DataRequired,InputRequired,EqualTo
-from wtforms import SearchField,StringField,PasswordField,SubmitField,EmailField,SelectField,TextAreaField,IntegerField,DateTimeField
+from wtforms import SearchField,StringField,PasswordField,SubmitField,EmailField,SelectField,TextAreaField,IntegerField,DateTimeField,HiddenField
 from datetime import datetime # for DateField
 # user
 class User_RegisterForms(FlaskForm):
@@ -74,6 +74,7 @@ class Admin_LoginForm(FlaskForm):
 
 ####
 class BookingForm(FlaskForm):
+   provider_id = HiddenField('Provider_id')
    date_time = DateTimeField('Date & Time', validators=[InputRequired()],format='%Y-%m-%d %H:%M', default=datetime.now())
    address = TextAreaField('Address', validators=[InputRequired(),Length(max=50)])
 
