@@ -73,6 +73,7 @@ def book_service(provider_id):
             # provider_mail=provider_email, # removing this parameter for now
             username=session['username'],
             service_type=booking_form.service_type.data,
+            proivder_mail=provider_email,
             address=booking_form.address.data,
             booking_date=booking_form.date_time.data
         )
@@ -90,7 +91,16 @@ def book_service(provider_id):
 def provider_dashboard():
    if 'provider_id' not in session:
       return redirect(url_for('auths_bp.provider_login'))
+   
+   # start working on tiny logics, 
+   # total bookings
+   cursor = mysql.connection.cursor()
+   cursor.execute('SELECT COUNT(*) FROM bookings WHERE provider_id= %s ',(session['provider_id'],))
+   total_bookings = cursor.fetchone()[0]
+   cursor.close()
 
-   return render_template('dashboards/provider_dashboard.html',provider_name=session['provider_name'])
+   print(total_bookings)
+
+   return render_template('dashboards/provider_dashboard.html',provider_name=session['provider_name'],total_bookings=total_bookings)
 
 

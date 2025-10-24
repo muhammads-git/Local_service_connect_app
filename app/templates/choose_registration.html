@@ -1,51 +1,95 @@
 {% extends "base.html" %}
-
 {% block content %}
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-12 col-sm-10 col-md-8 col-lg-6">
-            <div class="card border-0 shadow-sm rounded-2">
-                <div class="card-body text-center p-5">
-                    <h4 class="fw-semibold text-dark mb-4">Join ServiceConnect</h4>
-                    <p class="text-muted mb-4">Choose how you want to use our platform</p>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-4">
-                            <div class="card border-1 rounded-2 h-100">
-                                <div class="card-body p-4">
-                                    <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                                        <i class="bi bi-person text-white fs-4"></i>
-                                    </div>
-                                    <h6 class="fw-semibold text-dark mb-2">I need services</h6>
-                                    <p class="text-muted small mb-3">Find and book trusted local service providers</p>
-                                    <a href="{{ url_for('auths_bp.user_register') }}" class="btn btn-primary btn-sm rounded-1 px-4">User Sign Up</a>
+            <!-- Header Section -->
+            <div class="text-center mb-5">
+                <h2 class="fw-semibold text-dark mb-3">Join ServiceConnect</h2>
+                <p class="text-muted fs-6">Connect with trusted professionals or grow your service business</p>
+            </div>
+
+            <!-- Role Selection Cards -->
+            <div class="row g-4">
+                <!-- User Card -->
+                <div class="col-md-6">
+                    <div class="card border rounded-3 h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                                <i class="bi bi-house-door text-white fs-3"></i>
+                            </div>
+                            <h5 class="fw-semibold text-dark mb-3">Find Home Services</h5>
+                            <p class="text-muted small mb-4">
+                                Book trusted professionals for plumbing, cleaning, electrical work, and more home services
+                            </p>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-center small text-muted mb-2">
+                                    <span class="me-3"><i class="bi bi-check-circle text-success me-1"></i>Verified pros</span>
+                                    <span><i class="bi bi-check-circle text-success me-1"></i>Secure booking</span>
                                 </div>
                             </div>
+                            <a href="{{ url_for('auths_bp.user_register') }}" class="btn btn-primary rounded-2 px-4 w-100 py-2 fw-medium">
+                                Join as User
+                            </a>
                         </div>
-                        
-                        <div class="col-md-6 mb-4">
-                            <div class="card border-1 rounded-2 h-100">
-                                <div class="card-body p-4">
-                                    <div class="bg-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                                        <i class="bi bi-tools text-dark fs-4"></i>
-                                    </div>
-                                    <h6 class="fw-semibold text-dark mb-2">I provide services</h6>
-                                    <p class="text-muted small mb-3">Offer your skills and grow your business</p>
-                                    <a href="{{ url_for('auths_bp.provider_register') }}" class="btn btn-warning btn-sm rounded-1 px-4 text-dark">Provider Sign Up</a>
+                    </div>
+                </div>
+
+                <!-- Provider Card -->
+                <div class="col-md-6">
+                    <div class="card border rounded-3 h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                                <i class="bi bi-tools text-dark fs-3"></i>
+                            </div>
+                            <h5 class="fw-semibold text-dark mb-3">Offer Your Services</h5>
+                            <p class="text-muted small mb-4">
+                                Grow your business by connecting with customers needing your expertise and skills
+                            </p>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-center small text-muted mb-2">
+                                    <span class="me-3"><i class="bi bi-check-circle text-success me-1"></i>Get clients</span>
+                                    <span><i class="bi bi-check-circle text-success me-1"></i>Build reputation</span>
                                 </div>
                             </div>
+                            <a href="{{ url_for('auths_bp.provider_register') }}" class="btn btn-warning rounded-2 px-4 w-100 py-2 fw-medium text-dark">
+                                Join as Provider
+                            </a>
                         </div>
                     </div>
-                    
-                    <div class="mt-4 pt-3 border-top">
-                        <p class="text-muted small mb-0">
-                            Already have an account? 
-                            <a href="{{ url_for('auths_bp.user_login') }}" class="text-primary text-decoration-none fw-medium">Sign in here</a>
-                        </p>
-                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section -->
+            <div class="text-center mt-5 pt-4 border-top">
+                <p class="text-muted mb-3">
+                    Already have an account? Choose your login path
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('auths_bp.user_login') }}" class="btn btn-outline-primary rounded-2 px-4">
+                        User Login
+                    </a>
+                    <a href="{{ url_for('auths_bp.provider_login') }}" class="btn btn-outline-warning rounded-2 px-4 text-dark">
+                        Provider Login
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.card {
+    transition: all 0.2s ease;
+    border: 1px solid #e9ecef !important;
+}
+.card:hover {
+    border-color: #0d6efd !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+.btn {
+    transition: all 0.2s ease;
+}
+</style>
 {% endblock %}
