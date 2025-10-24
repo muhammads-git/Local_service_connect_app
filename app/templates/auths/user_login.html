@@ -2,54 +2,90 @@
 
 {% block content %}
 <div class="container-fluid">
-    <div class="row justify-content-center">
-        <div class="col-12 col-sm-8 col-md-6 col-lg-4">
-            <!-- Flash Messages -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="mb-4">
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ 'danger' if category == 'error' else 'info' }} border-0 rounded-1">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="fw-semibold text-dark mb-1">Welcome, {{ username }}</h4>
+                    <p class="text-muted small mb-0">Find trusted professionals for your home needs</p>
+                </div>
+                <span class="badge bg-light text-dark border small px-3 py-2">User Dashboard</span>
+            </div>
+        </div>
+    </div>
 
-            <!-- Login Form -->
-            <div class="card border-0 shadow-sm rounded-2">
-                <div class="card-body p-4 p-md-5">
-                    <div class="text-center mb-4">
-                        <h4 class="fw-semibold text-dark mb-2">Sign in to your account</h4>
-                        <p class="text-muted fs-6">Enter your credentials to continue</p>
-                    </div>
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center py-3">
+                    <h5>{{ service_providers_data|length }}</h5>
+                    <small>Available Providers</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center py-3">
+                    <h5>
+                        {% if service_providers_data and service_providers_data[0][4] %}
+                            {{ "%.1f"|format(service_providers_data[0][4]|float) }}
+                        {% else %}
+                            0.0
+                        {% endif %}
+                    </h5>
+                    <small>Top Rating</small>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <form action="{{ url_for('auths_bp.user_login') }}" method="POST">
-                        {{ user_form.hidden_tag() }}
-                        
-                        <div class="mb-3">
-                            {{ user_form.user_name.label(class="form-label small fw-medium text-dark mb-2") }}
-                            {{ user_form.user_name(class="form-control rounded-1 border-1 py-2", placeholder="Enter username") }}
+    <!-- Providers Grid -->
+    <div class="row g-3">
+        {% for data in service_providers_data %}
+        <div class="col-xl-4 col-lg-6 col-md-6">
+            <div class="card border-0 shadow-sm rounded-2 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-start mb-2">
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                            <i class="bi bi-person text-white"></i>
                         </div>
-                        
-                        <div class="mb-4">
-                            {{ user_form.user_password.label(class="form-label small fw-medium text-dark mb-2") }}
-                            {{ user_form.user_password(class="form-control rounded-1 border-1 py-2", placeholder="Enter password") }}
+                        <div>
+                            <h6 class="fw-semibold text-dark mb-1">{{ data[1] }}</h6>
+                            <span class="badge bg-light text-dark border small">{{ data[2] }}</span>
                         </div>
-                        
-                        {{ user_form.submit(class="btn btn-primary w-100 rounded-1 py-2 fw-medium") }}
-                    </form>
-
-                    <div class="text-center mt-4 pt-3 border-top">
-                        <p class="text-muted small mb-0">
-                            Don't have an account? 
-                            <a href="{{ url_for('auths_bp.user_register') }}" class="text-primary text-decoration-none fw-medium">Sign up</a>
-                        </p>
+                    </div>
+                    
+                    <p class="text-muted small mb-3">{{ data[3][:80] }}{% if data[3]|length > 80 %}...{% endif %}</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            {% if data[4] %}
+                                <span class="badge bg-success rounded-1">{{ "%.1f"|format(data[4]|float) }}/5.0</span>
+                            {% else %}
+                                <span class="badge bg-secondary rounded-1">No rating</span>
+                            {% endif %}
+                        </div>
+                        <a href="{{ url_for('dashboards_bp.book_service', provider_id=data[0]) }}" 
+                           class="btn btn-primary btn-sm rounded-1">
+                            Book
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
+        {% else %}
+        <div class="col-12">
+            <div class="card border-0 bg-light rounded-2">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-people display-4 text-muted mb-3"></i>
+                    <h5 class="text-muted">No service providers available</h5>
+                    <p class="text-muted small">Check back later for available professionals</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

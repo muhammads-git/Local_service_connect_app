@@ -1,103 +1,223 @@
 {% extends "base.html" %}
-
 {% block content %}
 <div class="container-fluid">
-    <!-- Header -->
+    <!-- Clean Header -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="fw-semibold text-dark mb-1">Welcome, {{ username }}</h4>
-                    <p class="text-muted small mb-0">Find trusted professionals for your home needs</p>
+                    <h4 class="fw-semibold text-dark mb-1">Welcome back, {{ username }}</h4>
+                    <p class="text-muted mb-0">Find trusted professionals for your home services</p>
                 </div>
-                <span class="badge bg-light text-dark border small px-3 py-2">User Dashboard</span>
+                <div class="text-end">
+                    <div class="text-muted small">Active since {{ session.get('login_time', 'Today') }}</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Top Provider -->
+    <!-- Professional Stats - Like Upwork -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border rounded-3">
+                <div class="card-body text-center p-3">
+                    <div class="text-primary mb-2">
+                        <i class="bi bi-people fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">{{ service_providers_data|length }}</h5>
+                    <small class="text-muted">Available Providers</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card border rounded-3">
+                <div class="card-body text-center p-3">
+                    <div class="text-success mb-2">
+                        <i class="bi bi-star fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">
+                        {% if service_providers_data and service_providers_data[0][4] %}
+                            {{ "%.1f"|format(service_providers_data[0][4]|float) }}
+                        {% else %}
+                            0.0
+                        {% endif %}
+                    </h5>
+                    <small class="text-muted">Top Rating</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border rounded-3">
+                <div class="card-body text-center p-3">
+                    <div class="text-info mb-2">
+                        <i class="bi bi-building fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">
+                        {% set services = [] %}
+                        {% for data in service_providers_data %}
+                            {% if data[2] and data[2] not in services %}
+                                {% set _ = services.append(data[2]) %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ services|length }}
+                    </h5>
+                    <small class="text-muted">Service Types</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border rounded-3">
+                <div class="card-body text-center p-3">
+                    <div class="text-warning mb-2">
+                        <i class="bi bi-clock-history fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">0</h5>
+                    <small class="text-muted">Your Bookings</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Provider Highlight - Like Fiverr Pro -->
+    {% if service_providers_data and service_providers_data[0][4] and service_providers_data[0][4] >= 4.0 %}
+    {% set top_provider = service_providers_data[0] %}
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 bg-light rounded-2">
-                <div class="card-body py-3">
+            <div class="card border rounded-3 bg-light">
+                <div class="card-body p-3">
                     <div class="d-flex align-items-center">
-                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                            <i class="bi bi-trophy text-white small"></i>
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="bi bi-award text-white"></i>
+                            </div>
                         </div>
-                        <div>
-                            <h6 class="fw-medium text-dark mb-1">Top Rated Provider</h6>
-                            {% if service_providers_data %}
-                                {% set top_provider = service_providers_data[0] %}
-                                <p class="text-muted small mb-0">{{ top_provider[1] }} • {{ top_provider[2] }}</p>
-                            {% else %}
-                                <p class="text-muted small mb-0">No rated providers yet</p>
-                            {% endif %}
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="fw-semibold text-dark mb-1">Top Rated Professional</h6>
+                            <p class="text-muted mb-1">{{ top_provider[1] }} • {{ top_provider[2] }}</p>
+                            <div class="d-flex align-items-center">
+                                <div class="d-flex text-warning me-2">
+                                    {% for i in range(1, 6) %}
+                                        <i class="bi bi-star-fill{% if i > top_provider[4] %}-half{% endif %} small"></i>
+                                    {% endfor %}
+                                </div>
+                                <span class="text-muted small">{{ "%.1f"|format(top_provider[4]|float) }} rating</span>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <a href="{{ url_for('dashboards_bp.book_service', provider_id=top_provider[0]) }}" 
+                               class="btn btn-primary rounded-2 px-4">
+                                Hire Now
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {% endif %}
 
-    <!-- Providers Table -->
+    <!-- Professional Providers Grid - Like Professional Marketplace -->
     <div class="row">
         <div class="col-12">
-            <div class="card border-0 shadow-sm rounded-2">
-                <div class="card-header bg-white border-0 py-3">
-                    <h6 class="fw-semibold text-dark mb-0">Available Service Providers</h6>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="border-0 small fw-medium text-muted py-3">Name</th>
-                                    <th class="border-0 small fw-medium text-muted py-3">Service</th>
-                                    <th class="border-0 small fw-medium text-muted py-3">Expertise</th>
-                                    <th class="border-0 small fw-medium text-muted py-3">Rating</th>
-                                    <th class="border-0 small fw-medium text-muted py-3"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for data in service_providers_data %}
-                                <tr>
-                                    <td class="py-3">
-                                        <div class="d-flex align-items-center">
-                                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px;">
-                                                <i class="bi bi-person text-white small"></i>
-                                            </div>
-                                            <div>
-                                                <p class="fw-medium text-dark small mb-0">{{ data[1] }}</p>
-                                                <p class="text-muted small mb-0">ID: {{ data[0] }}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-3">
-                                        <span class="text-dark small">{{ data[2] }}</span>
-                                    </td>
-                                    <td class="py-3">
-                                        <span class="text-muted small">{{ data[3][:50] }}{% if data[3]|length > 50 %}...{% endif %}</span>
-                                    </td>
-                                    <td class="py-3">
-                                        {% if data[4] %}
-                                            <span class="badge bg-success rounded-1 px-2 py-1 small">{{ "%.1f"|format(data[4]|float) }}/5.0</span>
-                                        {% else %}
-                                            <span class="badge bg-secondary rounded-1 px-2 py-1 small">No rating</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="py-3 text-end">
-                                        <a href="{{ url_for('dashboards_bp.book_service', provider_id=data[0]) }}">
-                                          <button class="btn btn-primary btn-sm rounded-1 px-3 py-1 small">Book</button>
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-semibold text-dark mb-0">Available Service Providers</h5>
+                <div class="d-flex align-items-center">
+                    <span class="text-muted small me-3">{{ service_providers_data|length }} professionals</span>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-filter me-1"></i>Filter
+                        </button>
                     </div>
                 </div>
+            </div>
+
+            <div class="row g-3">
+                {% for data in service_providers_data %}
+                <div class="col-xl-4 col-lg-6 col-md-6">
+                    <div class="card border rounded-3 h-100">
+                        <div class="card-body">
+                            <!-- Provider Header -->
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                        <i class="bi bi-person text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="fw-semibold text-dark mb-1">{{ data[1] }}</h6>
+                                    <span class="badge bg-light text-dark border">{{ data[2] }}</span>
+                                    {% if data[4] and data[4] >= 4.5 %}
+                                    <span class="badge bg-warning text-dark ms-1 small">Top Rated</span>
+                                    {% endif %}
+                                </div>
+                                {% if data[4] %}
+                                <div class="flex-shrink-0 text-end">
+                                    <div class="bg-success rounded-2 px-2 py-1">
+                                        <small class="text-white fw-bold">{{ "%.1f"|format(data[4]|float) }}</small>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Description -->
+                            <p class="text-muted small mb-3">{{ data[3] }}</p>
+
+                            <!-- Rating & Action -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if data[4] %}
+                                    <div class="d-flex align-items-center">
+                                        <div class="d-flex text-warning me-2">
+                                            {% for i in range(1, 6) %}
+                                                <i class="bi bi-star-fill{% if i > data[4] %}-half{% endif %} small"></i>
+                                            {% endfor %}
+                                        </div>
+                                        <small class="text-muted">({{ "%.1f"|format(data[4]|float) }})</small>
+                                    </div>
+                                    {% else %}
+                                    <span class="text-muted small">New professional</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <a href="{{ url_for('dashboards_bp.book_service', provider_id=data[0]) }}" 
+                                   class="btn btn-primary btn-sm rounded-2 px-3">
+                                    Book Service
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-12">
+                    <div class="card border rounded-3">
+                        <div class="card-body text-center py-5">
+                            <i class="bi bi-search display-4 text-muted mb-3"></i>
+                            <h5 class="text-muted">No service providers available</h5>
+                            <p class="text-muted mb-3">We're adding new professionals to serve you better</p>
+                            <button class="btn btn-outline-primary">Check back later</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.card {
+    transition: all 0.2s ease;
+    border: 1px solid #e9ecef !important;
+}
+.card:hover {
+    border-color: #0d6efd !important;
+    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.1);
+}
+.badge {
+    font-weight: 500;
+}
+</style>
 {% endblock %}

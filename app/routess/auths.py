@@ -63,6 +63,10 @@ def provider_register():
 # login routes
 @auths_bp.route('/user_login',methods=['POST','GET'])
 def user_login():
+   
+   if 'user_id' in session:
+      return redirect(url_for('dashboards_bp.user_dashboard'))
+   
    user_form = User_LoginForm()
    
    if user_form.validate_on_submit():
@@ -113,15 +117,7 @@ def provider_login():
       # check if data available
       if provider:
          hash_password=provider[3] # col 3 is passwords col
-         if provider[1] == 'Kamran':
-            session['provider_id'] = provider[0]
-            session['provider_name'] = provider[1]
-            session['role'] = 'provider' 
-
-            flash('Successfully logged In!','success')
-            return redirect(url_for('dashboards_bp.provider_dashboard'))
-         else:
-            bcyrpt.check_password_hash(hash_password,provider_password)
+         if bcyrpt.check_password_hash(hash_password,provider_password):
             session['provider_id'] = provider[0]
             session['provider_name'] = provider[1]
             session['role'] = 'provider' 
