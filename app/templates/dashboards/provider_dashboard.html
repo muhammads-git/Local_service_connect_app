@@ -25,8 +25,8 @@
                     <div class="text-primary mb-2">
                         <i class="bi bi-calendar-check fs-4"></i>
                     </div>
-                    <h5 class="fw-bold text-dark">0</h5>
-                    <small class="text-muted">{{ total_bookings }}</small>
+                    <h5 class="fw-bold text-dark">{{ total_bookings }}</h5>
+                    <small class="text-muted">Total Bookings</small>
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
                     <div class="text-success mb-2">
                         <i class="bi bi-check-circle fs-4"></i>
                     </div>
-                    <h5 class="fw-bold text-dark">0</h5>
+                    <h5 class="fw-bold text-dark">{{ completed_jobs }}</h5>
                     <small class="text-muted">Completed Jobs</small>
                 </div>
             </div>
@@ -49,7 +49,7 @@
                     <div class="text-warning mb-2">
                         <i class="bi bi-clock fs-4"></i>
                     </div>
-                    <h5 class="fw-bold text-dark">0</h5>
+                    <h5 class="fw-bold text-dark">{{ pending_jobs }}</h5>
                     <small class="text-muted">Pending</small>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                     <div class="text-info mb-2">
                         <i class="bi bi-star fs-4"></i>
                     </div>
-                    <h5 class="fw-bold text-dark">0.0</h5>
+                    <h5 class="fw-bold text-dark">{{ rounded_rating }}</h5>
                     <small class="text-muted">Your Rating</small>
                 </div>
             </div>
