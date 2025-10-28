@@ -13,7 +13,7 @@ def user_dashboard():
    if 'user_id' not in session:
       return redirect(url_for('auths_bp.user_login'))
    
-   # dashboard
+   # Fetching provider data for user dashboard
    cursor = mysql.connection.cursor()
 
    cursor.execute("""
@@ -30,8 +30,18 @@ def user_dashboard():
    """)
    service_providers_data = cursor.fetchall()
    cursor.close()
-      
-   return render_template('dashboards/user_dashboard.html',username=session['username'],service_providers_data=service_providers_data)
+    
+    # fectching users total bookings
+   cursor = mysql.connection.cursor()
+   cursor.execute('SELECT COUNT(*) FROM bookings WHERE user_id = %s',(session['user_id'],))
+   
+    # total bookings this user booked
+   all_bookings = cursor.fetchone()[0]
+   print(all_bookings)
+   cursor.close()
+
+   
+   return render_template('dashboards/user_dashboard.html',username=session['username'],service_providers_data=service_providers_data,all_bookings=all_bookings)
 
 @dashboards_bp.route('/book_service/<int:provider_id>', methods=['GET','POST'])
 def book_service(provider_id):
@@ -89,10 +99,11 @@ def book_service(provider_id):
 
 @dashboards_bp.route('/provider')
 def provider_dashboard():
+   # if provider not in session...
    if 'provider_id' not in session:
       return redirect(url_for('auths_bp.provider_login'))
    
-   # start working on tiny logics, 
+   # dashboard data....
    # total bookings
    cursor = mysql.connection.cursor()
    cursor.execute('SELECT COUNT(*) FROM bookings WHERE provider_id= %s ',(session['provider_id'],))
@@ -122,7 +133,19 @@ def provider_dashboard():
    # we need round off figures
    rounded_rating = round(raw_rating,1)  # round off 
 
-   return render_template('dashboards/provider_dashboard.html',provider_name=session['provider_name'],total_bookings=total_bookings,completed_jobs=completed_jobs,pending_jobs=pending_jobs,rounded_rating=rounded_rating)
+
+   
+   # handle RECENT BOOKINGS...
+   cursor = mysql.connection.cursor()
+
+   cursor.execute(''' SELECT b.address, b.status, b.service_date, u.username, sp.profession AS service_type FROM bookings b JOIN users u ON b.user_id = u.id
+            JOIN service_providers sp ON b.provider_id = sp.id
+            WHERE b.status ='pending' ''')
+   
+   recent_bookings = cursor.fetchall()
+   cursor.close()
+
+   return render_template('dashboards/provider_dashboard.html',provider_name=session['provider_name'],total_bookings=total_bookings,completed_jobs=completed_jobs,pending_jobs=pending_jobs,rounded_rating=rounded_rating,recent_bookings=recent_bookings)
 
 
 
