@@ -139,7 +139,7 @@ def provider_dashboard():
    cursor = mysql.connection.cursor()
 
    cursor.execute("""
-             SELECT u.username AS customer_name,b.service_description, b.service_date ,b.status FROM users u JOIN bookings b ON u.id = b.user_id  WHERE provider_id = %s
+             SELECT u.username AS customer_name,b.service_description, b.service_date ,b.status FROM users u JOIN bookings b  WHERE provider_id = %s
                   """,
                   (session['provider_id'],))
    
@@ -164,6 +164,10 @@ def provider_dashboard():
 
    # round off using round func
    round_off_completions = round(completion_rate,2)
+
+   # repeatetion of clients
+#    cursor = mysql.connection.cursor()
+#    cursor.execute('SELECT COUNT(*) FROM bookings WHERE provider_id =%s AND user_id')
 
 
    return render_template('dashboards/provider_dashboard.html',provider_name=session['provider_name'],total_bookings=total_bookings,completed_jobs=completed_jobs,pending_jobs=pending_jobs,rounded_rating=rounded_rating,recent_bookings=recent_bookings,round_off_completions=round_off_completions)
