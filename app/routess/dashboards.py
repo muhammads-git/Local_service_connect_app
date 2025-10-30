@@ -138,12 +138,37 @@ def provider_dashboard():
    # handle RECENT BOOKINGS...
    cursor = mysql.connection.cursor()
 
-   cursor.execute(''' SELECT b.address, b.status, b.service_date, u.username, sp.profession AS service_type FROM bookings b JOIN users u ON b.user_id = u.id
-            JOIN service_providers sp ON b.provider_id = sp.id
-            WHERE b.status ='pending' ''')
+   cursor.execute("""
+             SELECT u.username AS customer_name,b.service_description, b.service_date ,b.status FROM users u JOIN bookings b ON u.id = b.user_id  WHERE provider_id = %s
+                  """,
+                  (session['provider_id'],))
    
    recent_bookings = cursor.fetchall()
    cursor.close()
+
+   #completion rate 
+   # total booking provider got
+   cursor = mysql.connection.cursor()
+   cursor.execute('SELECT COUNT(*) FROM bookings WHERE provider_id = %s',(session['provider_id'],))
+   total_bookings_data = cursor.fetchall()[0]
+   cursor.close()
+
+   # completed bookingss out of total
+   cursor = mysql.connection.cursor()
+   cursor.execute('SELECT COUNT(*) FROM bookings WHERE provider_id =%s AND status = %s',(session['provider_id'],('completed')))
+   completed_bookings = cursor.fetchall()[0]
+   print(completed_bookings)
+   
+
+   # complettion rate logic
+   completion_rate = (total_bookings / completed_bookings * 100) # percentage formulaa 
+   print(completion_rate)
+
+   # round off 
+   round_off_completions = round(completion_rate,2)
+
+   print(round_off_completions)
+
 
    return render_template('dashboards/provider_dashboard.html',provider_name=session['provider_name'],total_bookings=total_bookings,completed_jobs=completed_jobs,pending_jobs=pending_jobs,rounded_rating=rounded_rating,recent_bookings=recent_bookings)
 
