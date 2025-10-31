@@ -37,6 +37,48 @@
   background-color: #17a2b8;
 }
 
+.card {
+    border: 1px solid #e9ecef !important;
+}
+.card:hover {
+    border-color: #dee2e6 !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+.table-sm td, .table-sm th {
+    padding: 0.5rem 0.75rem;
+}
+.action-btn {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    border: 1px solid #dee2e6;
+}
+.action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.btn-outline-success:hover {
+    background-color: #198754;
+    border-color: #198754;
+}
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
 @keyframes fadeInOut {
   0% { opacity: 0; transform: translateY(-10px); }
   10% { opacity: 1; transform: translateY(0); }

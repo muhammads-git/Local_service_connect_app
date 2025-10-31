@@ -75,13 +75,13 @@
                         <div class="d-flex align-items-center">
                             <span class="badge bg-light text-dark me-2">
                                 {% if recent_bookings %}
-                                    {{ recent_bookings|length }}
+                                Total Bookings : {{ recent_bookings|length }}
                                 {% else %}
                                     0
                                 {% endif %}
                             </span>
                             <button class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-filter"></i>
+                                <i class="bi bi-filter">Filter</i>
                             </button>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                                     <th class="small fw-medium text-muted py-2 px-3">Service</th>
                                     <th class="small fw-medium text-muted py-2 px-3">Date</th>
                                     <th class="small fw-medium text-muted py-2 px-3">Status</th>
-                                    <th class="small fw-medium text-muted py-2 px-3 text-end">Action</th>
+                                    <th class="small fw-medium text-muted py-2 px-3 text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -116,18 +116,63 @@
                                     <td class="py-2 px-3">
                                         {% if booking[3] == 'pending' %}
                                             <span class="badge bg-warning text-dark small">Pending</span>
-                                        {% elif booking[3] == 'confirmed' %}
-                                            <span class="badge bg-success small">Confirmed</span>
+                                        {% elif booking[3] == 'accepted' %}
+                                            <span class="badge bg-success small">Accepted</span>
+                                        {% elif booking[3] == 'in_progress' %}
+                                            <span class="badge bg-info small">In Progress</span>
                                         {% elif booking[3] == 'completed' %}
                                             <span class="badge bg-primary small">Completed</span>
+                                        {% elif booking[3] == 'rejected' %}
+                                            <span class="badge bg-secondary small">Rejected</span>
                                         {% else %}
                                             <span class="badge bg-secondary small">{{ booking[3] }}</span>
                                         {% endif %}
                                     </td>
-                                    <td class="py-2 px-3 text-end">
-                                        <button class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
+
+                                    <td class="py-2 px-3">
+                                        <div class="d-flex gap-1 justify-content-center">
+                                            {% if booking[3] == 'pending' %}
+                                                <!-- Accept Button - Subtle Success -->
+                                                <form action="{{ url_for('dashboards_bp.accept_booking', booking_id=booking[4]) }}" method="POST" class="d-inline">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                    <button type="submit" class="btn btn-outline-success btn-sm action-btn" 
+                                                            title="Accept Booking" onclick="return confirm('Accept this booking?')">
+                                                        <i class="bi bi-check-lg"></i> Accept
+                                                    </button>
+                                                </form>
+                                                
+                                                <!-- Reject Button - Subtle Danger -->
+                                                <form action="{{ url_for('dashboards_bp.reject_booking', booking_id=booking[4]) }}" method="POST" class="d-inline">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm action-btn" 
+                                                            title="Reject Booking" onclick="return confirm('Reject this booking?')">
+                                                        <i class="bi bi-x-lg"></i> Reject
+                                                    </button>
+                                                </form>
+                                                
+                                                <!-- View Button - Subtle Primary -->
+                                                <button class="btn btn-outline-primary btn-sm action-btn" title="View Details">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                
+                                            {% else %}
+                                                <!-- Status-specific actions -->
+                                                {% if booking[3] == 'accepted' %}
+                                                    <button class="btn btn-outline-info btn-sm action-btn" title="Start Work">
+                                                        <i class="bi bi-play-fill"></i>
+                                                    </button>
+                                                {% elif booking[3] == 'in_progress' %}
+                                                    <button class="btn btn-outline-primary btn-sm action-btn" title="Mark Complete">
+                                                        <i class="bi bi-flag-fill"></i>
+                                                    </button>
+                                                {% endif %}
+                                                
+                                                <!-- View Button - Always visible -->
+                                                <button class="btn btn-outline-secondary btn-sm action-btn" title="View Details">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            {% endif %}
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -207,6 +252,11 @@
 }
 .table-sm td, .table-sm th {
     padding: 0.5rem 0.75rem;
+}
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
 }
 </style>
 {% endblock %}

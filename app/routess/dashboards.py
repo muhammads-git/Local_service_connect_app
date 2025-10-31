@@ -139,8 +139,8 @@ def provider_dashboard():
    cursor = mysql.connection.cursor()
 
    cursor.execute("""
-             SELECT u.username AS customer_name,b.service_description, b.service_date ,b.status FROM users u JOIN bookings b  WHERE provider_id = %s
-                  """,
+             SELECT u.username AS customer_name,b.service_description, b.created_at ,b.status,b.id FROM users u JOIN bookings b ON u.id = b.user_id WHERE b.provider_id = %s
+             ORDER BY b.id DESC   """,
                   (session['provider_id'],))
    
    recent_bookings = cursor.fetchall()
@@ -173,4 +173,40 @@ def provider_dashboard():
    return render_template('dashboards/provider_dashboard.html',provider_name=session['provider_name'],total_bookings=total_bookings,completed_jobs=completed_jobs,pending_jobs=pending_jobs,rounded_rating=rounded_rating,recent_bookings=recent_bookings,round_off_completions=round_off_completions)
 
 
+@dashboards_bp.route('/accept_booking/<int:booking_id>',methods=['POST','GET'])
+def accept_booking(booking_id):
+   # change the status
+   try:
+        cursor  = mysql.connection.cursor()
+        cursor.execute("""
+                        UPDATE bookings SET status = 'accepted' WHERE id =%s AND provider_id =%s                
+                        """,(booking_id,session['provider_id']))
+        
+        mysql.connection.commit()
+        cursor.close()
+        
+        # flash message/ pop up
+        flash('Booking accepted','success')
+        return redirect(url_for('dashboards_bp.provider_dashboard'))
+        
+   except Exception as e:
+        flash('Error Occured','warning')
+        return redirect(url_for('dashboards_bp.provider_dashboard'))
+   
 
+@dashboards_bp.route('/reject_booking/<int:booking_id>',methods=['POST','GET'])
+def reject_booking(booking_id):
+    # 
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute('UPDATE bookings SET status ="rejected" WHERE id =%s AND provider_id = %s',(booking_id,session['provider_id']) )
+        mysql.connection.commit()
+        cursor.close()
+
+        # pop up
+        flash('Booking rejected','danger')
+        return redirect(url_for('dashboards_bp.provider_dashboard'))
+
+    except Exception as e:
+       flash('Error Occured','warning')
+       return redirect(url_for('dashboards_bp.provider_dashboard'))
