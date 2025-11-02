@@ -39,6 +39,11 @@
                         </div>
                         
                         <div class="mb-3">
+                            {{ user_form.user_phone.label(class="form-label small fw-medium text-dark mb-2") }}
+                            {{ user_form.user_phone(class="form-control rounded-1 border-1 py-2", placeholder="Enter contact") }}
+                        </div>
+                            
+                        <div class="mb-3">
                             {{ user_form.user_password.label(class="form-label small fw-medium text-dark mb-2") }}
                             {{ user_form.user_password(class="form-control rounded-1 border-1 py-2", placeholder="Create password") }}
                         </div>

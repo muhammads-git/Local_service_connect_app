@@ -1,0 +1,308 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Request a Service - HomeServe</title>
+</head>
+<body>
+   {% extends 'base.html' %}
+   {% block content %}
+   
+   <div class="container-fluid py-4">
+      <div class="row justify-content-center">
+         <div class="col-lg-6 col-md-8">
+            
+            <!-- Flash Messages Section - ADDED HERE -->
+            <div class="flash-messages mb-4">
+               {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                     {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                           <div class="d-flex align-items-center">
+                              {% if category == 'success' %}
+                                 <i class="bi bi-check-circle-fill me-2"></i>
+                              {% elif category == 'error' or category == 'danger' %}
+                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                              {% elif category == 'warning' %}
+                                 <i class="bi bi-exclamation-circle-fill me-2"></i>
+                              {% else %}
+                                 <i class="bi bi-info-circle-fill me-2"></i>
+                              {% endif %}
+                              <div>{{ message }}</div>
+                           </div>
+                           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                     {% endfor %}
+                  {% endif %}
+               {% endwith %}
+            </div>
+
+            <!-- Header Card -->
+            <div class="card border-0 bg-primary text-white mb-4 service-header-card">
+               <div class="card-body text-center p-4">
+                  <div class="service-icon mb-3">
+                     <i class="bi bi-tools display-4"></i>
+                  </div>
+                  <h2 class="fw-bold mb-2">Request a Service</h2>
+                  <p class="mb-0 opacity-75">Tell us what you need, we'll find the right professional</p>
+               </div>
+            </div>
+
+            <!-- Service Form Card -->
+            <div class="card border rounded-3 shadow-sm">
+               <div class="card-body p-4">
+                  <form action="{{ url_for('dashboards_bp.request_a_service') }}" method="POST">
+                     
+                     {{ request_service_form.hidden_tag() }}
+                     
+                     <!-- Service Type Field -->
+                     <div class="mb-4">
+                        <label class="form-label fw-semibold text-dark mb-3">
+                           <i class="bi bi-gear me-2 text-primary"></i>
+                           {{ request_service_form.service_type.label.text }}
+                        </label>
+                        {{ request_service_form.service_type(class="form-select form-select-lg border-2 py-3 service-type-select") }}
+                        <div class="form-text text-muted mt-2">
+                           <i class="bi bi-info-circle me-1"></i>
+                           Choose the general category that best matches your needs
+                        </div>
+                     </div>
+
+                     <!-- Service Description Field -->
+                     <div class="mb-4">
+                        <label class="form-label fw-semibold text-dark mb-3">
+                           <i class="bi bi-chat-text me-2 text-primary"></i>
+                           {{ request_service_form.service_description.label.text }}
+                        </label>
+                        {{ request_service_form.service_description(
+                            class="form-control border-2 py-3 service-description-field",
+                            rows="4",
+                            placeholder="Describe what you need in detail...\n• What exactly is the problem?\n• Where is it located?\n• Any specific requirements?"
+                        ) }}
+                        <div class="form-text text-muted mt-2">
+                           <i class="bi bi-lightbulb me-1"></i>
+                           Be specific - this helps us match you with the right expert
+                        </div>
+                     </div>
+
+                     <!-- Submit Button -->
+                     <div class="d-grid">
+                        {{ request_service_form.submit(
+                            class="btn btn-primary btn-lg py-3 fw-semibold submit-service-btn",
+                            value="Submit Service Request"
+                        ) }}
+                     </div>
+                  </form>
+               </div>
+            </div>
+
+            <!-- Help Section -->
+            <div class="card border-0 bg-light mt-4">
+               <div class="card-body p-4">
+                  <h6 class="fw-semibold text-dark mb-3">
+                     <i class="bi bi-question-circle me-2 text-primary"></i>
+                     How it works
+                  </h6>
+                  <div class="row text-center">
+                     <div class="col-md-4 mb-3">
+                        <div class="bg-white rounded-3 p-3 h-100">
+                           <div class="text-primary mb-2">
+                              <i class="bi bi-pencil fs-4"></i>
+                           </div>
+                           <h6 class="fw-semibold">Describe Your Need</h6>
+                           <p class="text-muted small mb-0">Tell us what service you require</p>
+                        </div>
+                     </div>
+                     <div class="col-md-4 mb-3">
+                        <div class="bg-white rounded-3 p-3 h-100">
+                           <div class="text-primary mb-2">
+                              <i class="bi bi-search fs-4"></i>
+                           </div>
+                           <h6 class="fw-semibold">We Find Experts</h6>
+                           <p class="text-muted small mb-0">We match you with qualified professionals</p>
+                        </div>
+                     </div>
+                     <div class="col-md-4 mb-3">
+                        <div class="bg-white rounded-3 p-3 h-100">
+                           <div class="text-primary mb-2">
+                              <i class="bi bi-telephone fs-4"></i>
+                           </div>
+                           <h6 class="fw-semibold">Get Contacted</h6>
+                           <p class="text-muted small mb-0">Providers contact you directly</p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <style>
+   /* Flash Messages Styling - ADDED */
+   .flash-messages .alert {
+      border: none;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      animation: slideInDown 0.5s ease-out;
+   }
+
+   .alert-success {
+      background: linear-gradient(135deg, #d1f2eb, #a3e4d7);
+      border-left: 4px solid #198754;
+      color: #0f5132;
+   }
+
+   .alert-error, .alert-danger {
+      background: linear-gradient(135deg, #f8d7da, #f1aeb5);
+      border-left: 4px solid #dc3545;
+      color: #721c24;
+   }
+
+   .alert-warning {
+      background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+      border-left: 4px solid #ffc107;
+      color: #664d03;
+   }
+
+   .alert-info {
+      background: linear-gradient(135deg, #d1ecf1, #c6e9f5);
+      border-left: 4px solid #0dcaf0;
+      color: #055160;
+   }
+
+   @keyframes slideInDown {
+      from {
+         opacity: 0;
+         transform: translateY(-20px);
+      }
+      to {
+         opacity: 1;
+         transform: translateY(0);
+      }
+   }
+
+   /* Service Header Card */
+   .service-header-card {
+      background: linear-gradient(135deg, #0d6efd, #6f42c1);
+      border-radius: 1rem;
+      overflow: hidden;
+      position: relative;
+   }
+
+   .service-header-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+   }
+
+   .service-icon {
+      animation: bounce 2s infinite;
+   }
+
+   @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+         transform: translateY(0);
+      }
+      40% {
+         transform: translateY(-10px);
+      }
+      60% {
+         transform: translateY(-5px);
+      }
+   }
+
+   /* Form Styling */
+   .service-type-select, .service-description-field {
+      border: 2px solid #e9ecef;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+   }
+
+   .service-type-select:focus, .service-description-field:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+      transform: translateY(-2px);
+   }
+
+   .service-description-field {
+      resize: vertical;
+      min-height: 120px;
+   }
+
+   /* Submit Button */
+   .submit-service-btn {
+      background: linear-gradient(135deg, #0d6efd, #6f42c1);
+      border: none;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+   }
+
+   .submit-service-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s;
+   }
+
+   .submit-service-btn:hover::before {
+      left: 100%;
+   }
+
+   .submit-service-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(13, 110, 253, 0.4);
+   }
+
+   /* Help Section Cards */
+   .bg-light .col-md-4 .bg-white {
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+   }
+
+   .bg-light .col-md-4 .bg-white:hover {
+      transform: translateY(-5px);
+      border-color: #0d6efd;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+   }
+
+   /* Responsive Design */
+   @media (max-width: 768px) {
+      .service-header-card .card-body {
+         padding: 2rem 1rem !important;
+      }
+      
+      .card-body {
+         padding: 2rem !important;
+      }
+      
+      .submit-service-btn {
+         padding: 0.75rem 1.5rem;
+      }
+   }
+
+   /* Form Labels */
+   .form-label {
+      font-size: 1.1rem;
+   }
+
+   /* Placeholder Styling */
+   .service-description-field::placeholder {
+      color: #6c757d;
+      opacity: 0.7;
+   }
+   </style>
+   {% endblock %}
+</body>
+</html>

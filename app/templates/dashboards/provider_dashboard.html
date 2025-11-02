@@ -10,17 +10,17 @@
                     <p class="text-muted mb-0">Manage your service business and connect with customers</p>
                 </div>
                 <div class="text-end">
-                    <span class="badge bg-warning text-dark px-3 py-2">Professional Dashboard</span>
+                    <span class="badge bg-warning text-dark px-3 py-2 professional-badge">Professional Dashboard</span>
                     <div class="text-muted small mt-1">Active since {{ session.get('login_time', 'Today') }}</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Stats Row - Compact but WITH ICONS -->
+    <!-- Stats Row - With Hover Animations -->
     <div class="row mb-4">
         <div class="col-md-3 mb-2">
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm stat-card">
                 <div class="card-body text-center p-3">
                     <div class="text-primary mb-2">
                         <i class="bi bi-calendar-check fs-5"></i>
@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm stat-card">
                 <div class="card-body text-center p-3">
                     <div class="text-success mb-2">
                         <i class="bi bi-check-circle fs-5"></i>
@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm stat-card">
                 <div class="card-body text-center p-3">
                     <div class="text-warning mb-2">
                         <i class="bi bi-clock fs-5"></i>
@@ -53,7 +53,7 @@
             </div>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm stat-card">
                 <div class="card-body text-center p-3">
                     <div class="text-info mb-2">
                         <i class="bi bi-star fs-5"></i>
@@ -65,23 +65,23 @@
         </div>
     </div>
 
-    <!-- Compact Recent Bookings Table -->
+    <!-- Recent Bookings Table with Smooth Animations -->
     <div class="row">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm booking-card">
                 <div class="card-header bg-white border-bottom py-2">
                     <div class="d-flex justify-content-between align-items-center">
                         <h6 class="fw-semibold text-dark mb-0">Recent Bookings</h6>
                         <div class="d-flex align-items-center">
-                            <span class="badge bg-light text-dark me-2">
+                            <span class="badge bg-primary me-2 booking-count">
                                 {% if recent_bookings %}
-                                Total Bookings : {{ recent_bookings|length }}
+                                Total: {{ recent_bookings|length }}
                                 {% else %}
                                     0
                                 {% endif %}
                             </span>
-                            <button class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-filter">Filter</i>
+                            <button class="btn btn-sm btn-outline-secondary filter-btn">
+                                <i class="bi bi-filter"></i> Filter
                             </button>
                         </div>
                     </div>
@@ -90,7 +90,7 @@
                 <div class="card-body p-0">
                     {% if recent_bookings %}
                     <div class="table-responsive">
-                        <table class="table table-sm table-hover mb-0">
+                        <table class="table table-sm table-hover mb-0 booking-table">
                             <thead class="bg-light">
                                 <tr>
                                     <th class="small fw-medium text-muted py-2 px-3">Customer</th>
@@ -102,10 +102,10 @@
                             </thead>
                             <tbody>
                                 {% for booking in recent_bookings %}
-                                <tr>
+                                <tr class="booking-row">
                                     <td class="py-2 px-3">
                                         <div class="d-flex align-items-center">
-                                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px;">
+                                            <div class="customer-avatar bg-light rounded-circle d-flex align-items-center justify-content-center me-2">
                                                 <i class="bi bi-person text-muted small"></i>
                                             </div>
                                             <span class="fw-medium small">{{ booking[0] }}</span>
@@ -115,54 +115,54 @@
                                     <td class="py-2 px-3 small text-muted">{{ booking[2] }}</td>
                                     <td class="py-2 px-3">
                                         {% if booking[3] == 'pending' %}
-                                            <span class="badge bg-warning text-dark small">Pending</span>
+                                            <span class="badge status-badge status-pending">Pending</span>
                                         {% elif booking[3] == 'accepted' %}
-                                            <span class="badge bg-success small">Accepted</span>
+                                            <span class="badge status-badge status-accepted">Accepted</span>
                                         {% elif booking[3] == 'in_progress' %}
-                                            <span class="badge bg-info small">In Progress</span>
+                                            <span class="badge status-badge status-progress">In Progress</span>
                                         {% elif booking[3] == 'completed' %}
-                                            <span class="badge bg-primary small">Completed</span>
+                                            <span class="badge status-badge status-completed">Completed</span>
                                         {% elif booking[3] == 'rejected' %}
-                                            <span class="badge bg-secondary small">Rejected</span>
+                                            <span class="badge status-badge status-rejected">Rejected</span>
                                         {% else %}
-                                            <span class="badge bg-secondary small">{{ booking[3] }}</span>
+                                            <span class="badge status-badge status-other">{{ booking[3] }}</span>
                                         {% endif %}
                                     </td>
 
                                     <td class="py-2 px-3">
                                         <div class="d-flex gap-1 justify-content-center">
                                             {% if booking[3] == 'pending' %}
-                                                <!-- Accept Button - Subtle Success -->
+                                                <!-- Accept Button with Animation -->
                                                 <form action="{{ url_for('dashboards_bp.accept_booking', booking_id=booking[4]) }}" method="POST" class="d-inline">
                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                    <button type="submit" class="btn btn-outline-success btn-sm action-btn" 
+                                                    <button type="submit" class="btn btn-success btn-sm action-btn accept-btn" 
                                                             title="Accept Booking" onclick="return confirm('Accept this booking?')">
                                                         <i class="bi bi-check-lg"></i> Accept
                                                     </button>
                                                 </form>
                                                 
-                                                <!-- Reject Button - Subtle Danger -->
+                                                <!-- Reject Button with Animation -->
                                                 <form action="{{ url_for('dashboards_bp.reject_booking', booking_id=booking[4]) }}" method="POST" class="d-inline">
                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm action-btn" 
+                                                    <button type="submit" class="btn btn-danger btn-sm action-btn reject-btn" 
                                                             title="Reject Booking" onclick="return confirm('Reject this booking?')">
                                                         <i class="bi bi-x-lg"></i> Reject
                                                     </button>
                                                 </form>
                                                 
-                                                <!-- View Button - Subtle Primary -->
-                                                <button class="btn btn-outline-primary btn-sm action-btn" title="View Details">
+                                                <!-- View Button -->
+                                                <button class="btn btn-outline-primary btn-sm action-btn view-btn" title="View Details">
                                                     <i class="bi bi-eye"></i>
                                                 </button>
                                                 
                                             {% else %}
                                                 <!-- Status-specific actions -->
                                                 {% if booking[3] == 'accepted' %}
-                                                    <button class="btn btn-outline-info btn-sm action-btn" title="Start Work">
+                                                    <button class="btn btn-info btn-sm action-btn" title="Start Work">
                                                         <i class="bi bi-play-fill"></i>
                                                     </button>
                                                 {% elif booking[3] == 'in_progress' %}
-                                                    <button class="btn btn-outline-primary btn-sm action-btn" title="Mark Complete">
+                                                    <button class="btn btn-primary btn-sm action-btn" title="Mark Complete">
                                                         <i class="bi bi-flag-fill"></i>
                                                     </button>
                                                 {% endif %}
@@ -180,7 +180,7 @@
                         </table>
                     </div>
                     {% else %}
-                    <div class="text-center py-4">
+                    <div class="text-center py-4 empty-state">
                         <i class="bi bi-inbox text-muted mb-2" style="font-size: 2rem;"></i>
                         <p class="text-muted mb-1">No booking requests yet</p>
                         <small class="text-muted">New bookings will appear here</small>
@@ -191,28 +191,28 @@
         </div>
     </div>
 
-    <!-- Compact Bottom Section -->
+    <!-- Bottom Section -->
     <div class="row mt-3">
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
+            <div class="card border-0 shadow-sm h-100 performance-card">
                 <div class="card-body">
                     <h6 class="fw-semibold text-dark mb-3">Performance</h6>
                     <div class="row text-center">
                         <div class="col-4 border-end">
                             <div class="text-center">
-                                <h6 class="fw-bold text-dark mb-1">{{ round_off_completions }}%</h6>
+                                <h6 class="fw-bold text-dark mb-1 performance-value">{{ round_off_completions }}%</h6>
                                 <small class="text-muted">Completion</small>
                             </div>
                         </div>
                         <div class="col-4 border-end">
                             <div class="text-center">
-                                <h6 class="fw-bold text-dark mb-1">0</h6>
+                                <h6 class="fw-bold text-dark mb-1 performance-value">0</h6>
                                 <small class="text-muted">Repeat Clients</small>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="text-center">
-                                <h6 class="fw-bold text-dark mb-1">0</h6>
+                                <h6 class="fw-bold text-dark mb-1 performance-value">0</h6>
                                 <small class="text-muted">Active</small>
                             </div>
                         </div>
@@ -221,18 +221,18 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
+            <div class="card border-0 shadow-sm h-100 tips-card">
                 <div class="card-body">
                     <h6 class="fw-semibold text-dark mb-3">Quick Tips</h6>
-                    <div class="d-flex align-items-start mb-2">
+                    <div class="d-flex align-items-start mb-2 tip-item">
                         <i class="bi bi-lightbulb text-warning me-2 mt-1 small"></i>
                         <small class="text-muted">Complete your profile to get more customers</small>
                     </div>
-                    <div class="d-flex align-items-start mb-2">
+                    <div class="d-flex align-items-start mb-2 tip-item">
                         <i class="bi bi-lightbulb text-warning me-2 mt-1 small"></i>
                         <small class="text-muted">Respond quickly to booking requests</small>
                     </div>
-                    <div class="d-flex align-items-start">
+                    <div class="d-flex align-items-start tip-item">
                         <i class="bi bi-lightbulb text-warning me-2 mt-1 small"></i>
                         <small class="text-muted">Ask for reviews after service</small>
                     </div>
@@ -243,20 +243,245 @@
 </div>
 
 <style>
+/* Smooth animations for everything */
+.card, .btn, .booking-row, .badge {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card hover effects */
 .card {
     border: 1px solid #e9ecef !important;
 }
-.card:hover {
-    border-color: #dee2e6 !important;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    border-color: #0d6efd !important;
 }
-.table-sm td, .table-sm th {
-    padding: 0.5rem 0.75rem;
+
+.booking-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
 }
-.btn-sm {
+
+.performance-card:hover, .tips-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Professional badge animation */
+.professional-badge {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Table row animations */
+.booking-row:hover {
+    background-color: #f8f9fa;
+    transform: translateX(4px);
+}
+
+/* Status badges with subtle animations */
+.status-badge {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.status-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
+}
+
+.status-badge:hover::before {
+    left: 100%;
+}
+
+.status-pending { 
+    background: linear-gradient(135deg, #ffc107, #ffb300);
+    color: #000;
+}
+
+.status-accepted { 
+    background: linear-gradient(135deg, #198754, #157347);
+    color: white;
+}
+
+.status-progress { 
+    background: linear-gradient(135deg, #0dcaf0, #0baccc);
+    color: white;
+}
+
+.status-completed { 
+    background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+    color: white;
+}
+
+.status-rejected { 
+    background: linear-gradient(135deg, #6c757d, #5c636a);
+    color: white;
+}
+
+/* Button animations */
+.action-btn {
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
     white-space: nowrap;
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.accept-btn {
+    background: linear-gradient(135deg, #198754, #157347);
+    border-color: #198754;
+}
+
+.accept-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3);
+    background: linear-gradient(135deg, #157347, #13653c);
+}
+
+.reject-btn {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    border-color: #dc3545;
+}
+
+.reject-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+    background: linear-gradient(135deg, #c82333, #bd2130);
+}
+
+.view-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 6px rgba(13, 110, 253, 0.2);
+}
+
+/* Customer avatar animation */
+.customer-avatar {
+    width: 28px;
+    height: 28px;
+    transition: all 0.3s ease;
+}
+
+.booking-row:hover .customer-avatar {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb) !important;
+}
+
+/* Performance numbers animation */
+.performance-value {
+    transition: all 0.3s ease;
+}
+
+.performance-card:hover .performance-value {
+    transform: scale(1.1);
+    color: #0d6efd !important;
+}
+
+/* Tips animation */
+.tip-item {
+    transition: all 0.3s ease;
+}
+
+.tip-item:hover {
+    transform: translateX(5px);
+    color: #495057 !important;
+}
+
+/* Filter button animation */
+.filter-btn {
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    transform: scale(1.05);
+    background-color: #0d6efd;
+    color: white;
+}
+
+/* Booking count badge */
+.booking-count {
+    animation: bounce 1s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-5px);}
+    60% {transform: translateY(-3px);}
+}
+
+/* Empty state animation */
+.empty-state {
+    animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Table responsive */
+.table-sm td, .table-sm th {
+    padding: 0.5rem 0.75rem;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .action-btn {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+    }
+    
+    .stat-card:hover {
+        transform: none;
+    }
 }
 </style>
+
+<script>
+// Add subtle page load animations
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate stats cards sequentially
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+    
+    // Animate table rows with delay
+    const tableRows = document.querySelectorAll('.booking-row');
+    tableRows.forEach((row, index) => {
+        row.style.opacity = '0';
+        row.style.transform = 'translateX(-20px)';
+        
+        setTimeout(() => {
+            row.style.transition = 'all 0.4s ease';
+            row.style.opacity = '1';
+            row.style.transform = 'translateX(0)';
+        }, 500 + (index * 50));
+    });
+});
+</script>
 {% endblock %}

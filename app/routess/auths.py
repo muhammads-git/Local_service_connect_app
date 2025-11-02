@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask import render_template,redirect,url_for,session,flash,get_flashed_messages
-from app.forms.forms import User_RegisterForms,Provider_RegisterForm,User_LoginForm,Provider_LoginForm
+from app.forms.forms import User_RegisterForms,Provider_RegisterForm,User_LoginForm,Provider_LoginForm,CompleteProfileForm
 from app.utils.extensions import bcyrpt
 from app.__init__ import mysql
 
@@ -20,13 +20,14 @@ def user_register():
    if user_form.validate_on_submit():
       user_name =user_form.user_name.data
       user_email = user_form.user_email.data
+      user_phone = user_form.user_phone.data
       confirm_password = user_form.confirm_password.data
 
       # hash the pass before storing
       hash_password = bcyrpt.generate_password_hash(confirm_password).decode('utf-8')
       # open up db 
       cursor = mysql.connection.cursor()
-      cursor.execute('INSERT INTO users (username,email,password) VALUES (%s,%s,%s)',(user_name,user_email,hash_password))
+      cursor.execute('INSERT INTO users (username,email,phone,password) VALUES (%s,%s,%s,%s)',(user_name,user_email,user_phone,hash_password))
       mysql.connection.commit()
       cursor.close()
 
@@ -129,7 +130,29 @@ def provider_login():
 
 
 
+# complete profile
+@auths_bp.route('/complete_profile',methods=['POST','GET'])
+def complete_profile():
+   profile_form = CompleteProfileForm()      
+   if profile_form.validate_on_submit():
+      address= profile_form.address.data
 
-   
+      try:
+      # db
+         cursor = mysql.connection.cursor()
+         cursor.execute('UPDATE users SET address = %s WHERE id = %s',(address,session['user_id']))
+         mysql.connection.commit()
+         cursor.close()
+
+         # flash
+         flash('Your profile is completed!','success')
+         # redirect to user dashboard
+         return redirect(url_for('dashboards_bp.user_dashboard'))
       
-      
+      except Exception as e:
+         mysql.connection.rollback()
+         flash('Error Updating profile','warning')
+         return redirect(url_for('auths_bp.complete_profile'))
+
+   # get
+   return render_template('auths/complete_profile_form.html',profile_form=profile_form)

@@ -1,42 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container-fluid">
-    <!-- Clean Header -->
+    <!-- Clean Header with Animation -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="fw-semibold text-dark mb-1">Welcome back, {{ username }}</h4>
+                    <h4 class="fw-semibold text-dark mb-1 welcome-text">Welcome back, {{ username }}</h4>
                     <p class="text-muted mb-0">Find trusted professionals for your home services</p>
                 </div>
                 <div class="text-end">
-                    <div class="text-muted small">Active since {{ session.get('login_time', 'Today') }}</div>
+                    <!-- ADDED: Request Service Button -->
+                    <a href="{{ url_for('dashboards_bp.request_a_service') }}" 
+                       class="btn btn-success rounded-2 px-4 me-2 request-service-btn">
+                        <i class="bi bi-plus-circle me-2"></i>Request a Service
+                    </a>
+                    <div class="text-muted small active-since mt-2">Active since {{ session.get('login_time', 'Today') }}</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Professional Stats - Like Upwork -->
+    <!-- Professional Stats with Hover Effects -->
     <div class="row mb-4">
         <div class="col-md-3 mb-3">
-            <div class="card border rounded-3">
+            <div class="card border rounded-3 stat-card">
                 <div class="card-body text-center p-3">
                     <div class="text-primary mb-2">
                         <i class="bi bi-people fs-4"></i>
                     </div>
-                    <h5 class="fw-bold text-dark">{{ service_providers_data|length }}</h5>
+                    <h5 class="fw-bold text-dark stat-number">{{ service_providers_data|length }}</h5>
                     <small class="text-muted">Available Providers</small>
                 </div>
             </div>
         </div>
         
         <div class="col-md-3 mb-3">
-            <div class="card border rounded-3">
+            <div class="card border rounded-3 stat-card">
                 <div class="card-body text-center p-3">
                     <div class="text-success mb-2">
                         <i class="bi bi-star fs-4"></i>
                     </div>
-                    <h5 class="fw-bold text-dark">
+                    <h5 class="fw-bold text-dark stat-number">
                         {% if service_providers_data and service_providers_data[0][4] %}
                             {{ "%.1f"|format(service_providers_data[0][4]|float) }}
                         {% else %}
@@ -49,12 +54,12 @@
         </div>
 
         <div class="col-md-3 mb-3">
-            <div class="card border rounded-3">
+            <div class="card border rounded-3 stat-card">
                 <div class="card-body text-center p-3">
                     <div class="text-info mb-2">
                         <i class="bi bi-building fs-4"></i>
                     </div>
-                    <h5 class="fw-bold text-dark">
+                    <h5 class="fw-bold text-dark stat-number">
                         {% set services = [] %}
                         {% for data in service_providers_data %}
                             {% if data[2] and data[2] not in services %}
@@ -69,36 +74,36 @@
         </div>
 
         <div class="col-md-3 mb-3">
-            <div class="card border rounded-3">
+            <div class="card border rounded-3 stat-card">
                 <div class="card-body text-center p-3">
                     <div class="text-warning mb-2">
                         <i class="bi bi-clock-history fs-4"></i>
                     </div>
-                    <h5 class="fw-bold text-dark">{{ all_bookings }}</h5>
+                    <h5 class="fw-bold text-dark stat-number">{{ all_bookings }}</h5>
                     <small class="text-muted">Your Bookings</small>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Top Provider Highlight - Like Fiverr Pro -->
+    <!-- Top Provider Highlight with Animation -->
     {% if service_providers_data and service_providers_data[0][4] and service_providers_data[0][4] >= 4.0 %}
     {% set top_provider = service_providers_data[0] %}
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border rounded-3 bg-light">
+            <div class="card border rounded-3 bg-light top-provider-card">
                 <div class="card-body p-3">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
-                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center award-icon" style="width: 50px; height: 50px;">
                                 <i class="bi bi-award text-white"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h6 class="fw-semibold text-dark mb-1">Top Rated Professional</h6>
-                            <p class="text-muted mb-1">{{ top_provider[1] }} • {{ top_provider[2] }}</p>
+                            <h6 class="fw-semibold text-dark mb-1">🎯 Top Rated Professional</h6>
+                            <p class="text-muted mb-1 provider-info">{{ top_provider[1] }} • {{ top_provider[2] }}</p>
                             <div class="d-flex align-items-center">
-                                <div class="d-flex text-warning me-2">
+                                <div class="d-flex text-warning me-2 rating-stars">
                                     {% for i in range(1, 6) %}
                                         <i class="bi bi-star-fill{% if i > top_provider[4] %}-half{% endif %} small"></i>
                                     {% endfor %}
@@ -108,7 +113,7 @@
                         </div>
                         <div class="flex-shrink-0">
                             <a href="{{ url_for('dashboards_bp.book_service', provider_id=top_provider[0]) }}" 
-                               class="btn btn-primary rounded-2 px-4">
+                               class="btn btn-primary rounded-2 px-4 hire-btn">
                                 Hire Now
                             </a>
                         </div>
@@ -119,15 +124,15 @@
     </div>
     {% endif %}
 
-    <!-- Professional Providers Grid - Like Professional Marketplace -->
+    <!-- Professional Providers Grid with Enhanced Animations -->
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-semibold text-dark mb-0">Available Service Providers</h5>
+                <h5 class="fw-semibold text-dark mb-0 section-title">Available Service Providers</h5>
                 <div class="d-flex align-items-center">
-                    <span class="text-muted small me-3">{{ service_providers_data|length }} professionals</span>
+                    <span class="text-muted small me-3 provider-count">{{ service_providers_data|length }} professionals</span>
                     <div class="dropdown">
-                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle filter-btn" type="button" data-bs-toggle="dropdown">
                             <i class="bi bi-filter me-1"></i>Filter
                         </button>
                     </div>
@@ -137,25 +142,25 @@
             <div class="row g-3">
                 {% for data in service_providers_data %}
                 <div class="col-xl-4 col-lg-6 col-md-6">
-                    <div class="card border rounded-3 h-100">
+                    <div class="card border rounded-3 h-100 provider-card">
                         <div class="card-body">
                             <!-- Provider Header -->
                             <div class="d-flex align-items-start mb-3">
                                 <div class="flex-shrink-0">
-                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <div class="provider-avatar bg-primary rounded-circle d-flex align-items-center justify-content-center">
                                         <i class="bi bi-person text-white"></i>
                                     </div>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <h6 class="fw-semibold text-dark mb-1">{{ data[1] }}</h6>
-                                    <span class="badge bg-light text-dark border">{{ data[2] }}</span>
+                                    <h6 class="fw-semibold text-dark mb-1 provider-name">{{ data[1] }}</h6>
+                                    <span class="badge service-badge bg-light text-dark border">{{ data[2] }}</span>
                                     {% if data[4] and data[4] >= 4.5 %}
-                                    <span class="badge bg-warning text-dark ms-1 small">Top Rated</span>
+                                    <span class="badge bg-warning text-dark ms-1 small top-rated-badge">⭐ Top Rated</span>
                                     {% endif %}
                                 </div>
                                 {% if data[4] %}
                                 <div class="flex-shrink-0 text-end">
-                                    <div class="bg-success rounded-2 px-2 py-1">
+                                    <div class="rating-badge bg-success rounded-2 px-2 py-1">
                                         <small class="text-white fw-bold">{{ "%.1f"|format(data[4]|float) }}</small>
                                     </div>
                                 </div>
@@ -163,14 +168,14 @@
                             </div>
 
                             <!-- Description -->
-                            <p class="text-muted small mb-3">{{ data[3] }}</p>
+                            <p class="text-muted small mb-3 provider-desc">{{ data[3] }}</p>
 
                             <!-- Rating & Action -->
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     {% if data[4] %}
                                     <div class="d-flex align-items-center">
-                                        <div class="d-flex text-warning me-2">
+                                        <div class="d-flex text-warning me-2 provider-stars">
                                             {% for i in range(1, 6) %}
                                                 <i class="bi bi-star-fill{% if i > data[4] %}-half{% endif %} small"></i>
                                             {% endfor %}
@@ -178,12 +183,12 @@
                                         <small class="text-muted">({{ "%.1f"|format(data[4]|float) }})</small>
                                     </div>
                                     {% else %}
-                                    <span class="text-muted small">New professional</span>
+                                    <span class="text-muted small new-provider">New professional</span>
                                     {% endif %}
                                 </div>
                                 
                                 <a href="{{ url_for('dashboards_bp.book_service', provider_id=data[0]) }}" 
-                                   class="btn btn-primary btn-sm rounded-2 px-3">
+                                   class="btn btn-primary btn-sm rounded-2 px-3 book-btn">
                                     Book Service
                                 </a>
                             </div>
@@ -192,7 +197,7 @@
                 </div>
                 {% else %}
                 <div class="col-12">
-                    <div class="card border rounded-3">
+                    <div class="card border rounded-3 empty-state">
                         <div class="card-body text-center py-5">
                             <i class="bi bi-search display-4 text-muted mb-3"></i>
                             <h5 class="text-muted">No service providers available</h5>
@@ -208,16 +213,345 @@
 </div>
 
 <style>
-.card {
-    transition: all 0.2s ease;
+/* Add Request Service Button Styles */
+.request-service-btn {
+    background: linear-gradient(135deg, #198754, #146c43);
+    border: none;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideInFromRight 0.8s ease-out 0.3s both;
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.request-service-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s;
+}
+
+.request-service-btn:hover::before {
+    left: 100%;
+}
+
+.request-service-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(25, 135, 84, 0.4);
+    background: linear-gradient(135deg, #146c43, #0f5132);
+}
+
+/* All your original animations and styles remain exactly the same */
+.card, .btn, .badge, .stat-number {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.welcome-text {
+    animation: slideInFromLeft 0.8s ease-out;
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.stat-card {
     border: 1px solid #e9ecef !important;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out;
 }
-.card:hover {
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0d6efd, #6f42c1);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover::before {
+    transform: scaleX(1);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     border-color: #0d6efd !important;
-    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.1);
 }
-.badge {
-    font-weight: 500;
+
+.stat-number {
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover .stat-number {
+    transform: scale(1.1);
+    color: #0d6efd;
+}
+
+.top-provider-card {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7) !important;
+    border: 1px solid #ffc107 !important;
+    animation: glow 2s ease-in-out infinite alternate, fadeIn 0.8s ease-out;
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+    }
+    to {
+        box-shadow: 0 0 20px rgba(255, 193, 7, 0.5);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.award-icon {
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-5px);
+    }
+    60% {
+        transform: translateY(-3px);
+    }
+}
+
+.provider-card {
+    border: 1px solid #e9ecef !important;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.provider-card:nth-child(1) { animation-delay: 0.1s; }
+.provider-card:nth-child(2) { animation-delay: 0.2s; }
+.provider-card:nth-child(3) { animation-delay: 0.3s; }
+.provider-card:nth-child(4) { animation-delay: 0.4s; }
+.provider-card:nth-child(5) { animation-delay: 0.5s; }
+.provider-card:nth-child(6) { animation-delay: 0.6s; }
+
+.provider-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(13, 110, 253, 0.05), transparent);
+    transition: left 0.6s;
+}
+
+.provider-card:hover::before {
+    left: 100%;
+}
+
+.provider-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-color: #0d6efd !important;
+}
+
+.provider-avatar {
+    width: 48px;
+    height: 48px;
+    transition: all 0.3s ease;
+}
+
+.provider-card:hover .provider-avatar {
+    transform: scale(1.1) rotate(5deg);
+    background: linear-gradient(135deg, #0d6efd, #6f42c1) !important;
+}
+
+.service-badge {
+    transition: all 0.3s ease;
+}
+
+.provider-card:hover .service-badge {
+    background: linear-gradient(135deg, #0d6efd, #6f42c1) !important;
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+.top-rated-badge {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+    }
+}
+
+.rating-badge {
+    transition: all 0.3s ease;
+}
+
+.provider-card:hover .rating-badge {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #198754, #13653c) !important;
+}
+
+.book-btn {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+    border: none;
+}
+
+.book-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.book-btn:hover::before {
+    left: 100%;
+}
+
+.book-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.4);
+    background: linear-gradient(135deg, #0b5ed7, #0a58ca);
+}
+
+.hire-btn {
+    background: linear-gradient(135deg, #0d6efd, #6f42c1);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.hire-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+    background: linear-gradient(135deg, #0b5ed7, #5a32a3);
+}
+
+.filter-btn {
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    transform: scale(1.05);
+    background-color: #0d6efd;
+    color: white;
+}
+
+.provider-stars i {
+    transition: all 0.3s ease;
+}
+
+.provider-card:hover .provider-stars i {
+    transform: scale(1.2);
+    color: #ffc107 !important;
+}
+
+.section-title {
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.empty-state {
+    animation: fadeIn 1s ease-in;
+}
+
+.provider-count {
+    animation: countPop 0.6s ease-out 0.4s both;
+}
+
+@keyframes countPop {
+    0% {
+        transform: scale(0);
+    }
+    70% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 768px) {
+    .provider-card:hover {
+        transform: none;
+    }
+    
+    .stat-card:hover {
+        transform: none;
+    }
+    
+    .book-btn, .hire-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.875rem;
+    }
+    
+    .request-service-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
 }
 </style>
 {% endblock %}

@@ -1,7 +1,7 @@
 from flask import redirect,render_template,url_for,session,flash,get_flashed_messages
 from flask import Blueprint
 from app.__init__ import mysql
-from app.forms.forms import BookingForm
+from app.forms.forms import BookingForm,BookServiceForm
 from app.utils.mail import sendBookingNotifications
 
 # initialize Blueprints instance
@@ -97,6 +97,42 @@ def book_service(provider_id):
                         provider_name=provider_name,
                         provider_profession=provider_profession)
 
+
+#### Request a service 
+@dashboards_bp.route('/request_a_service',methods=['POST','GET'])
+def request_a_service():
+    request_service_form = BookServiceForm()
+
+    if request_service_form.validate_on_submit():
+        type  = request_service_form.service_type.data
+        description = request_service_form.service_description.data
+        
+        # fetch user data if profile is complete
+        cursor = mysql.connection.cursor()
+        cursor.execute('SELECT address FROM users where id = %s',(session['user_id'],))
+        user_adress = cursor.fetchone()[0]
+        cursor.close()
+
+        # check if user address is not null
+        if user_adress is not None:
+            # db 
+            cursor = mysql.connection.cursor()
+            cursor.execute('INSERT INTO bookings (user_id,status,service_type,service_description) VALUES (%s,%s,%s,%s)', (session['user_id'],'pending',type,description))
+            mysql.connection.commit()
+            cursor.close()
+
+            # flash message
+            flash('Service request has been sent, You will get provider soon!','success')
+            return redirect(url_for('dashboards_bp.request_a_service'))
+        else:
+            flash('Complete your profile before submitting service form','warning')
+            # url
+            return redirect(url_for('auths_bp.complete_profile'))
+        
+    # GET
+    return render_template('dashboards/bookservice_form.html',request_service_form=request_service_form)
+        
+    
 @dashboards_bp.route('/provider')
 def provider_dashboard():
    # if provider not in session...

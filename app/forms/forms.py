@@ -6,6 +6,7 @@ from datetime import datetime # for DateField
 class User_RegisterForms(FlaskForm):
    user_name = StringField('Full Name',validators=[InputRequired(),Length(min=6,max=20)])
    user_email = EmailField('Email',validators=[InputRequired(),Email()])
+   user_phone = StringField('Contact',validators=[InputRequired(),Length(max=10)])
    user_password = PasswordField('Password',validators=[InputRequired(),Length(min=6,max=20)])
    confirm_password = PasswordField('Confirm Password',validators=[InputRequired(),EqualTo('user_password',message='Password must match.')])
    submit = SubmitField('Register As User')
@@ -16,13 +17,15 @@ class Provider_RegisterForm(FlaskForm):
    provider_email = EmailField('Email',validators=[InputRequired(),Email()])
    provider_password = PasswordField('Password',validators=[InputRequired(),Length(min=6,max=20)])
    confirm_password = PasswordField('Confirm Password',validators=[InputRequired(),EqualTo('provider_password',message='Password must match.')])
-   profession = SelectField('Profession', choices=[
+   profession = SelectField('Your Profession', choices=[
         ('plumber', 'Plumber'),
         ('electrician', 'Electrician'),
         ('cleaner', 'Cleaner'),
-        ('mechanic', 'Mechanic'),
-        ('technician', 'Technician'),
-    ], validators=[InputRequired()])
+        ('handyman', 'Handyman'),
+        ('carpenter', 'Carpenter'),
+        ('general_worker', 'General Worker')
+    ], validators=[DataRequired()])
+
    profession_desc = TextAreaField('Description',validators=[InputRequired(),Length(max=500,message='Description must be under 500')])
    
    # location = SelectField('Location', choices=[
@@ -89,3 +92,28 @@ class BookingForm(FlaskForm):
    contact = StringField('Contact', validators=[InputRequired(), Length(min=10,max=15)])
 
    submit = SubmitField('Book Service')
+
+
+### Book a service form 
+
+class BookServiceForm(FlaskForm):
+   service_type = SelectField('Choose a service',choices=[        
+        ('plumbing', 'Plumbing Work'),
+        ('electrical', 'Electrical Work'), 
+        ('cleaning', 'Cleaning'),
+        ('handyman', 'Handyman Services'),
+        ('carpentry', 'Carpentry Work'),
+        ('other', 'Something Else')], validators=[InputRequired()])
+
+   # service_address = TextAreaField('Write Your Address',validators=[InputRequired()])
+   
+   service_description = TextAreaField('Describe Your Specific Needs', validators=[DataRequired()])
+   # contact = StringField('Contact', validators=[InputRequired(), Length(min=10,max=15)])
+   # date = DateTimeField('DateTime',validators=[InputRequired()],format='%Y-%m-%d %H:%M', default=datetime.now())
+   submit = SubmitField('Request')
+
+
+   # complete profile
+class CompleteProfileForm(FlaskForm):
+   address = TextAreaField('Provide address',validators=[InputRequired(), Length(max=100)])
+   submit = SubmitField('Submit')

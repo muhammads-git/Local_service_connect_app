@@ -54,7 +54,7 @@
             
             <div class="navbar-nav ms-auto">
                 {% if session.username %}
-                    <a class="nav-link text-dark small fw-medium" href="/dashboard">Dashboard</a>
+                    <a class="nav-link text-dark small fw-medium" href="{{ url_for('dashboards_bp.user_dashboard')}}">Dashboard</a>
                     <a class="nav-link text-dark small fw-medium" href="/profile">Profile</a>
                     <a class="nav-link text-dark small fw-medium" href="{{ url_for('auths_bp.user_logout')}}">Logout</a>
                 {% else %}
