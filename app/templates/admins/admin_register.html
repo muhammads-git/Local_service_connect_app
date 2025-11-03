@@ -4,29 +4,244 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="stylesheet" href="{{ url_for('static',filename='flashstyle.css')}}">  
+   <title>Admin Registration - HomeServe</title>
 </head>
 <body>
-   <center>
-      <!-- flash messages -->
-      {% with messages = get_flashed_messages(with_categories=true) %}
-         {% if messages %}
-            <div class="flash-container">
-         {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-         {% endfor %}
-            </div>
-         {% endif %}
-      {% endwith %}
+   {% extends 'base.html' %}
+   {% block content %}
 
-      <form action="{{ url_for('admins_bp.admin_register') }}" method="POST">
-         {{ admin_form.hidden_tag() }}
-         {{ admin_form.username.label() }} <br> {{ admin_form.username() }} <br>
-         {{ admin_form.email.label() }} <br> {{ admin_form.email() }} <br>
-         {{ admin_form.password.label() }} <br> {{ admin_form.password() }} <br>
-         {{ admin_form.submit() }}
-      </form>
-      <a href="{{ url_for('admins_bp.admin_login') }}">Login</a>
-   </center>
-   
+   <div class="admin-auth-container">
+      <div class="row justify-content-center align-items-center min-vh-100">
+         <div class="col-xl-4 col-lg-5 col-md-6">
+            <!-- Admin Header -->
+            <div class="text-center mb-5">
+               <div class="admin-register-icon mb-4">
+                  <i class="bi bi-shield-plus display-4 text-primary"></i>
+               </div>
+               <h1 class="h3 fw-bold text-dark mb-2">Create Admin Account</h1>
+               <p class="text-muted">Setup administrative access for HomeServe</p>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+               {% if messages %}
+                  <div class="flash-messages mb-4">
+                     {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show border-0" role="alert">
+                           <div class="d-flex align-items-center">
+                              {% if category == 'success' %}
+                                 <i class="bi bi-check-circle-fill me-2 text-success"></i>
+                              {% elif category == 'error' or category == 'danger' %}
+                                 <i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i>
+                              {% else %}
+                                 <i class="bi bi-info-circle-fill me-2 text-info"></i>
+                              {% endif %}
+                              <span class="small">{{ message }}</span>
+                           </div>
+                           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                     {% endfor %}
+                  </div>
+               {% endif %}
+            {% endwith %}
+
+            <!-- Registration Card -->
+            <div class="card border-0 shadow-sm rounded-3">
+               <div class="card-body p-4 p-xl-5">
+                  <form action="{{ url_for('admins_bp.admin_register') }}" method="POST">
+                     {{ admin_form.hidden_tag() }}
+                     
+                     <!-- Username Field -->
+                     <div class="mb-4">
+                        <label class="form-label fw-semibold text-dark mb-2">
+                           <i class="bi bi-person-badge me-2 text-primary"></i>
+                           {{ admin_form.username.label.text }}
+                        </label>
+                        {{ admin_form.username(
+                            class="form-control form-control-lg border-1 py-3",
+                            placeholder="Enter admin username"
+                        ) }}
+                        <div class="form-text text-muted mt-1">
+                           Choose a unique administrator username
+                        </div>
+                     </div>
+
+                     <!-- Email Field -->
+                     <div class="mb-4">
+                        <label class="form-label fw-semibold text-dark mb-2">
+                           <i class="bi bi-envelope-at me-2 text-primary"></i>
+                           {{ admin_form.email.label.text }}
+                        </label>
+                        {{ admin_form.email(
+                            class="form-control form-control-lg border-1 py-3",
+                            placeholder="admin@homeserve.com"
+                        ) }}
+                        <div class="form-text text-muted mt-1">
+                           Use a secure email address for admin communications
+                        </div>
+                     </div>
+
+                     <!-- Password Field -->
+                     <div class="mb-4">
+                        <label class="form-label fw-semibold text-dark mb-2">
+                           <i class="bi bi-key me-2 text-primary"></i>
+                           {{ admin_form.password.label.text }}
+                        </label>
+                        {{ admin_form.password(
+                            class="form-control form-control-lg border-1 py-3",
+                            placeholder="Create a strong password"
+                        ) }}
+                        <div class="form-text text-muted mt-1">
+                           Minimum 8 characters with letters and numbers
+                        </div>
+                     </div>
+
+                     <!-- Submit Button -->
+                     <div class="d-grid mt-4">
+                        {{ admin_form.submit(
+                            class="btn btn-primary btn-lg py-3 fw-semibold border-0",
+                            value="Create Admin Account"
+                        ) }}
+                     </div>
+                  </form>
+
+                  <!-- Login Link -->
+                  <div class="text-center mt-4 pt-3 border-top">
+                     <p class="text-muted mb-2">Already have an admin account?</p>
+                     <a href="{{ url_for('admins_bp.admin_login') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>
+                        Sign in to Admin Panel
+                     </a>
+                  </div>
+               </div>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="text-center mt-4">
+               <p class="text-muted small">
+                  <i class="bi bi-shield-check me-1"></i>
+                  Administrative access provides full system control
+               </p>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <style>
+   .admin-auth-container {
+      background: linear-gradient(135deg, #fafbfc 0%, #f8f9fa 100%);
+      min-height: 100vh;
+   }
+
+   .admin-register-icon {
+      animation: gentleBounce 3s ease-in-out infinite;
+   }
+
+   @keyframes gentleBounce {
+      0%, 100% {
+         transform: translateY(0px);
+      }
+      50% {
+         transform: translateY(-8px);
+      }
+   }
+
+   .card {
+      border: 1px solid #e9ecef;
+      background: #ffffff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+   }
+
+   .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+   }
+
+   .form-control {
+      border: 1px solid #dee2e6;
+      transition: all 0.2s ease;
+      font-size: 1rem;
+   }
+
+   .form-control:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+   }
+
+   .btn-primary {
+      background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+      transition: all 0.2s ease;
+   }
+
+   .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+   }
+
+   .btn-outline-primary {
+      border: 1px solid #0d6efd;
+      color: #0d6efd;
+      transition: all 0.2s ease;
+   }
+
+   .btn-outline-primary:hover {
+      background: #0d6efd;
+      color: white;
+      transform: translateY(-1px);
+   }
+
+   .alert {
+      border-radius: 0.5rem;
+      border: none;
+   }
+
+   .alert-success {
+      background: rgba(25, 135, 84, 0.1);
+      color: #0f5132;
+   }
+
+   .alert-danger {
+      background: rgba(220, 53, 69, 0.1);
+      color: #721c24;
+   }
+
+   .alert-info {
+      background: rgba(13, 202, 240, 0.1);
+      color: #055160;
+   }
+
+   /* Professional spacing and typography */
+   .form-label {
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+   }
+
+   .form-text {
+      font-size: 0.8rem;
+   }
+
+   /* Responsive adjustments */
+   @media (max-width: 768px) {
+      .admin-auth-container {
+         padding: 1rem;
+      }
+      
+      .card-body {
+         padding: 2rem !important;
+      }
+   }
+
+   /* Focus states for accessibility */
+   .form-control:focus {
+      background: #ffffff;
+   }
+
+   /* Button loading state */
+   .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+   }
+   </style>
+   {% endblock %}
 </body>
 </html>

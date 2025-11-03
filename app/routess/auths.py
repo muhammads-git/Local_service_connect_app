@@ -96,10 +96,19 @@ def user_login():
 
 
 # user loguot
-@auths_bp.route('/user_logout')
-def user_logout():
-   session.clear()
-   return redirect(url_for('auths_bp.user_login'))
+@auths_bp.route('/logout')
+def logout():
+   
+   if session.get('role') == 'user':
+      session.clear()
+      return redirect(url_for('auths_bp.user_login'))
+   elif session.get('role') == 'provider':
+      session.clear()
+      return redirect(url_for('auths_bp.provider_login'))
+   else:
+      session.clear()
+      return redirect(url_for('admins_bp.admin_login'))
+
 
 @auths_bp.route('/provider_login',methods=['POST','GET'])
 def provider_login():

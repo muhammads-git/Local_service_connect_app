@@ -4,26 +4,811 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="stylesheet" href="{{ url_for('static',filename='flashstyle.css')}}">  
-   <title>Admin Dashboard</title>
+   <title>Admin Dashboard - HomeServe</title>
 </head>
 <body>
-   <center>
-      <!-- flash messages -->
-      {% with messages = get_flashed_messages(with_categories=true) %}
-         {% if messages %}
-            <div class="flash-container">
-         {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-         {% endfor %}
-            </div>
-         {% endif %}
-      {% endwith %}
-         
-      <!--  -->
-      <h1>Total Number of Users: {{ total_users }}</h1>
-      <h1>Total Number of Providers: {{ total_providers }}</h1>
+   {% extends 'base.html' %}
+   {% block content %}
 
-   </center>
-   
+   <div class="admin-dashboard">
+      <!-- Top Navigation Bar -->
+      <nav class="admin-navbar">
+         <div class="nav-brand">
+            <i class="bi bi-shield-check text-primary"></i>
+            <span>HomeServe Admin</span>
+         </div>
+         <div class="nav-actions">
+            <button class="btn-nav">
+               <i class="bi bi-bell"></i>
+               <span class="badge">3</span>
+            </button>
+            <button class="btn-nav">
+               <i class="bi bi-gear"></i>
+            </button>
+            <div class="admin-profile">
+               <div class="avatar">A</div>
+               <span>Administrator</span>
+            </div>
+         </div>
+      </nav>
+
+      <!-- Main Layout -->
+      <div class="admin-layout">
+         <!-- Sidebar -->
+         <aside class="admin-sidebar">
+            <div class="sidebar-section">
+               <h6 class="section-title">MAIN</h6>
+               <a href="#" class="sidebar-link active">
+                  <i class="bi bi-speedometer2"></i>
+                  <span>Dashboard</span>
+               </a>
+               <a href="#" class="sidebar-link">
+                  <i class="bi bi-graph-up"></i>
+                  <span>Analytics</span>
+               </a>
+            </div>
+
+            <div class="sidebar-section">
+               <h6 class="section-title">MANAGEMENT</h6>
+               <a href="#" class="sidebar-link">
+                  <i class="bi bi-people"></i>
+                  <span>Users</span>
+                  <span class="count-badge">{{ total_users }}</span>
+               </a>
+               <a href="#" class="sidebar-link">
+                  <i class="bi bi-tools"></i>
+                  <span>Providers</span>
+                  <span class="count-badge">{{ total_providers }}</span>
+               </a>
+               <a href="#" class="sidebar-link">
+                  <i class="bi bi-calendar-check"></i>
+                  <span>Bookings</span>
+                  <span class="count-badge">0</span>
+               </a>
+            </div>
+
+            <div class="sidebar-section">
+               <h6 class="section-title">SYSTEM</h6>
+               <a href="#" class="sidebar-link">
+                  <i class="bi bi-sliders"></i>
+                  <span>Settings</span>
+               </a>
+               <a href="#" class="sidebar-link">
+                  <i class="bi bi-shield-check"></i>
+                  <span>Security</span>
+               </a>
+               <a href="#" class="sidebar-link">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Logout</span>
+               </a>
+            </div>
+         </aside>
+
+         <!-- Main Content -->
+         <main class="admin-main">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+               {% if messages %}
+                  <div class="alert-container">
+                     {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                           <i class="bi bi-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }}"></i>
+                           {{ message }}
+                           <button class="alert-close">&times;</button>
+                        </div>
+                     {% endfor %}
+                  </div>
+               {% endif %}
+            {% endwith %}
+
+            <!-- Page Header -->
+            <div class="page-header">
+               <h1 class="page-title">Dashboard Overview</h1>
+               <div class="header-actions">
+                  <button class="btn btn-primary">
+                     <i class="bi bi-download"></i>
+                     Export Report
+                  </button>
+                  <button class="btn btn-outline">
+                     <i class="bi bi-arrow-clockwise"></i>
+                     Refresh
+                  </button>
+               </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+               <div class="stat-card">
+                  <div class="stat-header">
+                     <h3 class="stat-value">{{ total_users }}</h3>
+                     <div class="stat-trend positive">
+                        <i class="bi bi-arrow-up"></i>
+                        12.5%
+                     </div>
+                  </div>
+                  <p class="stat-label">Total Users</p>
+                  <div class="stat-actions">
+                     <button class="btn-stat">
+                        <i class="bi bi-eye"></i>
+                        View All
+                     </button>
+                     <button class="btn-stat">
+                        <i class="bi bi-plus"></i>
+                        Add User
+                     </button>
+                  </div>
+               </div>
+
+               <div class="stat-card">
+                  <div class="stat-header">
+                     <h3 class="stat-value">{{ total_providers }}</h3>
+                     <div class="stat-trend positive">
+                        <i class="bi bi-arrow-up"></i>
+                        8.2%
+                     </div>
+                  </div>
+                  <p class="stat-label">Service Providers</p>
+                  <div class="stat-actions">
+                     <button class="btn-stat">
+                        <i class="bi bi-eye"></i>
+                        View All
+                     </button>
+                     <button class="btn-stat">
+                        <i class="bi bi-person-plus"></i>
+                        Add Provider
+                     </button>
+                  </div>
+               </div>
+
+               <div class="stat-card">
+                  <div class="stat-header">
+                     <h3 class="stat-value">0</h3>
+                     <div class="stat-trend negative">
+                        <i class="bi bi-arrow-down"></i>
+                        3.1%
+                     </div>
+                  </div>
+                  <p class="stat-label">Active Bookings</p>
+                  <div class="stat-actions">
+                     <button class="btn-stat">
+                        <i class="bi bi-eye"></i>
+                        View All
+                     </button>
+                     <button class="btn-stat">
+                        <i class="bi bi-search"></i>
+                        Monitor
+                     </button>
+                  </div>
+               </div>
+
+               <div class="stat-card">
+                  <div class="stat-header">
+                     <h3 class="stat-value">$0</h3>
+                     <div class="stat-trend neutral">
+                        <i class="bi bi-dash"></i>
+                        0%
+                     </div>
+                  </div>
+                  <p class="stat-label">Total Revenue</p>
+                  <div class="stat-actions">
+                     <button class="btn-stat">
+                        <i class="bi bi-graph-up"></i>
+                        Analytics
+                     </button>
+                     <button class="btn-stat">
+                        <i class="bi bi-cash-coin"></i>
+                        Payments
+                     </button>
+                  </div>
+               </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="section">
+               <div class="section-header">
+                  <h2 class="section-title">Quick Actions</h2>
+                  <p class="section-subtitle">Frequently used administrative tasks</p>
+               </div>
+               <div class="actions-grid">
+                  <button class="action-card">
+                     <div class="action-icon user-management">
+                        <i class="bi bi-people-fill"></i>
+                     </div>
+                     <h4>User Management</h4>
+                     <p>Manage user accounts and permissions</p>
+                     <span class="action-arrow">→</span>
+                  </button>
+
+                  <button class="action-card">
+                     <div class="action-icon provider-management">
+                        <i class="bi bi-tools"></i>
+                     </div>
+                     <h4>Provider Management</h4>
+                     <p>Approve and manage service providers</p>
+                     <span class="action-arrow">→</span>
+                  </button>
+
+                  <button class="action-card">
+                     <div class="action-icon booking-management">
+                        <i class="bi bi-calendar-check"></i>
+                     </div>
+                     <h4>Booking Oversight</h4>
+                     <p>Monitor and manage service bookings</p>
+                     <span class="action-arrow">→</span>
+                  </button>
+
+                  <button class="action-card">
+                     <div class="action-icon analytics">
+                        <i class="bi bi-graph-up-arrow"></i>
+                     </div>
+                     <h4>System Analytics</h4>
+                     <p>View platform performance metrics</p>
+                     <span class="action-arrow">→</span>
+                  </button>
+               </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="section">
+               <div class="section-header">
+                  <h2 class="section-title">Recent Activity</h2>
+                  <button class="btn btn-outline btn-sm">
+                     View All Activity
+                  </button>
+               </div>
+               <div class="activity-feed">
+                  <div class="activity-item">
+                     <div class="activity-icon new-user">
+                        <i class="bi bi-person-plus"></i>
+                     </div>
+                     <div class="activity-content">
+                        <p><strong>New user registration</strong> - John Doe joined the platform</p>
+                        <span class="activity-time">2 minutes ago</span>
+                     </div>
+                  </div>
+                  <div class="activity-item">
+                     <div class="activity-icon new-provider">
+                        <i class="bi bi-tool"></i>
+                     </div>
+                     <div class="activity-content">
+                        <p><strong>Provider approved</strong> - Electric Pro services activated</p>
+                        <span class="activity-time">1 hour ago</span>
+                     </div>
+                  </div>
+                  <div class="activity-item">
+                     <div class="activity-icon booking">
+                        <i class="bi bi-calendar-plus"></i>
+                     </div>
+                     <div class="activity-content">
+                        <p><strong>New booking request</strong> - Plumbing service requested</p>
+                        <span class="activity-time">3 hours ago</span>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </main>
+      </div>
+   </div>
+
+   <style>
+   /* Modern Admin Dashboard Styles */
+   .admin-dashboard {
+      min-height: 100vh;
+      background: #f8fafc;
+   }
+
+   /* Top Navigation */
+   .admin-navbar {
+      background: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+   }
+
+   .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: #1e293b;
+   }
+
+   .nav-brand i {
+      font-size: 1.5rem;
+   }
+
+   .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+   }
+
+   .btn-nav {
+      background: none;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 8px;
+      color: #64748b;
+      position: relative;
+      transition: all 0.2s;
+   }
+
+   .btn-nav:hover {
+      background: #f1f5f9;
+      color: #334155;
+   }
+
+   .btn-nav .badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: #ef4444;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+   }
+
+   .admin-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem;
+      border-radius: 8px;
+   }
+
+   .avatar {
+      width: 32px;
+      height: 32px;
+      background: #0d6efd;
+      color: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+   }
+
+   /* Main Layout */
+   .admin-layout {
+      display: flex;
+   }
+
+   /* Sidebar */
+   .admin-sidebar {
+      width: 280px;
+      background: white;
+      border-right: 1px solid #e2e8f0;
+      padding: 1.5rem 0;
+      height: calc(100vh - 80px);
+      position: sticky;
+      top: 0;
+   }
+
+   .sidebar-section {
+      margin-bottom: 2rem;
+   }
+
+   .section-title {
+      padding: 0 1.5rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+   }
+
+   .sidebar-link {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      color: #475569;
+      text-decoration: none;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+   }
+
+   .sidebar-link:hover {
+      background: #f8fafc;
+      color: #1e293b;
+   }
+
+   .sidebar-link.active {
+      background: #f1f5f9;
+      color: #0d6efd;
+      border-left-color: #0d6efd;
+      font-weight: 500;
+   }
+
+   .sidebar-link i {
+      margin-right: 0.75rem;
+      width: 20px;
+      text-align: center;
+   }
+
+   .count-badge {
+      margin-left: auto;
+      background: #e2e8f0;
+      color: #475569;
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+   }
+
+   /* Main Content */
+   .admin-main {
+      flex: 1;
+      padding: 2rem;
+   }
+
+   /* Alerts */
+   .alert-container {
+      margin-bottom: 2rem;
+   }
+
+   .alert {
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+   }
+
+   .alert-success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+   }
+
+   .alert-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+   }
+
+   .alert-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: inherit;
+   }
+
+   /* Page Header */
+   .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+   }
+
+   .page-title {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+   }
+
+   .header-actions {
+      display: flex;
+      gap: 1rem;
+   }
+
+   .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+   }
+
+   .btn-primary {
+      background: #0d6efd;
+      color: white;
+   }
+
+   .btn-primary:hover {
+      background: #0b5ed7;
+      transform: translateY(-1px);
+   }
+
+   .btn-outline {
+      background: white;
+      color: #475569;
+      border: 1px solid #d1d5db;
+   }
+
+   .btn-outline:hover {
+      background: #f8fafc;
+      border-color: #9ca3af;
+   }
+
+   .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+   }
+
+   /* Stats Grid */
+   .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+   }
+
+   .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+   }
+
+   .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+   }
+
+   .stat-value {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+   }
+
+   .stat-trend {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+   }
+
+   .stat-trend.positive {
+      background: #f0fdf4;
+      color: #166534;
+   }
+
+   .stat-trend.negative {
+      background: #fef2f2;
+      color: #991b1b;
+   }
+
+   .stat-trend.neutral {
+      background: #f8fafc;
+      color: #475569;
+   }
+
+   .stat-label {
+      color: #64748b;
+      margin: 0 0 1rem;
+      font-size: 0.875rem;
+   }
+
+   .stat-actions {
+      display: flex;
+      gap: 0.75rem;
+   }
+
+   .btn-stat {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition: all 0.2s;
+      cursor: pointer;
+   }
+
+   .btn-stat:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+   }
+
+   /* Sections */
+   .section {
+      margin-bottom: 3rem;
+   }
+
+   .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+   }
+
+   .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0;
+   }
+
+   .section-subtitle {
+      color: #64748b;
+      margin: 0.5rem 0 0;
+      font-size: 0.875rem;
+   }
+
+   /* Quick Actions */
+   .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+   }
+
+   .action-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+   }
+
+   .action-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-color: #0d6efd;
+   }
+
+   .action-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      color: white;
+   }
+
+   .action-icon.user-management { background: #0d6efd; }
+   .action-icon.provider-management { background: #198754; }
+   .action-icon.booking-management { background: #ffc107; }
+   .action-icon.analytics { background: #6f42c1; }
+
+   .action-card h4 {
+      margin: 0 0 0.5rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1e293b;
+   }
+
+   .action-card p {
+      margin: 0;
+      color: #64748b;
+      font-size: 0.875rem;
+      line-height: 1.4;
+   }
+
+   .action-arrow {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      color: #cbd5e1;
+      font-size: 1.25rem;
+      transition: all 0.2s;
+   }
+
+   .action-card:hover .action-arrow {
+      color: #0d6efd;
+      transform: translateX(2px);
+   }
+
+   /* Activity Feed */
+   .activity-feed {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+   }
+
+   .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #f1f5f9;
+   }
+
+   .activity-item:last-child {
+      border-bottom: none;
+   }
+
+   .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      flex-shrink: 0;
+   }
+
+   .activity-icon.new-user { background: #0d6efd; }
+   .activity-icon.new-provider { background: #198754; }
+   .activity-icon.booking { background: #ffc107; }
+
+   .activity-content {
+      flex: 1;
+   }
+
+   .activity-content p {
+      margin: 0;
+      color: #1e293b;
+   }
+
+   .activity-time {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+   }
+
+   /* Responsive */
+   @media (max-width: 1024px) {
+      .admin-layout {
+         flex-direction: column;
+      }
+      
+      .admin-sidebar {
+         width: 100%;
+         height: auto;
+      }
+      
+      .stats-grid {
+         grid-template-columns: 1fr 1fr;
+      }
+   }
+
+   @media (max-width: 768px) {
+      .admin-main {
+         padding: 1rem;
+      }
+      
+      .stats-grid {
+         grid-template-columns: 1fr;
+      }
+      
+      .actions-grid {
+         grid-template-columns: 1fr;
+      }
+      
+      .page-header {
+         flex-direction: column;
+         align-items: flex-start;
+         gap: 1rem;
+      }
+   }
+   </style>
+   {% endblock %}
 </body>
 </html>

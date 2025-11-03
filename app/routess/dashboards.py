@@ -166,11 +166,11 @@ def provider_dashboard():
    raw_rating = cursor.fetchone()[0]   # will return like 4.4433
    cursor.close()
 
+
    # we need round off figures
    rounded_rating = round(raw_rating,1)  # round off 
 
 
-   
    # handle RECENT BOOKINGS...
    cursor = mysql.connection.cursor()
 
