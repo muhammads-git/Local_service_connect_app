@@ -22,6 +22,10 @@ Thumbs.db
 # Flask specific
 instance/
 
+# migration files sq
+migrations/
+.sql
+
 
 # .env
 .env
