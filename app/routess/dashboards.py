@@ -165,10 +165,13 @@ def provider_dashboard():
    cursor.execute(''' SELECT AVG(rating) FROM reviews WHERE provider_id = %s''',(session['provider_id'],))
    raw_rating = cursor.fetchone()[0]   # will return like 4.4433
    cursor.close()
+   print(raw_rating)
 
-
-   # we need round off figures
-   rounded_rating = round(raw_rating,1)  # round off 
+    # edge cases
+   if raw_rating is None:
+       rounded_rating = str(0.0)
+   else:       # we need round off figures
+        rounded_rating = round(raw_rating,1)  # round off 
 
 
    # handle RECENT BOOKINGS...
@@ -193,17 +196,18 @@ def provider_dashboard():
    cursor = mysql.connection.cursor()
    cursor.execute('SELECT COUNT(*) FROM bookings WHERE provider_id =%s AND status = %s',(session['provider_id'],('completed')))
    completed_bookings = cursor.fetchone()[0]
+   print(completed_bookings)
    
 
    # complettion rate logic
-   completion_rate = (completed_bookings / total_bookings_data * 100) # percentage formulaa 
-
-   # round off using round func
-   round_off_completions = round(completion_rate,2)
-
-   # repeatetion of clients
-#    cursor = mysql.connection.cursor()
-#    cursor.execute('SELECT COUNT(*) FROM bookings WHERE provider_id =%s AND user_id')
+   if completed_bookings:
+        # percentage formula
+        completion_rate = (completed_bookings / total_bookings_data * 100) 
+        # if true  
+        round_off_completions = round(completion_rate,2)
+   else:
+       completion_rate = str(0.0)
+       round_off_completions = completion_rate
 
 
    return render_template('dashboards/provider_dashboard.html',provider_name=session['provider_name'],total_bookings=total_bookings,completed_jobs=completed_jobs,pending_jobs=pending_jobs,rounded_rating=rounded_rating,recent_bookings=recent_bookings,round_off_completions=round_off_completions)
