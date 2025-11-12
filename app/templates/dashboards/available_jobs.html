@@ -1,0 +1,318 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="fw-semibold text-dark mb-1">Available Jobs & Services</h4>
+                    <p class="text-muted mb-0">Browse available service requests from customers</p>
+                </div>
+                <div class="text-end">
+                    <a href="{{ url_for('dashboards_bp.provider_dashboard') }}" 
+                        class="btn btn-outline-secondary rounded-2 px-4 me-2">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                    <div class="text-muted small mt-1">{{ available_jobs_data|length }} available jobs</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-2">
+            <div class="card border-0 shadow-sm stat-card">
+                <div class="card-body text-center p-3">
+                    <div class="text-primary mb-2">
+                        <i class="bi bi-briefcase fs-5"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">{{ available_jobs_data|length }}</h5>
+                    <small class="text-muted">Available Jobs</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-2">
+            <div class="card border-0 shadow-sm stat-card">
+                <div class="card-body text-center p-3">
+                    <div class="text-success mb-2">
+                        <i class="bi bi-clock-history fs-5"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">24h</h5>
+                    <small class="text-muted">Avg. Response Time</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-2">
+            <div class="card border-0 shadow-sm stat-card">
+                <div class="card-body text-center p-3">
+                    <div class="text-warning mb-2">
+                        <i class="bi bi-geo-alt fs-5"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">5km</h5>
+                    <small class="text-muted">Service Radius</small>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-md-3 mb-2">
+            <div class="card border-0 shadow-sm stat-card">
+                <div class="card-body text-center p-3">
+                    <div class="text-info mb-2">
+                        <i class="bi bi-star fs-5"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">4.8</h5>
+                    <small class="text-muted">Your Rating</small>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- Available Jobs Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm booking-card">
+                <div class="card-header bg-white border-bottom py-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="fw-semibold text-dark mb-0">Available Service Requests</h6>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-primary me-2 booking-count">
+                                {% if available_jobs_data %}
+                                Total: {{ available_jobs_data|length }}
+                                {% else %}
+                                    0
+                                {% endif %}
+                            </span>
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-filter"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    {% if available_jobs_data %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0 booking-table">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="small fw-medium text-muted py-2 px-3">Customer</th>
+                                    <th class="small fw-medium text-muted py-2 px-3">Service Description</th>
+                                    <th class="small fw-medium text-muted py-2 px-3">Status</th>
+                                    <th class="small fw-medium text-muted py-2 px-3 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in available_jobs_data %}
+                                <tr class="booking-row">
+                                    <td class="py-2 px-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="customer-avatar bg-light rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                <i class="bi bi-person text-muted small"></i>
+                                            </div>
+                                            <div>
+                                                <span class="fw-medium small d-block">{{ booking[0] }}</span>
+                                                <small class="text-muted">New Customer</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-2 px-3">
+                                        <div>
+                                            <span class="small">{{ booking[1] }}</span>
+                                            <div class="mt-1">
+                                                <span class="badge bg-light text-dark small">General Service</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-2 px-3">
+                                        {% if booking[2] == 'pending' %}
+                                            <span class="badge status-badge status-pending">Pending</span>
+                                        {% elif booking[2] == 'accepted' %}
+                                            <span class="badge status-badge status-accepted">Accepted</span>
+                                        {% elif booking[2] == 'in_progress' %}
+                                            <span class="badge status-badge status-progress">In Progress</span>
+                                        {% elif booking[2] == 'completed' %}
+                                            <span class="badge status-badge status-completed">Completed</span>
+                                        {% elif booking[2] == 'rejected' %}
+                                            <span class="badge status-badge status-rejected">Rejected</span>
+                                        {% else %}
+                                            <span class="badge status-badge status-other">{{ booking[2] }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-2 px-3">
+                                        <div class="d-flex gap-1 justify-content-center">
+                                            <!-- Simple View Button -->
+                                            <button class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-eye"></i> View
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-briefcase text-muted mb-3" style="font-size: 3rem;"></i>
+                        <p class="text-muted mb-1 fs-5">No available jobs at the moment</p>
+                        <small class="text-muted">New service requests will appear here as customers book your services</small>
+                        <div class="mt-3">
+                            <a href="{{ url_for('dashboards_bp.provider_dashboard') }}" class="btn btn-primary">
+                                <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Info Section -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="fw-semibold text-dark mb-3">Acceptance Tips</h6>
+                    <div class="d-flex align-items-start mb-2">
+                        <i class="bi bi-lightning text-warning me-2 mt-1 small"></i>
+                        <small class="text-muted">Respond quickly to increase your acceptance rate</small>
+                    </div>
+                    <div class="d-flex align-items-start mb-2">
+                        <i class="bi bi-clock text-info me-2 mt-1 small"></i>
+                        <small class="text-muted">Jobs are first-come, first-served</small>
+                    </div>
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-chat-dots text-success me-2 mt-1 small"></i>
+                        <small class="text-muted">Contact customers promptly after accepting</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="fw-semibold text-dark mb-3">Service Statistics</h6>
+                    <div class="row text-center">
+                        <div class="col-4 border-end">
+                            <div class="text-center">
+                                <h6 class="fw-bold text-dark mb-1">85%</h6>
+                                <small class="text-muted">Acceptance Rate</small>
+                            </div>
+                        </div>
+                        <div class="col-4 border-end">
+                            <div class="text-center">
+                                <h6 class="fw-bold text-dark mb-1">24</h6>
+                                <small class="text-muted">Jobs This Month</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-center">
+                                <h6 class="fw-bold text-dark mb-1">4.8</h6>
+                                <small class="text-muted">Avg. Rating</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Smooth animations for everything */
+.card, .btn, .booking-row, .badge {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card hover effects */
+.card {
+    border: 1px solid #e9ecef !important;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    border-color: #0d6efd !important;
+}
+
+.booking-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Table row animations */
+.booking-row:hover {
+    background-color: #f8f9fa;
+    transform: translateX(4px);
+}
+
+/* Status badges */
+.status-badge {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 12px;
+}
+
+.status-pending { 
+    background: linear-gradient(135deg, #ffc107, #ffb300);
+    color: #000;
+}
+
+.status-accepted { 
+    background: linear-gradient(135deg, #198754, #157347);
+    color: white;
+}
+
+.status-progress { 
+    background: linear-gradient(135deg, #0dcaf0, #0baccc);
+    color: white;
+}
+
+.status-completed { 
+    background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+    color: white;
+}
+
+.status-rejected { 
+    background: linear-gradient(135deg, #6c757d, #5c636a);
+    color: white;
+}
+
+/* Button hover effects */
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Customer avatar */
+.customer-avatar {
+    width: 28px;
+    height: 28px;
+    transition: all 0.3s ease;
+}
+
+.booking-row:hover .customer-avatar {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb) !important;
+}
+
+/* Table responsive */
+.table-sm td, .table-sm th {
+    padding: 0.5rem 0.75rem;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .btn {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+    }
+    
+    .stat-card:hover {
+        transform: none;
+    }
+}
+</style>
+{% endblock %}

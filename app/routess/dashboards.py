@@ -1,4 +1,4 @@
-from flask import redirect,render_template,url_for,session,flash,get_flashed_messages
+from flask import redirect,render_template,url_for,session,flash,get_flashed_messages,request
 from flask import Blueprint
 from app.__init__ import mysql
 from app.forms.forms import BookingForm,BookServiceForm
@@ -6,7 +6,6 @@ from app.utils.mail import sendBookingNotifications
 
 # initialize Blueprints instance
 dashboards_bp = Blueprint('dashboards_bp', __name__, url_prefix='/dashboard')
-
 
 @dashboards_bp.route('/user')
 def user_dashboard():
@@ -250,3 +249,14 @@ def reject_booking(booking_id):
     except Exception as e:
        flash('Error Occured','warning')
        return redirect(url_for('dashboards_bp.provider_dashboard'))
+    
+
+### available jobs/bookings
+@dashboards_bp.route('/available_jobs',methods=['GET'])
+def available_jobs():
+    # think .............
+    cursor = mysql.connection.cursor()
+    cursor.execute(' SELECT u.username, b.service_description, b.status FROM users u JOIN bookings b WHERE status ="pending" ')
+    available_jobs_data = cursor.fetchall()
+    cursor.close()
+    return render_template('dashboards/available_jobs.html',available_jobs_data=available_jobs_data)

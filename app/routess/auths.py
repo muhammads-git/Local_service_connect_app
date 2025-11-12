@@ -1,10 +1,19 @@
 from flask import Blueprint
-from flask import render_template,redirect,url_for,session,flash,get_flashed_messages
+from flask import render_template,redirect,url_for,session,flash,get_flashed_messages, request
 from app.forms.forms import User_RegisterForms,Provider_RegisterForm,User_LoginForm,Provider_LoginForm,CompleteProfileForm
 from app.utils.extensions import bcyrpt
 from app.__init__ import mysql
 
 auths_bp = Blueprint('auths_bp', __name__)
+
+### checking web work
+
+@auths_bp.route('/debug')
+def debug():
+    print("Headers:", dict(request.headers))
+    print("Args:", dict(request.args))
+    print("Form:", dict(request.form))
+    return "Check your console!"
 
 
 @auths_bp.route('/')
