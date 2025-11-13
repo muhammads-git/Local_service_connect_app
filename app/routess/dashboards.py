@@ -250,13 +250,43 @@ def reject_booking(booking_id):
        flash('Error Occured','warning')
        return redirect(url_for('dashboards_bp.provider_dashboard'))
     
-
 ### available jobs/bookings
 @dashboards_bp.route('/available_jobs',methods=['GET'])
 def available_jobs():
     # think .............
     cursor = mysql.connection.cursor()
-    cursor.execute(' SELECT u.username, b.service_description, b.status FROM users u JOIN bookings b WHERE status ="pending" ')
+    cursor.execute(' SELECT b.id, u.username, b.service_description, b.status FROM users u JOIN bookings b ON u.id = b.user_id WHERE b.status ="pending" ')
     available_jobs_data = cursor.fetchall()
     cursor.close()
-    return render_template('dashboards/available_jobs.html',available_jobs_data=available_jobs_data)
+
+    # if users clicks view job
+    selected_job_id = request.args.get('view_jobs')
+    selected_job = None
+
+    if selected_job_id:
+        selected_job = get_view_jobs_id(selected_job_id)
+
+
+
+    return render_template('dashboards/available_jobs.html',available_jobs_data=available_jobs_data,selected_job_id=selected_job_id,selected_job=selected_job)
+
+# get view_jobs id
+def get_view_jobs_id(job_id):
+    # get selected job data from db
+    cursor = mysql.connection.cursor()
+    cursor.execute(' SELECT b.id, u.username, b.service_description, b.status, b.service_date, b.address FROM users u JOIN bookings b ON u.id =b.user_id WHERE b.id = %s AND b.status =%s',(job_id,'pending'))
+    selected_job_data = cursor.fetchone()
+    cursor.close()
+
+    return selected_job_data
+
+
+
+# accept job ruoute
+@dashboards_bp.route('/accept_job')
+def accept_job(job_id):
+    return 'Accepted'
+
+@dashboards_bp.route('/reject_job')
+def reject_job(job_id):
+    return 'Rejected'
