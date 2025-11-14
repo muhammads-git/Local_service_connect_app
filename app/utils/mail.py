@@ -1,6 +1,7 @@
 from flask_mail import Mail,Message
 from flask import current_app
 from flask import url_for
+from app.__init__ import mysql
 mail=Mail()
 
 
@@ -45,3 +46,16 @@ def sendBookingNotifications(username,service_type,proivder_mail,address,booking
         <p>- ServiConnect Team</p>
     '''   
    mail.send(msg)   
+
+
+
+   # create notifications funtion
+
+def create_notifcations(user_id,message):
+    #
+    cursor = mysql.connection.cursor()
+    cursor.execute(' INSERT INTO notifications (user_id,message) VALUES(%s,%s)',(user_id,message))
+    mysql.connection.commit()
+    cursor.close()
+
+    print('Notification delivered to user!')

@@ -9,6 +9,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     
+    <!-- ★★★ ADD YOUR FLASH CSS HERE ★★★ -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='flashstyle.css') }}">
+    
     <style>
         body {
             background-color: #f8f9fa;
@@ -71,6 +74,47 @@
         </div>
     </nav>
 
+    <!-- ★★★ APPLE-STYLE FLASH MESSAGES ★★★ -->
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}" data-flash-id="{{ loop.index }}">
+                        <div class="flash-content">
+                            <div class="flash-icon">
+                                {% if category == 'success' %}
+                                    <i class="bi bi-checkmark-circle"></i>
+                                {% elif category == 'error' %}
+                                    <i class="bi bi-exclamationmark-triangle"></i>
+                                {% elif category == 'warning' %}
+                                    <i class="bi bi-exclamationmark-circle"></i>
+                                {% elif category == 'info' %}
+                                    <i class="bi bi-info-circle"></i>
+                                {% else %}
+                                    <i class="bi bi-bell"></i>
+                                {% endif %}
+                            </div>
+                            <div class="flash-text">
+                                <div class="flash-title">
+                                    {% if category == 'success' %}Success
+                                    {% elif category == 'error' %}Error
+                                    {% elif category == 'warning' %}Warning
+                                    {% elif category == 'info' %}Information
+                                    {% else %}Notification{% endif %}
+                                </div>
+                                <div class="flash-message-text">{{ message }}</div>
+                            </div>
+                            <button class="flash-close" onclick="this.parentElement.parentElement.remove()">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                        <div class="flash-progress"></div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
     <!-- Main Content -->
     <main class="container py-4">
         {% block content %}{% endblock %}
@@ -78,5 +122,19 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Flash Messages JS -->
+    <script>
+    // Auto-remove flash messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = document.querySelectorAll('.flash-message');
+        flashMessages.forEach(flash => {
+            setTimeout(() => {
+                flash.style.animation = 'flashSlideOut 0.3s ease-out forwards';
+                setTimeout(() => flash.remove(), 300);
+            }, 5000);
+        });
+    });
+    </script>
 </body>
 </html>

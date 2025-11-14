@@ -3,7 +3,7 @@ from flask import Blueprint
 from app.__init__ import mysql
 from app.forms.forms import BookingForm,BookServiceForm
 from app.utils.mail import sendBookingNotifications
-
+from app.utils.mail import create_notifcations
 # initialize Blueprints instance
 dashboards_bp = Blueprint('dashboards_bp', __name__, url_prefix='/dashboard')
 
@@ -280,13 +280,58 @@ def get_view_jobs_id(job_id):
 
     return selected_job_data
 
-
-
 # accept job ruoute
-@dashboards_bp.route('/accept_job')
+@dashboards_bp.route('/accept_job/<int:job_id>',methods=['GET'])
 def accept_job(job_id):
-    return 'Accepted'
+    # check if job is available
+    print(job_id)
+    cursor = mysql.connection.cursor()
+    cursor.execute(' SELECT status FROM bookings WHERE id = %s',(job_id,))
+    _available = cursor.fetchone()
+    cursor.close()
+    print(_available)
 
-@dashboards_bp.route('/reject_job')
-def reject_job(job_id):
-    return 'Rejected'
+    # edge case
+    if _available == 'accepted':
+        flash('Job has already been accepted by another PROVIDER','warning')
+        return redirect(url_for('dashboards_bp.available_jobs'))
+    
+
+    # get provider id from session
+    provider_id = session.get('provider_id')
+    print(provider_id)
+    # handle update booking
+    cursor = mysql.connection.cursor()
+    cursor.execute(' UPDATE bookings SET status ="accepted", provider_id = %s WHERE id = %s ',(provider_id,job_id,))
+    mysql.connection.commit()
+    cursor.close()
+
+    flash('Booking has been accepted, Cutomer has been notified!','success')
+
+    # get user this booking belongs
+    cursor = mysql.connection.cursor()
+    cursor.execute(' SELECT user_id FROM bookings WHERE id = %s',(job_id,))
+    customer_id = cursor.fetchone()[0]
+
+    # send notification to user
+    create_notifcations(customer_id,'Great News! A provider accepted your request.')
+
+    return redirect(url_for('dashboards_bp.available_jobs'))
+
+
+
+
+# @dashboards_bp.route('/reject_job/int:job_id')
+# def reject_job(job_id):
+
+#     cursor = mysql.connection.cursor()
+#     cursor.execute(' UPDATE bookings SET status ="accepted" WHERE id = %s ',(job_id))
+#     mysql.connection.commit()
+#     cursor.close()
+
+#     # Flash for your side
+#     flash('Booking Rejected','warning')
+
+#     # now notfiy users that booking is rejected
+
+#     return 'Rejected'
