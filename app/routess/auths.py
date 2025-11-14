@@ -100,12 +100,16 @@ def logout():
    
    if session.get('role') == 'user':
       session.clear()
+
+      flash('You have been logged out!','info')
       return redirect(url_for('auths_bp.user_login'))
    elif session.get('role') == 'provider':
       session.clear()
+      flash('You have been logged out!','info')
       return redirect(url_for('auths_bp.provider_login'))
    else:
       session.clear()
+      flash('You have been logged out!','info')
       return redirect(url_for('admins_bp.admin_login'))
 
 

@@ -164,7 +164,6 @@ def provider_dashboard():
    cursor.execute(''' SELECT AVG(rating) FROM reviews WHERE provider_id = %s''',(session['provider_id'],))
    raw_rating = cursor.fetchone()[0]   # will return like 4.4433
    cursor.close()
-   print(raw_rating)
 
     # edge cases
    if raw_rating is None:
@@ -195,7 +194,7 @@ def provider_dashboard():
    cursor = mysql.connection.cursor()
    cursor.execute('SELECT COUNT(*) FROM bookings WHERE provider_id =%s AND status = %s',(session['provider_id'],('completed')))
    completed_bookings = cursor.fetchone()[0]
-   print(completed_bookings)
+
    
 
    # complettion rate logic
@@ -284,12 +283,10 @@ def get_view_jobs_id(job_id):
 @dashboards_bp.route('/accept_job/<int:job_id>',methods=['GET'])
 def accept_job(job_id):
     # check if job is available
-    print(job_id)
     cursor = mysql.connection.cursor()
     cursor.execute(' SELECT status FROM bookings WHERE id = %s',(job_id,))
     _available = cursor.fetchone()
     cursor.close()
-    print(_available)
 
     # edge case
     if _available == 'accepted':
@@ -299,7 +296,6 @@ def accept_job(job_id):
 
     # get provider id from session
     provider_id = session.get('provider_id')
-    print(provider_id)
     # handle update booking
     cursor = mysql.connection.cursor()
     cursor.execute(' UPDATE bookings SET status ="accepted", provider_id = %s WHERE id = %s ',(provider_id,job_id,))
@@ -307,6 +303,9 @@ def accept_job(job_id):
     cursor.close()
 
     flash('Booking has been accepted, Cutomer has been notified!','success')
+
+    # connect flash
+    flash('You can now connect to Customer','success')
 
     # get user this booking belongs
     cursor = mysql.connection.cursor()
