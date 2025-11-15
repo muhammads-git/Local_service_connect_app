@@ -4,6 +4,7 @@ from app.__init__ import mysql
 from app.forms.forms import BookingForm,BookServiceForm
 from app.utils.mail import sendBookingNotifications
 from app.utils.mail import create_notifcations
+
 # initialize Blueprints instance
 dashboards_bp = Blueprint('dashboards_bp', __name__, url_prefix='/dashboard')
 
@@ -11,7 +12,6 @@ dashboards_bp = Blueprint('dashboards_bp', __name__, url_prefix='/dashboard')
 def user_dashboard():
    if 'user_id' not in session:
       return redirect(url_for('auths_bp.user_login'))
-   
    # Fetching provider data for user dashboard
    cursor = mysql.connection.cursor()
 
@@ -41,6 +41,32 @@ def user_dashboard():
 
    
    return render_template('dashboards/user_dashboard.html',username=session['username'],service_providers_data=service_providers_data,all_bookings=all_bookings)
+
+# mark as read single notification
+@dashboards_bp.route('/mark_as_read_single/<int:notification_id>',methods=['POST'])
+def mark_as_read_single(notification_id):
+    if 'user_id' not in session:
+        return redirect(url_for('auths_bp.user_login'))
+    
+    cursor = mysql.connection.cursor()
+    cursor.execute(' UPDATE notifications SET is_read = TRUE WHERE id =%s AND user_id =%s',(notification_id,session['user_id']))
+    mysql.connection.commit()
+    cursor.close()
+
+    return redirect(url_for('dashboards_bp.user_dashboard'))
+
+# mark as read all
+@dashboards_bp.route('/mark_all_asread',methods=['POST'])
+def mark_all_asread():
+    if 'user_id' not in session:
+        return redirect(url_for('auths_bp.user_login'))
+    
+    cursor = mysql.connection.cursor()
+    cursor.execute('UPDATE notifications SET is_read = TRUE WHERE user_id = %s',(session['user_id'],))
+    mysql.connection.commit()
+    cursor.close()
+
+    return redirect(url_for('dashboards_bp.user_dashboard'))
 
 @dashboards_bp.route('/book_service/<int:provider_id>', methods=['GET','POST'])
 def book_service(provider_id):

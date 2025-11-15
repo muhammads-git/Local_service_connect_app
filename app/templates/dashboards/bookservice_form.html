@@ -13,32 +13,6 @@
    <div class="container-fluid py-4">
       <div class="row justify-content-center">
          <div class="col-lg-6 col-md-8">
-            
-            <!-- Flash Messages Section - ADDED HERE -->
-            <div class="flash-messages mb-4">
-               {% with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                     {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                           <div class="d-flex align-items-center">
-                              {% if category == 'success' %}
-                                 <i class="bi bi-check-circle-fill me-2"></i>
-                              {% elif category == 'error' or category == 'danger' %}
-                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                              {% elif category == 'warning' %}
-                                 <i class="bi bi-exclamation-circle-fill me-2"></i>
-                              {% else %}
-                                 <i class="bi bi-info-circle-fill me-2"></i>
-                              {% endif %}
-                              <div>{{ message }}</div>
-                           </div>
-                           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                     {% endfor %}
-                  {% endif %}
-               {% endwith %}
-            </div>
-
             <!-- Header Card -->
             <div class="card border-0 bg-primary text-white mb-4 service-header-card">
                <div class="card-body text-center p-4">

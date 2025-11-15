@@ -9,72 +9,326 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     
-    <!-- ★★★ ADD YOUR FLASH CSS HERE ★★★ -->
+    <!-- Flash CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='flashstyle.css') }}">
+<style>
+    /* === YOUR EXACT ORIGINAL LIGHT THEME === */
+    body {
+        background-color: #f8f9fa;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
     
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-        
-        .navbar {
-            background: #ffffff;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        .card {
-            border: none;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .btn {
-            font-weight: 500;
-        }
-        
-        .form-control {
-            border: 1px solid #dee2e6;
-        }
-        
-        .form-control:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
-        }
-        
-        .table th {
-            border: none;
-            font-weight: 500;
-        }
-    </style>
+    .navbar {
+        background: #ffffff;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .card {
+        border: none;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .btn {
+        font-weight: 500;
+    }
+    
+    .form-control {
+        border: 1px solid #dee2e6;
+    }
+    
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+    }
+    
+    .table th {
+        border: none;
+        font-weight: 500;
+    }
+    .navbar-brand {
+    color: #0d6efd !important;
+    }
+
+    /* === DARK THEME ONLY - ADDED BELOW === */
+    [data-theme="dark"] body {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .navbar {
+        background: #1a1a1a !important;
+        border-bottom: 1px solid #333333 !important;
+    }
+
+    [data-theme="dark"] .card {
+        background: #1a1a1a !important;
+        border: 1px solid #333333 !important;
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .text-dark {
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .text-muted {
+        color: #cccccc !important;
+    }
+
+    [data-theme="dark"] .table {
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .table th {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .table td {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .form-control {
+        background-color: #1a1a1a !important;
+        border-color: #333333 !important;
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .nav-link {
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .bg-light {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .bg-white {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+    }
+    [data-theme="dark"] .navbar-brand {
+    color: #0d6efd !important; /* Keep it blue in dark mode too */
+}
+
+    /* === NOTIFICATIONS DROPDOWN STYLING === */
+    .notifications-dropdown {
+        position: relative;
+    }
+
+    .notifications-dropdown .dropdown-menu {
+        width: 380px;
+        max-height: 500px;
+        overflow-y: auto;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+    }
+
+    .notifications-dropdown .dropdown-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f8f9fa;
+        transition: background-color 0.2s ease;
+        color: #212529 !important; /* Force text color in light theme */
+    }
+
+    .notifications-dropdown .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .notification-unread {
+        background-color: rgba(13, 110, 253, 0.05) !important;
+        border-left: 3px solid #0d6efd;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-message {
+        font-size: 0.875rem;
+        margin-bottom: 4px;
+        color: #212529 !important; /* Force dark text in light theme */
+    }
+
+    .notification-time {
+        font-size: 0.75rem;
+        color: #6c757d !important; /* Force muted color */
+    }
+
+    .notification-actions {
+        margin-top: 8px;
+    }
+
+    /* === DARK THEME NOTIFICATION FIXES === */
+    [data-theme="dark"] .notifications-dropdown .dropdown-menu {
+        background: #2d2d2d !important;
+        border-color: #404040 !important;
+    }
+
+    [data-theme="dark"] .notifications-dropdown .dropdown-item {
+        color: #ffffff !important; /* White text in dark theme */
+        border-bottom-color: #404040 !important;
+        background-color: #2d2d2d !important;
+    }
+
+    [data-theme="dark"] .notifications-dropdown .dropdown-item:hover {
+        background-color: #3d3d3d !important;
+    }
+
+    [data-theme="dark"] .notification-message {
+        color: #ffffff !important; /* White text in dark theme */
+    }
+
+    [data-theme="dark"] .notification-time {
+        color: #cccccc !important; /* Light gray in dark theme */
+    }
+
+    [data-theme="dark"] .notification-unread {
+        background-color: rgba(13, 110, 253, 0.2) !important;
+        border-left: 3px solid #0d6efd !important;
+    }
+
+    [data-theme="dark"] .dropdown-header {
+        color: #ffffff !important;
+        background-color: #2d2d2d !important;
+        border-bottom-color: #404040 !important;
+    }
+
+    [data-theme="dark"] .dropdown-footer {
+        background-color: #2d2d2d !important;
+        border-top-color: #404040 !important;
+    }
+
+    [data-theme="dark"] .dropdown-footer .text-muted {
+        color: #cccccc !important;
+    }
+
+    /* === SURPRISE DESIGN TOUCH === */
+    .notification-badge-pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    .notification-item {
+        transition: all 0.3s ease;
+        border-radius: 6px;
+        margin: 2px 0;
+    }
+
+    .notification-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    [data-theme="dark"] .notification-item:hover {
+        box-shadow: 0 2px 8px rgba(255,255,255,0.1);
+    }
+</style>
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <a class="navbar-brand fw-semibold text-primary" href="/">
+            <a class="navbar-brand fw-semibold" href="/">
                 <i class="bi bi-house-gear"></i> ServiConnect
             </a>
             
-            <div class="navbar-nav ms-auto">
-                {% if session.get('role') == 'user' %}
-                    <a class="nav-link text-dark small fw-medium" href="{{ url_for('dashboards_bp.user_dashboard')}}">Dashboard</a>
-                    <a class="nav-link text-dark small fw-medium" href="/profile">Profile</a>
-                    <a class="nav-link text-dark small fw-medium" href="{{ url_for('auths_bp.logout')}}">Logout</a>
-                
-                {% elif session.get('role') == 'provider' %}
-                    <a class="nav-link text-dark small fw-medium" href="{{ url_for('dashboards_bp.provider_dashboard')}}">Dashboard</a>
-                    <a class="nav-link text-dark small fw-medium" href="/profile">Profile</a>
-                    <a class="nav-link text-dark small fw-medium" href="{{ url_for('auths_bp.logout')}}">Logout</a>
-                {% else %}
-                    <a class="nav-link text-dark small fw-medium" href="/login">Login</a>
-                    <a class="nav-link text-dark small fw-medium" href="/choose-registration">Register</a>
-                    <a class="nav-link text-dark small fw-medium" href="{{ url_for('auths_bp.logout')}}">Logout</a>
+            <div class="d-flex align-items-center">
+                <!-- Theme Toggle -->
+                <button class="btn btn-outline-secondary btn-sm me-3" id="themeToggle" title="Toggle theme">
+                    <i class="bi bi-moon-fill d-none"></i>
+                    <i class="bi bi-sun-fill"></i>
+                </button>
+
+                <!-- NOTIFICATIONS DROPDOWN - MOVED INSIDE NAVBAR -->
+                {% if session.get('user_id') %}
+                <div class="nav-item dropdown notifications-dropdown">
+                    <a class="nav-link dropdown-toggle position-relative" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell fs-5"></i>
+                        {% if g.unread_count > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge-pulse" style="font-size: 0.6rem;">
+                            {{ g.unread_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                    
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                            <h6 class="mb-0 fw-semibold">Notifications</h6>
+                            {% if g.unread_count > 0 %}
+                            <form action="{{ url_for('dashboards_bp.mark_all_asread') }}" method="POST" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Mark All Read</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="notification-list">
+                            {% if g.notifications %}
+                                {% for notification in g.notifications %}
+                                <div class="dropdown-item notification-item {% if not notification[3] %}notification-unread{% endif %}">
+                                    <div class="notification-content">
+                                        <div class="notification-message">{{ notification[1] }}</div>
+                                        <div class="notification-time">
+                                            <small>{{ notification[2].strftime('%b %d, %I:%M %p') if notification[2] else 'Recently' }}</small>
+                                        </div>
+                                        {% if not notification[3] %}
+                                        <div class="notification-actions mt-2">
+                                            <form action="{{ url_for('dashboards_bp.mark_as_read_single', notification_id=notification[0]) }}" method="POST" class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    <i class="bi bi-check-lg"></i> Mark Read
+                                                </button>
+                                            </form>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="dropdown-item text-center py-4">
+                                    <i class="bi bi-bell-slash text-muted fs-1 mb-2"></i>
+                                    <p class="text-muted mb-0">No notifications yet</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="dropdown-footer text-center p-2 border-top">
+                            <small class="text-muted">You have {{ g.unread_count }} unread notifications</small>
+                        </div>
+                    </div>
+                </div>
                 {% endif %}
+
+                <!-- Navigation Links -->
+                <div class="navbar-nav ms-3">
+                    {% if session.get('role') == 'user' %}
+                        <a class="nav-link small fw-medium" href="{{ url_for('dashboards_bp.user_dashboard')}}">Dashboard</a>
+                        <a class="nav-link small fw-medium" href="/profile">Profile</a>
+                        <a class="nav-link small fw-medium" href="{{ url_for('auths_bp.logout')}}">Logout</a>
+                    
+                    {% elif session.get('role') == 'provider' %}
+                        <a class="nav-link small fw-medium" href="{{ url_for('dashboards_bp.provider_dashboard')}}">Dashboard</a>
+                        <a class="nav-link small fw-medium" href="/profile">Profile</a>
+                        <a class="nav-link small fw-medium" href="{{ url_for('auths_bp.logout')}}">Logout</a>
+                    {% else %}
+                        <a class="nav-link small fw-medium" href="/login">Login</a>
+                        <a class="nav-link small fw-medium" href="/choose-registration">Register</a>
+                        <a class="nav-link small fw-medium" href="{{ url_for('auths_bp.logout')}}">Logout</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- ★★★ APPLE-STYLE FLASH MESSAGES ★★★ -->
+    <!-- Flash Messages -->
     <div class="flash-container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -123,9 +377,47 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Flash Messages JS -->
+    <!-- Theme Toggle JavaScript -->
     <script>
-    // Auto-remove flash messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('themeToggle');
+        const moonIcon = themeToggle.querySelector('.bi-moon-fill');
+        const sunIcon = themeToggle.querySelector('.bi-sun-fill');
+        
+        // Load saved theme or default to light
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        // Set initial icon
+        if (savedTheme === 'dark') {
+            moonIcon.classList.remove('d-none');
+            sunIcon.classList.add('d-none');
+        } else {
+            sunIcon.classList.remove('d-none');
+            moonIcon.classList.add('d-none');
+        }
+        
+        // Toggle theme on click
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            // Update theme
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update icon
+            if (newTheme === 'dark') {
+                moonIcon.classList.remove('d-none');
+                sunIcon.classList.add('d-none');
+            } else {
+                sunIcon.classList.remove('d-none');
+                moonIcon.classList.add('d-none');
+            }
+        });
+    });
+
+    // Flash Messages JS
     document.addEventListener('DOMContentLoaded', function() {
         const flashMessages = document.querySelectorAll('.flash-message');
         flashMessages.forEach(flash => {
