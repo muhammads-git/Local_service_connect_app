@@ -86,6 +86,7 @@ def user_login():
             session['user_id'] = user[0]  # create session 
             session['username'] = user[1]
             session['role'] = 'user' # save the role for later differences
+            session.permanent = True
             # flash
             flash('Successfully logged In!','success')
             return redirect(url_for('dashboards_bp.user_dashboard'))  # pending....
@@ -134,6 +135,7 @@ def provider_login():
             session['provider_id'] = provider[0]
             session['provider_name'] = provider[1]
             session['role'] = 'provider' 
+            session.permanent = True
 
             flash('Successfully logged In!','success')
             return redirect(url_for('dashboards_bp.provider_dashboard'))

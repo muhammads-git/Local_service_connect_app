@@ -36,9 +36,7 @@ def user_dashboard():
    
     # total bookings this user booked
    all_bookings = cursor.fetchone()[0]
-   print(all_bookings)
    cursor.close()
-
    
    return render_template('dashboards/user_dashboard.html',username=session['username'],service_providers_data=service_providers_data,all_bookings=all_bookings)
 

@@ -3,6 +3,7 @@ from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect
 from dotenv import load_dotenv
 import os
+from datetime import timedelta
 
 # Load .env once at the top
 load_dotenv()
@@ -49,9 +50,12 @@ def notifications():
 # creating app
 def create_app():
     
-    
     # Simple direct config - no separate config file
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
+    # Session 
+    app.config['SESSION_PERMANENT'] = True
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
+
     app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'localhost')
     app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
     app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', '')

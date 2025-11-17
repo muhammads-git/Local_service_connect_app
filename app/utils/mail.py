@@ -58,4 +58,3 @@ def create_notifcations(user_id,message):
     mysql.connection.commit()
     cursor.close()
 
-    print('Notification delivered to user!')
