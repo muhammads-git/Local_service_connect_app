@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+   {% extends 'base.html' %}
+   {% block content %}
+
+   <p>My Chats</p>
+   {% for job in chats_job %}
+   <div class="chat-item">
+      <p>Job #{{ job[0] }}</p>
+      <a method="GET" href="{{ url_for('dashboards_bp.user_chat_box', job_id=job[0]) }}" 
+         class="btn btn-primary">
+         Continue Chat
+      </a>
+   </div>
+   {% endfor %}
+   {% endblock %}
+</body>
+</html>

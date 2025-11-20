@@ -40,6 +40,103 @@ def user_dashboard():
    
    return render_template('dashboards/user_dashboard.html',username=session['username'],service_providers_data=service_providers_data,all_bookings=all_bookings)
 
+## start chat user
+@dashboards_bp.route('/start_chat/<int:job_id>',methods=['GET'])
+def start_chat(job_id):
+    # get provider id from bookings 
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT provider_id FROM bookings WHERE id = %s', (job_id,))
+    booking = cursor.fetchone()
+    
+    if not booking or booking[0] is None:
+        flash('Cannot start a chat, no provider is assigned to this job','info')
+        return redirect(url_for('dashboards_bp.user_dashboard'))
+    
+    receiver_id = booking[0] 
+    # print(receiver_id)
+
+    # get user id from session
+    sender_id = session.get('user_id')
+    # insert into table
+    cursor = mysql.connection.cursor()
+    cursor.execute(' INSERT INTO messages (receiver_id,sender_id,job_id,message) VALUES(%s,%s,%s,%s)',
+                   (receiver_id,sender_id,job_id,'Hello, I want to discuss this job'))
+    
+    flash('Message sent!','info')
+    # get customer name
+    customer_name = session.get('username')
+    # create notification for user
+    create_notifcations(sender_id,f'A new chat! {customer_name} wants to connect with you!')
+
+    return redirect(url_for('dashboards_bp.user_chat_box',job_id=job_id)) # chat boxxxxx pending
+
+@dashboards_bp.route('/user_chat_box/<int:job_id>',methods=['GET'])
+def user_chat_box(job_id):
+
+    # get sender_id
+    user_id = session.get('user_id')
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(' SELECT sender_id,message,created_at,is_read FROM messages WHERE job_id = %s ORDER BY created_at ASC',(job_id,)) 
+    messages = cursor.fetchall()
+    cursor.close()
+
+    # mark as read the messages 
+    cursor = mysql.connection.cursor()
+    cursor.execute(' UPDATE messages SET is_read = TRUE WHERE job_id=%s AND receiver_id = %s',(job_id,user_id))
+    mysql.connection.commit()
+    cursor.close()
+
+    # 
+    return render_template('dashboards/user_chat_box.html',messages=messages,job_id=job_id,user_id=user_id)
+
+# send message 
+@dashboards_bp.route('/send_message',methods=["POST"])
+def send_messages():
+    user_id = session.get('user_id')
+    job_id = request.form.get('job_id')
+    message_text = request.form['message']
+
+    # get provider id for this chat 
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT provider_id FROM bookings WHERE id = %s',(job_id,))
+    provider_id = cursor.fetchone()[0]
+    # case
+    if not provider_id:
+        flash('Cannot send message, No provider assigned to this job','info')
+        return redirect(url_for('dashboards_bp.user_dashboard'))
+    try:
+        # insert into messages
+        cursor = mysql.connection.cursor()
+        cursor.execute(' INSERT INTO messages (receiver_id,sender_id,job_id,message) VALUES(%s,%s,%s,%s) ',(provider_id,user_id,job_id,message_text,))
+        mysql.connection.commit()
+        cursor.close()
+        # create notification for provider
+        create_notifcations(user_id,'New message')
+
+    except Exception as e:
+        flash(f'Error {e} sending message, try again!','warning')
+    
+    # handle routes
+    return redirect(url_for('dashboards_bp.user_chat_box',job_id=job_id))
+
+# my chats route
+@dashboards_bp.route('/myChats',methods=['GET'])
+def myChats():
+    if 'user_id' not in session:
+        return redirect(url_for('auths_bp.user_login'))
+    
+    user_id = session.get('user_id')
+
+    # get chats 
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        'SELECT DISTINCT job_id FROM messages WHERE receiver_id = %s OR sender_id = %s'
+    ,(user_id,user_id))
+    chats_job = cursor.fetchall()
+    
+    return render_template('dashboards/my_chats.html',chats_job=chats_job)
+
 # mark as read single notification
 @dashboards_bp.route('/mark_as_read_single/<int:notification_id>',methods=['POST'])
 def mark_as_read_single(notification_id):
@@ -336,25 +433,16 @@ def accept_job(job_id):
     cursor.execute(' SELECT user_id FROM bookings WHERE id = %s',(job_id,))
     customer_id = cursor.fetchone()[0]
 
+    # provider name 
+    provider_name = session.get('provider_name')
+
     # send notification to user
-    create_notifcations(customer_id,'Great News! A provider accepted your request.')
+    create_notifcations(customer_id,f'Great News!Provider {provider_name} accepted your request.')
 
     return redirect(url_for('dashboards_bp.available_jobs'))
 
+# # provider chat box
+# @dashboards_bp.route('/chat_box/<int:job_id>',methods=['GET','POST'])
+# def chat_box(job_id):
+#     pass
 
-
-
-# @dashboards_bp.route('/reject_job/int:job_id')
-# def reject_job(job_id):
-
-#     cursor = mysql.connection.cursor()
-#     cursor.execute(' UPDATE bookings SET status ="accepted" WHERE id = %s ',(job_id))
-#     mysql.connection.commit()
-#     cursor.close()
-
-#     # Flash for your side
-#     flash('Booking Rejected','warning')
-
-#     # now notfiy users that booking is rejected
-
-#     return 'Rejected'
