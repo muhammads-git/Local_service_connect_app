@@ -111,13 +111,15 @@ def send_messages():
         cursor.execute(' INSERT INTO messages (receiver_id,sender_id,job_id,message) VALUES(%s,%s,%s,%s) ',(provider_id,user_id,job_id,message_text,))
         mysql.connection.commit()
         cursor.close()
+        # flash
+        flash('Sent!','success')
         # create notification for provider
         create_notifcations(user_id,'New message')
 
     except Exception as e:
-        flash(f'Error {e} sending message, try again!','warning')
+        flash(f'Error {e} sending message, try again!','danger')
     
-    # handle routes
+    # handle routes redirect to chat box
     return redirect(url_for('dashboards_bp.user_chat_box',job_id=job_id))
 
 # my chats route
@@ -157,7 +159,7 @@ def mark_all_asread():
         return redirect(url_for('auths_bp.user_login'))
     
     cursor = mysql.connection.cursor()
-    cursor.execute('UPDATE notifications SET is_read = TRUE WHERE user_id = %s',(session['user_id'],))
+    cursor.execute('UPDATE notifications SET is_read = TRUE WHERE recipient_id = %s',(session['user_id'],))
     mysql.connection.commit()
     cursor.close()
 
@@ -441,8 +443,90 @@ def accept_job(job_id):
 
     return redirect(url_for('dashboards_bp.available_jobs'))
 
-# # provider chat box
-# @dashboards_bp.route('/chat_box/<int:job_id>',methods=['GET','POST'])
-# def chat_box(job_id):
-#     pass
+################## PROVIDER CHAT SYSTEM 
+@dashboards_bp.route('/provider_chat_box<int:job_id>',methods=['GET'])
+def provider_chat_box(job_id):
+    if 'provider_id' not in session:
+        return redirect(url_for('auths_bp.provider_login'))
+    
+    # get provider id
+    receiver_id = session.get('provider_id')
 
+    # fetch messages from table messages to show in chat box
+    cursor = mysql.connection.cursor()
+    cursor.execute(' SELECT sender_id,message,created_at,is_read FROM messages WHERE job_id=%s',(job_id,))
+    messages = cursor.fetchall()
+    cursor.close()
+
+    # update messages to TRUE
+    cursor = mysql.connection.cursor()
+    cursor.execute(' UPDATE messages SET is_read = TRUE where job_id=%s AND receiver_id = %s',(job_id,receiver_id))
+    mysql.connection.commit()
+    cursor.close()
+
+    return render_template('dashboards/provider_chat_box.html', messages=messages,job_id=job_id,receiver_id=receiver_id)  # receiver is provider soo ==
+
+# send message route
+@dashboards_bp.route('/provider_send_messages',methods=['POST'])
+def provider_send_messages():
+    # provider id , job_id, message 
+    provider_id = session.get('provider_id')
+    job_id = request.form.get('job_id')
+    message_text = request.form['message']
+
+    # get user id from bookings table 
+    cursor = mysql.connection.cursor()
+    cursor.execute(' SELECT user_id FROM bookings WHERE job_id=%s',(job_id,))
+    user_id = cursor.fetchone()[0]
+
+    try:
+        # insert into messages
+        cursor = mysql.connection.cursor()
+        cursor.execute(' INSERT INTO messages (receiver_id,sender_id,job_id,message) VALUES(%s,%s,%s,%s)',(user_id,provider_id,job_id,message_text))
+        mysql.connection.commit()
+        cursor.close()
+        flash('Sent!','success')
+        # create notification
+        create_notifcations(provider_id,'New Message!')
+        
+    except Exception as e:
+        flash(f'Error {e} while sending this message','danger')
+
+    # handle route 
+    return redirect(url_for('dashboards_bp.provider_chat_box'))
+
+## mark all as read 
+@dashboards_bp.route('/provider_mark_all_read',methods=['POST'])
+def provider_mark_all_read():
+    # the notification provider got
+    if 'provider_id' not in session:
+        flash('login required!','warning')
+        return redirect(url_for('auths_bp.provider_login'))
+    cursor = mysql.connection.cursor()
+    cursor.execute(' UPDATE notifications SET is_read = TRUE WHERE recipient_id =%s',(session['provider_id'],))
+    mysql.connection.commit()
+    cursor.close()
+
+    return redirect(url_for('dashboards_bp.provider_dashboard'))
+
+@dashboards_bp.route('/provider_mark_one_read<int:notification_id>')
+def provider_mark_one_read(notification_id):
+    if 'provider_id' not in session:
+        flash('Login required!','warning')
+    
+    cursor = mysql.connection.cursor()
+    cursor.execute('UPDATE notifications SET is_read = TRUE WHERE id = %s AND recipient_id = %s',(notification_id,session['provider_id']))
+    mysql.connection.commit()
+    cursor.close()
+
+    return redirect(url_for('dashboards_bp.provider_dashboard'))
+
+@dashboards_bp.route('/provider_start_chat<int:notification_id>')
+def provider_start_chat(notification_id):
+    if 'provider_id' not in session:
+        return redirect(url_for('auths_bp.provider_login'))
+    # return render template
+    return render_template('dashboards/provider_chat_box.html')
+    
+    
+    

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+</head>
+<body>
+   {% extends 'base.html' %}
+   {% block content %}
+   <!-- content -->
+
+   <!-- user_chat.html -->
+   <div class="chat-container">
+       <div class="chat-header">
+           <h5>Chat about Job #{{ job_id }}</h5>
+       </div> 
+
+   <div class="chat-messages">
+      {% for msg in messages %}
+         <div class="message {% if msg[0] == user_id %}sent{% else %}received{% endif %}">
+             <p>{{ msg[1] }}</p>  <!-- message text -->
+             <small>{{ msg[2] }}</small>  <!-- timestamp -->
+         </div>
+      {% endfor %}
+    </div>
+<!-- send message route -->
+   <form method="POST" action="{{ url_for('dashboards_bp.send_messages') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="job_id" value="23">
+      <input type="text" name="message" placeholder="Type a message..." required>
+      <button type="submit">Reply</button>
+   </form>
+
+
+
+   {% endblock %}
+   
+</body>
+</html>

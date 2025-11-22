@@ -1,4 +1,4 @@
-from flask import Flask,g,render_template,redirect,session,url_for
+from flask import Flask,g,render_template,redirect,session,url_for,flash
 from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect
 from dotenv import load_dotenv
@@ -15,37 +15,25 @@ app = Flask(__name__)
 
 @app.before_request
 def notifications():
-   # look for notificatons
-      # notifications logic, when provider accepts notification it comes to db 
-   # we need to fetch notification table data , messages to see if there is any
-   # so we can show to user in dashboards
-   if 'user_id' in session:
+   if 'user_id' in session or 'provider_id' in session:
       cursor = mysql.connection.cursor()
-      
-      cursor.execute(' SELECT id, message, created_at, is_read FROM notifications WHERE user_id =%s ORDER by created_at DESC',(session['user_id'],))
+      # A or B
+      recipient_id = session.get('user_id') or session.get('provider_id')
+
+      cursor.execute(' SELECT id, message, created_at, is_read FROM notifications WHERE recipient_id =%s ORDER by created_at DESC',(recipient_id,))
       notifications = cursor.fetchall()
       cursor.close()
 
       # count unread
-      # count_notifications = sum(1 for notification in notifications)
       count = 0
       for notification in notifications:
-      #    notification[0] == message
-      # 1 == created at 
-      # 2 == is_read which will be 0 default
          if notification[3] == 0:
                count += 1
-
       unread_count = count
 
       # make available for all the routes
       g.unread_count = unread_count
       g.notifications = notifications
-   
-   else:
-       g.unread_count = 0
-       g.notifications = []
-
 
 # creating app
 def create_app():
