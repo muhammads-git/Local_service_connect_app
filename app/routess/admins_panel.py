@@ -74,7 +74,7 @@ def admin_login():
 
 
 @admins_bp.route('/admin_dashboard')
-@admin_required  # 👈 checking role if not admin not allowed!
+@admin_required  #  checking role if not admin not allowed!
 def admin_dashboard():
     # fetch user and provider counts
     cursor = mysql.connection.cursor()

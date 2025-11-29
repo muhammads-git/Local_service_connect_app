@@ -83,6 +83,8 @@ def user_login():
       if user:
          hash_password = user[3] # index 3 means col 3 is passwords col
          if bcyrpt.check_password_hash(hash_password,user_password):
+            session.pop('provider_id',None) # clear provider session if there are 
+            session.pop('role',None) # clear role as well
             session['user_id'] = user[0]  # create session 
             session['username'] = user[1]
             session['role'] = 'user' # save the role for later differences
@@ -132,6 +134,8 @@ def provider_login():
       if provider:
          hash_password=provider[3] # col 3 is passwords col
          if bcyrpt.check_password_hash(hash_password,provider_password):
+            session.pop('user_id',None) # clear previous user sessions
+            session.pop('role',None)
             session['provider_id'] = provider[0]
             session['provider_name'] = provider[1]
             session['role'] = 'provider' 

@@ -68,11 +68,11 @@
                     </div>
                     
                     <!-- Action Buttons -->
-                    {% if selected_job[3] == 'pending' %}
+                    {% if selected_job[3] == 'available' %}
                     <div class="row mt-3">
                         <div class="col-12">
                             <div class="d-flex gap-2">
-                                <form action="{{ url_for('dashboards_bp.accept_job', job_id=selected_job[0]) }}" method="GET" class="d-inline">
+                                <form action="{{ url_for('dashboards_bp.accept_job', job_id=selected_job[0]) }}" method="POST" class="d-inline">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" class="btn btn-success btn-sm">
                                         <i class="bi bi-check-lg"></i> Accept Job
@@ -193,8 +193,8 @@
                                         </div>
                                     </td>
                                     <td class="py-2 px-3">
-                                        {% if booking[3] == 'pending' %}
-                                            <span class="badge status-badge status-pending">Pending</span>
+                                        {% if booking[3] == 'available' %}
+                                            <span class="badge status-badge status-pending">Available</span>
                                         {% elif booking[3] == 'accepted' %}
                                             <span class="badge status-badge status-accepted">Accepted</span>
                                         {% elif booking[3] == 'in_progress' %}

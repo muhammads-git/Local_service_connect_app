@@ -117,8 +117,8 @@
                                     <td class="py-2 px-3 small">{{ booking[1] }}</td>
                                     <td class="py-2 px-3 small text-muted">{{ booking[2] }}</td>
                                     <td class="py-2 px-3">
-                                        {% if booking[3] == 'pending' %}
-                                            <span class="badge status-badge status-pending">Pending</span>
+                                        {% if booking[3] == 'available' %}
+                                            <span class="badge status-badge status-pending">Available</span>
                                         {% elif booking[3] == 'accepted' %}
                                             <span class="badge status-badge status-accepted">Accepted</span>
                                         {% elif booking[3] == 'in_progress' %}
@@ -134,7 +134,7 @@
 
                                     <td class="py-2 px-3">
                                         <div class="d-flex gap-1 justify-content-center">
-                                            {% if booking[3] == 'pending' %}
+                                            {% if booking[3] == 'available' %}
                                                 <!-- Accept Button with Animation -->
                                                 <form action="{{ url_for('dashboards_bp.accept_booking', booking_id=booking[4]) }}" method="POST" class="d-inline">
                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

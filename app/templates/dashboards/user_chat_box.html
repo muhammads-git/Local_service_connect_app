@@ -19,6 +19,7 @@
    <div class="chat-messages">
       {% for msg in messages %}
          <div class="message {% if msg[0] == user_id %}sent{% else %}received{% endif %}">
+             <small>{{ msg[0] }}</small>  
              <p>{{ msg[1] }}</p>  <!-- message text -->
              <small>{{ msg[2] }}</small>  <!-- timestamp -->
          </div>
@@ -27,7 +28,7 @@
 <!-- send message route -->
    <form method="POST" action="{{ url_for('dashboards_bp.send_messages') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <input type="hidden" name="job_id" value="23">
+      <input type="hidden" name="job_id" value="{{ job_id }}">
       <input type="text" name="message" placeholder="Type a message..." required>
       <button type="submit">Reply</button>
    </form>

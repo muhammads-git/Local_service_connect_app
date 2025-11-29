@@ -14,26 +14,27 @@ csrf = CSRFProtect()
 app = Flask(__name__)
 
 @app.before_request
-def notifications():
+def notifications():    
    if 'user_id' in session or 'provider_id' in session:
       cursor = mysql.connection.cursor()
-      # A or B
+      # User or Provider
       recipient_id = session.get('user_id') or session.get('provider_id')
 
-      cursor.execute(' SELECT id, message, created_at, is_read FROM notifications WHERE recipient_id =%s ORDER by created_at DESC',(recipient_id,))
+      cursor.execute(' SELECT id, message, created_at, is_read, job_id FROM notifications WHERE recipient_id =%s ORDER by created_at DESC',(recipient_id,))
       notifications = cursor.fetchall()
       cursor.close()
 
       # count unread
       count = 0
       for notification in notifications:
-         if notification[3] == 0:
-               count += 1
-      unread_count = count
+         if notification[3] == 0:   # unread
+               count += 1   # count + 1 
+      unread_count = count  # save into var
 
       # make available for all the routes
       g.unread_count = unread_count
       g.notifications = notifications
+                  
 
 # creating app
 def create_app():
