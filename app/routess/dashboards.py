@@ -70,7 +70,7 @@ def start_chat():
     # get customer name
     customer_name = session.get('username')
     # create notification for user
-    create_notifcations(receiver_id,f'{customer_name} wants to reply back, be patient!')
+    create_notifcations(receiver_id,f'New message from {customer_name}!')
 
     return redirect(url_for('dashboards_bp.user_chat_box', job_id=job_id)) # chat boxxxxx pending
 
@@ -531,6 +531,22 @@ def provider_start_chat():
         return redirect(url_for('auths_bp.provider_login'))
     # // get job_id from session memory
     job_id = session.get('last_job')
+
+    # get user id 
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT user_id FROM bookings WHERE id = %s',(job_id,))
+    user_id = cursor.fetchone()[0]
+
+    if user_id and user_id[0] is None:
+        flash('No user found for this job!','warning')
+    
+    # get provider name from session
+    provider_name = session.get('provider_name')
+    if provider_name is None:
+        provider_name = 'Unknown'
+
+    # create notification
+    create_notifcations(user_id,f'New message from {provider_name}!')
 
     return redirect(url_for('dashboards_bp.provider_chat_box',job_id=job_id))
 
