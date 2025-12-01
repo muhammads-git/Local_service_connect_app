@@ -85,7 +85,7 @@ def user_login():
          if bcyrpt.check_password_hash(hash_password,user_password):
             session.pop('provider_id',None) # clear provider session if there are 
             session.pop('role',None) # clear role as well
-            session['user_id'] = user[0]  # create session 
+            session['user_id'] = user[0]  # save id
             session['username'] = user[1]
             session['role'] = 'user' # save the role for later differences
             session.permanent = True

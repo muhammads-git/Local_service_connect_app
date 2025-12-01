@@ -26,7 +26,7 @@
       {% endfor %}
     </div>
 <!-- send message route -->
-   <form method="POST" action="{{ url_for('dashboards_bp.send_messages') }}">
+   <form method="POST" action="{{ url_for('dashboards_bp.provider_send_messages') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="job_id" value="{{ job_id }}">
       <input type="text" name="message" placeholder="Type a message..." required>

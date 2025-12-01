@@ -289,7 +289,7 @@
                                                 </button>
                                             </form>
                                             <!-- start chat button  -->
-                                            <form action="{{ url_for('dashboards_bp.start_chat', job_id=26 ) }}" method="GET" class="d-inline">
+                                            <form action="{{ url_for('dashboards_bp.start_chat') }}" method="GET" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <button type="submit" class="btn btn-sm btn-success">
                                                     <i class="bi bi-check-lg"></i> Start Chat
@@ -359,12 +359,13 @@
                                                 </button>
                                             </form>
                                             <!-- start chat button  -->
-                                            <form action="{{ url_for('dashboards_bp.provider_start_chat', job_id=56) }}" method="GET" class="d-inline">
+                                            <form action="{{ url_for('dashboards_bp.provider_start_chat') }}" method="GET" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <button type="submit" class="btn btn-sm btn-success">
                                                     <i class="bi bi-check-lg"></i> Start Chat
                                                 </button>
                                             </form>
+                          
                                         </div>
                                         {% endif %}
                                     </div>
