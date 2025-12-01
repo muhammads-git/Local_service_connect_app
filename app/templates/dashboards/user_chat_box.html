@@ -1,37 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* === CHAT STYLES THAT MATCH YOUR APP === */
+        .chat-container {
+            max-width: 700px;
+            margin: 30px auto;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 70vh;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .chat-header {
+            background: #0d6efd;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            max-width: 70%;
+        }
+        
+        .sent {
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        .received {
+            margin-right: auto;
+        }
+        
+        .message-bubble {
+            padding: 10px 15px;
+            border-radius: 18px;
+            display: inline-block;
+            word-wrap: break-word;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        
+        .sent .message-bubble {
+            background: #0d6efd;
+            color: white;
+        }
+        
+        .received .message-bubble {
+            background: white;
+            border: 1px solid #dee2e6;
+            color: #212529;
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 5px;
+            font-weight: 400;
+        }
+        
+        .chat-input {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            background: white;
+            color: #212529;
+            font-size: 0.95rem;
+        }
+        
+        .message-input:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+            outline: none;
+        }
+        
+        .send-btn {
+            background: #0d6efd;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: background-color 0.2s;
+        }
+        
+        .send-btn:hover {
+            background: #0b5ed7;
+        }
+        
+        /* === DARK THEME OVERRIDES === */
+        [data-theme="dark"] .chat-container {
+            background: #1a1a1a;
+            border-color: #333333;
+            color: #ffffff;
+        }
+        
+        [data-theme="dark"] .chat-header {
+            background: #0d6efd; /* Keep blue in dark mode */
+            border-color: rgba(255,255,255,0.1);
+        }
+        
+        [data-theme="dark"] .chat-messages {
+            background: #121212;
+        }
+        
+        [data-theme="dark"] .received .message-bubble {
+            background: #2d2d2d;
+            border-color: #404040;
+            color: #ffffff; /* White text in dark mode */
+        }
+        
+        [data-theme="dark"] .sent .message-bubble {
+            background: #0d6efd; /* Keep blue in dark mode */
+            color: white;
+        }
+        
+        [data-theme="dark"] .message-time {
+            color: #cccccc;
+        }
+        
+        [data-theme="dark"] .chat-input {
+            background: #1a1a1a;
+            border-color: #333333;
+        }
+        
+        [data-theme="dark"] .message-input {
+            background: #2d2d2d;
+            border-color: #404040;
+            color: #ffffff;
+        }
+        
+        [data-theme="dark"] .message-input:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        
+        [data-theme="dark"] .send-btn {
+            background: #0d6efd; /* Keep blue in dark mode */
+        }
+        
+        [data-theme="dark"] .send-btn:hover {
+            background: #0b5ed7;
+        }
+        
+        /* Scrollbar styling */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        
+        [data-theme="dark"] .chat-messages::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+        
+        [data-theme="dark"] .chat-messages::-webkit-scrollbar-thumb {
+            background: #555;
+        }
+    </style>
 </head>
 <body>
-   {% extends 'base.html' %}
-   {% block content %}
-   <!-- content -->
-
-   <!-- user_chat.html -->
-   <div class="chat-container">
-       <div class="chat-header">
-           <h5>Chat about Job #{{ job_id }}</h5>
-       </div> 
-
-   <div class="chat-messages">
-      {% for msg in messages %}
-         <div class="message {% if msg[0] == user_id %}sent{% else %}received{% endif %}">
-             <small>{{ msg[0] }}</small>  
-             <p>{{ msg[1] }}</p>  <!-- message text -->
-             <small>{{ msg[2] }}</small>  <!-- timestamp -->
-         </div>
-      {% endfor %}
+    {% extends 'base.html' %}
+    {% block content %}
+    
+    <div class="chat-container">
+        <div class="chat-header">
+            <h5>Chat about Job #{{ job_id }}</h5>
+            <small>With {% if session.role == 'user' %}Service Provider{% else %}Client{% endif %}</small>
+        </div>
+        
+        <div class="chat-messages" id="messageContainer">
+            {% for msg in messages %}
+            <div class="message {% if msg[0] == session.user_id %}sent{% else %}received{% endif %}">
+                <div class="message-bubble">
+                    {{ msg[1] }}
+                </div>
+                <div class="message-time">
+                    {{ msg[2].strftime('%I:%M %p') }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <form method="POST" action="{{ url_for('dashboards_bp.send_messages') }}" class="chat-input">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="job_id" value="{{ job_id }}">
+            <input type="text" name="message" class="message-input" placeholder="Type your message..." required>
+            <button type="submit" class="send-btn">Send</button>
+        </form>
     </div>
-<!-- send message route -->
-   <form method="POST" action="{{ url_for('dashboards_bp.send_messages') }}">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <input type="hidden" name="job_id" value="{{ job_id }}">
-      <input type="text" name="message" placeholder="Type a message..." required>
-      <button type="submit">Reply</button>
-   </form>
-   {% endblock %}
+    
+    <script>
+        // Simple scroll to bottom on load
+        window.onload = function() {
+            const container = document.getElementById('messageContainer');
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
+        };
+        
+        // Keep input focused
+        document.querySelector('.message-input')?.focus();
+    </script>
+    
+    {% endblock %}
 </body>
 </html>

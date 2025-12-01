@@ -44,33 +44,33 @@ def user_dashboard():
 @dashboards_bp.route('/start_chat',methods=['GET'])
 def start_chat():
     job_id = session.get('last_job')
-    if job_id:
-        # get provider id from bookings 
-        cursor = mysql.connection.cursor()
-        cursor.execute('SELECT provider_id FROM bookings WHERE id = %s', (job_id,))
-        booking = cursor.fetchone()
-    else:
-        flash(f'{job_id} error!','warning')
+    # if job_id:
+    #     # get provider id from bookings 
+    #     cursor = mysql.connection.cursor()
+    #     cursor.execute('SELECT provider_id FROM bookings WHERE id = %s', (job_id,))
+    #     booking = cursor.fetchone()
+    # else:
+    #     flash(f'{job_id} error!','warning')
 
-    if booking[0] is None:
-        flash('Cannot start a chat, no provider is assigned to this job','info')
-        return redirect(url_for('dashboards_bp.user_dashboard'))
+    # if booking[0] is None:
+    #     flash('Cannot start a chat, no provider is assigned to this job','info')
+    #     return redirect(url_for('dashboards_bp.user_dashboard'))
     
-    receiver_id = booking[0] 
+    # receiver_id = booking[0] 
 
-    # get user id from session
-    sender_id = session.get('user_id')
-    # 
-    # insert into table
-    cursor = mysql.connection.cursor()
-    cursor.execute(' INSERT INTO messages (receiver_id,sender_id,job_id,message) VALUES(%s,%s,%s,%s)',
-                   (receiver_id,sender_id,job_id,'Hello, Lets discuss this job'))
+    # # get user id from session
+    # sender_id = session.get('user_id')
+    # # 
+    # # insert into table
+    # cursor = mysql.connection.cursor()
+    # cursor.execute(' INSERT INTO messages (receiver_id,sender_id,job_id,message) VALUES(%s,%s,%s,%s)',
+    #                (receiver_id,sender_id,job_id,'Hello, Lets discuss this job'))
     
-    flash('Message sent!','info')
+    # flash('Message sent!','info')
     # get customer name
-    customer_name = session.get('username')
+    # customer_name = session.get('username')
     # create notification for user
-    create_notifcations(receiver_id,f'New message from {customer_name}!')
+    # create_notifcations(receiver_id,f'New message from {customer_name}!')
 
     return redirect(url_for('dashboards_bp.user_chat_box', job_id=job_id)) # chat boxxxxx pending
 
@@ -85,7 +85,6 @@ def user_chat_box():
     cursor.execute(' SELECT sender_id,message,created_at,is_read FROM messages WHERE job_id = %s ORDER BY created_at ASC',(job_id,)) 
     messages = cursor.fetchall()
     cursor.close()
-    print(messages[0])
 
     # mark as read the messages 
     cursor = mysql.connection.cursor()
@@ -100,7 +99,6 @@ def user_chat_box():
 def send_messages():
     user_id = session.get('user_id')
     job_id = session.get('last_job')
-    print(user_id)
     message_text = request.form['message']
 
     # get provider id for this chat 
@@ -529,24 +527,24 @@ def provider_mark_one_read(notification_id):
 def provider_start_chat():
     if 'provider_id' not in session:
         return redirect(url_for('auths_bp.provider_login'))
-    # // get job_id from session memory
+    # # // get job_id from session memory
     job_id = session.get('last_job')
 
-    # get user id 
-    cursor = mysql.connection.cursor()
-    cursor.execute('SELECT user_id FROM bookings WHERE id = %s',(job_id,))
-    user_id = cursor.fetchone()[0]
+    # # get user id 
+    # cursor = mysql.connection.cursor()
+    # cursor.execute('SELECT user_id FROM bookings WHERE id = %s',(job_id,))
+    # user_id = cursor.fetchone()[0]
 
-    if user_id and user_id[0] is None:
-        flash('No user found for this job!','warning')
+    # if user_id and user_id[0] is None:
+    #     flash('No user found for this job!','warning')
     
-    # get provider name from session
-    provider_name = session.get('provider_name')
-    if provider_name is None:
-        provider_name = 'Unknown'
+    # # get provider name from session
+    # provider_name = session.get('provider_name')
+    # if provider_name is None:
+    #     provider_name = 'Unknown'
 
     # create notification
-    create_notifcations(user_id,f'New message from {provider_name}!')
+    # create_notifcations(user_id,f'New message from {provider_name}!')
 
     return redirect(url_for('dashboards_bp.provider_chat_box',job_id=job_id))
 
