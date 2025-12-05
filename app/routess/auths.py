@@ -136,6 +136,7 @@ def provider_login():
          if bcyrpt.check_password_hash(hash_password,provider_password):
             session.pop('user_id',None) # clear previous user sessions
             session.pop('role',None)
+            
             session['provider_id'] = provider[0]
             session['provider_name'] = provider[1]
             session['role'] = 'provider' 

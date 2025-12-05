@@ -20,14 +20,14 @@ def notifications():
       # User or Provider
       recipient_id = session.get('user_id') or session.get('provider_id')
 
-      cursor.execute(' SELECT id, message, created_at, is_read, job_id FROM notifications WHERE recipient_id =%s ORDER by created_at DESC',(recipient_id,))
+      cursor.execute(' SELECT DISTINCT(job_id), id, message, created_at, is_read FROM notifications WHERE recipient_id =%s ORDER by created_at DESC',(recipient_id,))
       notifications = cursor.fetchall()
       cursor.close()
 
       # count unread
       count = 0
       for notification in notifications:
-         if notification[3] == 0:   # unread
+         if notification[4] == 0:   # unread
                count += 1   # count + 1 
       unread_count = count  # save into var
 

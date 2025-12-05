@@ -103,8 +103,9 @@ def send_messages():
 
     # get provider id for this chat 
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT provider_id FROM bookings WHERE id = %s',(job_id,))
+    cursor.execute(' SELECT provider_id FROM bookings WHERE id = %s',(job_id,))
     provider_id = cursor.fetchone()[0]
+    
     # case
     if not provider_id or provider_id is None:
         flash('Cannot send message, No provider assigned to this job','info')
@@ -118,7 +119,7 @@ def send_messages():
         # flash
         flash('Sent!','success')
         # create notification for provider
-        create_notifcations(provider_id,'New message')
+        create_notifcations(provider_id,job_id,'New message')
 
     except Exception as e:
         flash(f'Error {e} sending message, try again!','danger')
@@ -150,7 +151,7 @@ def mark_as_read_single(notification_id):
         return redirect(url_for('auths_bp.user_login'))
     
     cursor = mysql.connection.cursor()
-    cursor.execute(' UPDATE notifications SET is_read = TRUE WHERE id =%s AND user_id =%s',(notification_id,session['user_id']))
+    cursor.execute(' UPDATE notifications SET is_read = TRUE WHERE id =%s AND recipient_id =%s',(notification_id,session['user_id']))
     mysql.connection.commit()
     cursor.close()
 
@@ -431,16 +432,15 @@ def accept_job(job_id):
     cursor = mysql.connection.cursor()
     cursor.execute(' SELECT user_id FROM bookings WHERE id = %s',(job_id,))
     customer_id = cursor.fetchone()[0]
-
     # provider name 
     provider_name = session.get('provider_name')
 
     # send notification to user
-    create_notifcations(customer_id,f'A Provider {provider_name} accepted your request.')
+    create_notifcations(customer_id,job_id,f'A Provider {provider_name} accepted your request.')
 
     return redirect(url_for('dashboards_bp.provider_chat_box',job_id=job_id))
 
-################## PROVIDER CHAT SYSTEM 
+## PROVIDER CHAT SYSTEM 
 @dashboards_bp.route('/provider_chat_box',methods=['GET'])
 def provider_chat_box():
     if 'provider_id' not in session:
@@ -488,7 +488,7 @@ def provider_send_messages():
         cursor.close()
         flash('Sent!','success')
         # create notification
-        create_notifcations(user_id,'New Message!')
+        create_notifcations(user_id,job_id,'New Message!')
         
     except Exception as e:
         flash(f'Error {e} while sending this message','danger')
@@ -511,7 +511,7 @@ def provider_mark_all_read():
 
     return redirect(url_for('dashboards_bp.provider_dashboard'))
 
-@dashboards_bp.route('/provider_mark_one_read<int:notification_id>')
+@dashboards_bp.route('/provider_mark_one_read<int:notification_id>',methods=['POST'])
 def provider_mark_one_read(notification_id):
     if 'provider_id' not in session:
         flash('Login required!','warning')
