@@ -20,7 +20,7 @@ def notifications():
       # User or Provider
       recipient_id = session.get('user_id') or session.get('provider_id')
 
-      cursor.execute(' SELECT DISTINCT(job_id), id, message, created_at, is_read FROM notifications WHERE recipient_id =%s ORDER by created_at DESC',(recipient_id,))
+      cursor.execute(' SELECT job_id, id, message, created_at, is_read FROM notifications WHERE recipient_id =%s ORDER by created_at DESC',(recipient_id,))
       notifications = cursor.fetchall()
       cursor.close()
 
