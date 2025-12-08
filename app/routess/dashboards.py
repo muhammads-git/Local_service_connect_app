@@ -41,9 +41,9 @@ def user_dashboard():
    return render_template('dashboards/user_dashboard.html',username=session['username'],service_providers_data=service_providers_data,all_bookings=all_bookings)
 
 ## start chat user
-@dashboards_bp.route('/start_chat',methods=['GET'])
-def start_chat():
-    job_id = session.get('last_job')
+@dashboards_bp.route('/start_chat/<int:job_id>',methods=['GET'])
+def start_chat(job_id):
+    
     # if job_id:
     #     # get provider id from bookings 
     #     cursor = mysql.connection.cursor()
@@ -74,12 +74,14 @@ def start_chat():
 
     return redirect(url_for('dashboards_bp.user_chat_box', job_id=job_id)) # chat boxxxxx pending
 
-@dashboards_bp.route('/user_chat_box',methods=['GET'])
-def user_chat_box():
+@dashboards_bp.route('/user_chat_box/<int:job_id>',methods=['GET'])
+def user_chat_box(job_id):
     # get sender_id
     user_id = session.get('user_id')
+
     # get job_id
-    job_id = session.get('last_job')
+    # job_id = session.get('last_job')
+    print(job_id)
 
     cursor = mysql.connection.cursor()
     cursor.execute(' SELECT sender_id,message,created_at,is_read FROM messages WHERE job_id = %s ORDER BY created_at ASC',(job_id,)) 
@@ -98,28 +100,30 @@ def user_chat_box():
 @dashboards_bp.route('/send_message',methods=["POST"])
 def send_messages():
     user_id = session.get('user_id')
-    job_id = session.get('last_job')
+    # job_id = session.get('last_job')
+    job_id = request.form.get('job_id')
     message_text = request.form['message']
 
     # get provider id for this chat 
     cursor = mysql.connection.cursor()
     cursor.execute(' SELECT provider_id FROM bookings WHERE id = %s',(job_id,))
-    provider_id = cursor.fetchone()[0]
+    provider_id = cursor.fetchone()
     
     # case
-    if not provider_id or provider_id is None:
+    if not provider_id or provider_id[0] is None:
         flash('Cannot send message, No provider assigned to this job','info')
         return redirect(url_for('dashboards_bp.user_dashboard'))
+    
     try:
         # insert into messages
         cursor = mysql.connection.cursor()
-        cursor.execute('INSERT INTO messages (receiver_id,sender_id,job_id,message) VALUES(%s,%s,%s,%s) ',(provider_id,user_id,job_id,message_text,))
+        cursor.execute('INSERT INTO messages (receiver_id,sender_id,job_id,message) VALUES(%s,%s,%s,%s) ',(provider_id[0],user_id,job_id,message_text,))
         mysql.connection.commit()
         cursor.close()
         # flash
         flash('Sent!','success')
         # create notification for provider
-        create_notifcations(provider_id,job_id,'New message')
+        create_notifcations(provider_id[0],job_id,'New message')
 
     except Exception as e:
         flash(f'Error {e} sending message, try again!','danger')
@@ -441,16 +445,16 @@ def accept_job(job_id):
     return redirect(url_for('dashboards_bp.provider_chat_box',job_id=job_id))
 
 ## PROVIDER CHAT SYSTEM 
-@dashboards_bp.route('/provider_chat_box',methods=['GET'])
-def provider_chat_box():
+@dashboards_bp.route('/provider_chat_box/<int:job_id>',methods=['GET'])
+def provider_chat_box(job_id):
     if 'provider_id' not in session:
         return redirect(url_for('auths_bp.provider_login'))
     
     # get provider id
     receiver_id = session.get('provider_id')
     # get job_id
-    job_id = session.get('last_job')
-
+    # job_id = session.get('last_job')
+# 
     # fetch messages from table messages to show in chat box
     cursor = mysql.connection.cursor()
     cursor.execute(' SELECT sender_id,message,created_at,is_read FROM messages WHERE job_id=%s',(job_id,))
@@ -471,7 +475,8 @@ def provider_send_messages():
     # provider id , job_id, message 
     provider_id = session.get('provider_id')
     # // get job id from session
-    job_id = session.get('last_job')
+    # job_id = session.get('last_job')
+    job_id = request.form.get('job_id')
     # // get message from url <form></form>
     message_text = request.form['message']
 
@@ -523,28 +528,10 @@ def provider_mark_one_read(notification_id):
 
     return redirect(url_for('dashboards_bp.provider_dashboard'))
 
-@dashboards_bp.route('/provider_start_chat',methods=['GET'])
-def provider_start_chat():
+@dashboards_bp.route('/provider_start_chat/<int:job_id>', methods=["GET"])
+def provider_start_chat(job_id):
     if 'provider_id' not in session:
         return redirect(url_for('auths_bp.provider_login'))
-    # # // get job_id from session memory
-    job_id = session.get('last_job')
-
-    # # get user id 
-    # cursor = mysql.connection.cursor()
-    # cursor.execute('SELECT user_id FROM bookings WHERE id = %s',(job_id,))
-    # user_id = cursor.fetchone()[0]
-
-    # if user_id and user_id[0] is None:
-    #     flash('No user found for this job!','warning')
-    
-    # # get provider name from session
-    # provider_name = session.get('provider_name')
-    # if provider_name is None:
-    #     provider_name = 'Unknown'
-
-    # create notification
-    # create_notifcations(user_id,f'New message from {provider_name}!')
 
     return redirect(url_for('dashboards_bp.provider_chat_box',job_id=job_id))
 
