@@ -500,7 +500,7 @@ def provider_send_messages():
         print('Error insertingggg.....')
 
     # handle route 
-    return redirect(url_for('dashboards_bp.provider_chat_box'))
+    return redirect(url_for('dashboards_bp.provider_chat_box',job_id=job_id))
 
 ## mark all as read 
 @dashboards_bp.route('/provider_mark_all_read',methods=['POST'])

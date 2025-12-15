@@ -275,9 +275,11 @@
                                 {% for notification in g.notifications %}
                                 <div class="dropdown-item notification-item {% if not notification[3] %}notification-unread{% endif %}">
                                     <div class="notification-content">
-                                        <div class="notification-message">{{ notification[2] }}</div>
+                                        <div class="notification-message">
+                                            <small>{{ notification[2].strftime('%b %d, %I:%M %p') if notification[3] else 'Recently' }}</small>
+                                            </div>
                                         <div class="notification-time">
-                                            <small>{{ notification[3].strftime('%b %d, %I:%M %p') if notification[3] else 'Recently' }}</small>
+                                            {{ notification[3]}}
                                         </div>
                                         {% if notification[0] %}
                                                                                 <!-- start chat button  -->
@@ -292,33 +294,38 @@
                                             <button disabled>NO JOB ID</button>
                                         {% endif %}
 
-                                        {% if not notification[4] %}
+
+                                        {% for data in g.resultIsRead %}
                                         <div class="notification-actions mt-2">
+                                            {% if not data[3] %}
                                             <form action="{{ url_for('dashboards_bp.mark_as_read_single', notification_id=notification[1]) }}" method="POST" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <button type="submit" class="btn btn-sm btn-success">
                                                     <i class="bi bi-check-lg"></i> Mark Read
                                                 </button>
                                             </form>
+                                            {% endif %}
+
                                         </div>
-                                        {% endif %}
+                                        {% endfor %}
                                     </div>
-                                </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="dropdown-item text-center py-4">
-                                    <i class="bi bi-bell-slash text-muted fs-1 mb-2"></i>
-                                    <p class="text-muted mb-0">No notifications yet</p>
-                                </div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="dropdown-footer text-center p-2 border-top">
-                            <small class="text-muted">You have {{ g.unread_count }} unread notifications</small>
+                                        
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="dropdown-item text-center py-4">
+                                        <i class="bi bi-bell-slash text-muted fs-1 mb-2"></i>
+                                        <p class="text-muted mb-0">No notifications yet</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="dropdown-footer text-center p-2 border-top">
+                                <small class="text-muted">You have {{ g.unread_count }} unread notifications</small>
+                            </div>
                         </div>
                     </div>
-                </div>
-                {% endif %}
+                    {% endif %}
 
                 <!-- provider side notification bar -->
 
@@ -350,9 +357,9 @@
                                 {% for notification in g.notifications %}
                                 <div class="dropdown-item notification-item {% if not notification[3] %}notification-unread{% endif %}">
                                     <div class="notification-content">
-                                        <div class="notification-message">{{ notification[2] }}</div>
+                                        <div class="notification-message"><small>{{ notification[2].strftime('%b %d, %I:%M %p') if notification[3] else 'Recently' }}</small></div>
                                         <div class="notification-time">
-                                            <small>{{ notification[3].strftime('%b %d, %I:%M %p') if notification[3] else 'Recently' }}</small>
+                                            {{ notification[3] }}
                                         </div>
                                         {% if notification[0] %}
                                             <!-- start chat button  -->
@@ -366,17 +373,19 @@
                                         {% else %}
                                             <button disabled>NO JOB ID</button>
                                         {% endif %}
-
-                                        {% if not notification[4] %}
+                                        
+                                        {% for data in g.resultIsRead %}
                                         <div class="notification-actions mt-2">
+                                            {% if not data[3] %}
                                             <form action="{{ url_for('dashboards_bp.provider_mark_one_read', notification_id=notification[1]) }}" method="POST" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <button type="submit" class="btn btn-sm btn-success">
                                                     <i class="bi bi-check-lg"></i> Mark Read
                                                 </button>
                                             </form>
+                                            {% endif %}
                                         </div>
-                                        {% endif %}
+                                        {% endfor %}
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -389,7 +398,7 @@
                         </div>
                         
                         <div class="dropdown-footer text-center p-2 border-top">
-                            <small class="text-muted">You have {{ g.unread_count }} unread notifications</small>
+                            <small class="text-muted">You have {{ g.unread_count }} unread messages</small>
                         </div>
                     </div>
                 </div>

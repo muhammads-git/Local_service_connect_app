@@ -19,21 +19,48 @@ def notifications():
       cursor = mysql.connection.cursor()
       # User or Provider
       recipient_id = session.get('user_id') or session.get('provider_id')
+      
+      try:
+         cursor.execute(""" SELECT
+            job_id,  
+            COUNT(*) as message_count, 
+            MAX(created_at) as latest_time, 
+            GROUP_CONCAT(message SEPARATOR ' | ') as messages_combined
+            FROM notifications 
+            WHERE recipient_id = %s 
+            GROUP BY job_id
+            ORDER BY latest_time DESC """ ,(recipient_id,))
+         notifications = cursor.fetchall()
+      except Exception as e:
+         flash(f"error {e} occured, try again!",'warning')
 
-      cursor.execute(' SELECT job_id, id, message, created_at, is_read FROM notifications WHERE recipient_id =%s ORDER by created_at DESC',(recipient_id,))
-      notifications = cursor.fetchall()
-      cursor.close()
+      # debugg logg # 1
+      for i,each in enumerate(notifications):
+         print(f"{i}: Data ({each[3]})") 
+      print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
 
-      # count unread
+      # for is _read 
+      try:
+         cursor.execute(' SELECT job_id, message,created_at,is_read from notifications WHERE recipient_id = %s',(recipient_id,)) 
+         resultIsRead = cursor.fetchall()
+         cursor.close()
+      except Exception as e:
+         flash(f'error {e} occured, try again!','warning')
+      
+      # dubugggg log 2
+      for i,each in enumerate(resultIsRead):
+         print(f'{i}: Data {each[0]}')
+      
       count = 0
-      for notification in notifications:
-         if notification[4] == 0:   # unread
-               count += 1   # count + 1 
-      unread_count = count  # save into var
+      for data in resultIsRead:
+         if data[3] == 0: #// means unread
+            count += 1 
+      unread_count = count
 
       # make available for all the routes
       g.unread_count = unread_count
       g.notifications = notifications
+      g.resultIsRead = resultIsRead
                   
 
 # creating app
