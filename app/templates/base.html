@@ -279,7 +279,11 @@
                                             <small>{{ notification[2].strftime('%b %d, %I:%M %p') if notification[3] else 'Recently' }}</small>
                                             </div>
                                         <div class="notification-time">
-                                            {{ notification[3]}}
+                                            <!-- not showing messages just a string "message" -->
+                                            {% if notification[3] %}
+                                                message
+                                            {% endif %}
+                                            <!--  -->
                                         </div>
                                         {% if notification[0] %}
                                                                                 <!-- start chat button  -->
@@ -358,7 +362,9 @@
                                     <div class="notification-content">
                                         <div class="notification-message"><small>{{ notification[2].strftime('%b %d, %I:%M %p') if notification[3] else 'Recently' }}</small></div>
                                         <div class="notification-time">
-                                            {{ notification[3] }}
+                                            {% if notification[3] %}
+                                            message
+                                            {% endif %}
                                         </div>
                                         {% if notification[0] %}
                                             <!-- start chat button  -->
