@@ -25,7 +25,8 @@ def notifications():
             job_id,  
             COUNT(*) as message_count, 
             MAX(created_at) as latest_time, 
-            GROUP_CONCAT(message SEPARATOR ' | ') as messages_combined
+            GROUP_CONCAT(message SEPARATOR ' | ') as messages_combined,
+            MIN(is_read) as unread
             FROM notifications 
             WHERE recipient_id = %s 
             GROUP BY job_id
@@ -34,34 +35,19 @@ def notifications():
       except Exception as e:
          flash(f"error {e} occured, try again!",'warning')
 
-      # debugg logg # 1
-      for i,each in enumerate(notifications):
-         print(f"{i}: Data ({each[3]})") 
-      print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-
-      # for is _read 
-      try:
-         cursor.execute(' SELECT job_id, message,created_at,is_read from notifications WHERE recipient_id = %s',(recipient_id,)) 
-         resultIsRead = cursor.fetchall()
-         cursor.close()
-      except Exception as e:
-         flash(f'error {e} occured, try again!','warning')
+      # # for is _read 
+      # try:
+      #    cursor.execute(' SELECT job_id, message,created_at,is_read from notifications WHERE recipient_id = %s',(recipient_id,)) 
+      #    resultIsRead = cursor.fetchall()
+      #    cursor.close()
+      # except Exception as e:
+      #    flash(f'error {e} occured, try again!','warning')
       
-      # dubugggg log 2
-      for i,each in enumerate(resultIsRead):
-         print(f'{i}: Data {each[0]}')
-      
-      count = 0
-      for data in resultIsRead:
-         if data[3] == 0: #// means unread
-            count += 1 
-      unread_count = count
+      unread_count = sum(1 for note in notifications if note[4] == 0)
 
       # make available for all the routes
       g.unread_count = unread_count
-      g.notifications = notifications
-      g.resultIsRead = resultIsRead
-                  
+      g.notifications = notifications                  
 
 # creating app
 def create_app():

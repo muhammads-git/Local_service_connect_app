@@ -295,19 +295,18 @@
                                         {% endif %}
 
 
-                                        {% for data in g.resultIsRead %}
+                        
                                         <div class="notification-actions mt-2">
-                                            {% if not data[3] %}
+                                            {% if notification[4] == 0 %}
                                             <form action="{{ url_for('dashboards_bp.mark_as_read_single', notification_id=notification[1]) }}" method="POST" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <button type="submit" class="btn btn-sm btn-success">
                                                     <i class="bi bi-check-lg"></i> Mark Read
                                                 </button>
-                                            </form>
                                             {% endif %}
-
+                                            </form>
+                                        
                                         </div>
-                                        {% endfor %}
                                     </div>
                                         
                                     </div>
@@ -374,18 +373,16 @@
                                             <button disabled>NO JOB ID</button>
                                         {% endif %}
                                         
-                                        {% for data in g.resultIsRead %}
                                         <div class="notification-actions mt-2">
-                                            {% if not data[3] %}
+                                            {% if notification[4]== 0 %}
                                             <form action="{{ url_for('dashboards_bp.provider_mark_one_read', notification_id=notification[1]) }}" method="POST" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <button type="submit" class="btn btn-sm btn-success">
                                                     <i class="bi bi-check-lg"></i> Mark Read
                                                 </button>
-                                            </form>
                                             {% endif %}
+                                            </form>
                                         </div>
-                                        {% endfor %}
                                     </div>
                                 </div>
                                 {% endfor %}
