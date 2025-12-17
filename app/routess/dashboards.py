@@ -149,15 +149,19 @@ def myChats():
     return render_template('dashboards/my_chats.html',chats_job=chats_job)
 
 # mark as read single notification
-@dashboards_bp.route('/mark_as_read_single/<int:notification_id>',methods=['POST'])
-def mark_as_read_single(notification_id):
+@dashboards_bp.route('/mark_as_read_single/<int:job_id>',methods=['POST'])
+def mark_as_read_single(job_id):
     if 'user_id' not in session:
         return redirect(url_for('auths_bp.user_login'))
-    
-    cursor = mysql.connection.cursor()
-    cursor.execute(' UPDATE notifications SET is_read = TRUE WHERE id =%s AND recipient_id =%s',(notification_id,session['user_id']))
-    mysql.connection.commit()
-    cursor.close()
+
+
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute(' UPDATE notifications SET is_read = TRUE WHERE job_id =%s AND recipient_id =%s',(job_id,session['user_id']))
+        mysql.connection.commit()
+        cursor.close()
+    except Exception as e:
+        flash(f'error occured {e}, try again!','warning')
 
     return redirect(url_for('dashboards_bp.user_dashboard'))
 
@@ -166,11 +170,14 @@ def mark_as_read_single(notification_id):
 def mark_all_asread():
     if 'user_id' not in session:
         return redirect(url_for('auths_bp.user_login'))
-    
-    cursor = mysql.connection.cursor()
-    cursor.execute('UPDATE notifications SET is_read = TRUE WHERE recipient_id = %s',(session['user_id'],))
-    mysql.connection.commit()
-    cursor.close()
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute('UPDATE notifications SET is_read = TRUE WHERE recipient_id = %s',(session['user_id'],))
+        mysql.connection.commit()
+        cursor.close()
+
+    except Exception as e:
+        flash(f'error occured {e}, try again!','warning')
 
     return redirect(url_for('dashboards_bp.user_dashboard'))
 
@@ -516,13 +523,13 @@ def provider_mark_all_read():
 
     return redirect(url_for('dashboards_bp.provider_dashboard'))
 
-@dashboards_bp.route('/provider_mark_one_read<int:notification_id>',methods=['POST'])
-def provider_mark_one_read(notification_id):
+@dashboards_bp.route('/provider_mark_one_read<int:job_id>',methods=['POST'])
+def provider_mark_one_read(job_id):
     if 'provider_id' not in session:
         flash('Login required!','warning')
     
     cursor = mysql.connection.cursor()
-    cursor.execute('UPDATE notifications SET is_read = TRUE WHERE id = %s AND recipient_id = %s',(notification_id,session['provider_id']))
+    cursor.execute('UPDATE notifications SET is_read = TRUE WHERE job_id = %s AND recipient_id = %s',(job_id,session['provider_id']))
     mysql.connection.commit()
     cursor.close()
 
