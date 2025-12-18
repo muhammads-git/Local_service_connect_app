@@ -417,12 +417,12 @@
                 <div class="navbar-nav ms-3">
                     {% if session.get('role') == 'user' %}
                         <a class="nav-link small fw-medium" href="{{ url_for('dashboards_bp.user_dashboard')}}">Dashboard</a>
-                        <a class="nav-link small fw-medium" href="/profile">Profile</a>
+                        <a class="nav-link small fw-medium" href="{{ url_for('dashboards_bp.user_profile')}}">Profile</a>
                         <a class="nav-link small fw-medium" href="{{ url_for('auths_bp.logout')}}">Logout</a>
                     
                     {% elif session.get('role') == 'provider' %}
                         <a class="nav-link small fw-medium" href="{{ url_for('dashboards_bp.provider_dashboard')}}">Dashboard</a>
-                        <a class="nav-link small fw-medium" href="/profile">Profile</a>
+                        <a class="nav-link small fw-medium" href="{{ url_for('dashboards_bp.provider_profile')}}">Profile</a>
                         <a class="nav-link small fw-medium" href="{{ url_for('auths_bp.logout')}}">Logout</a>
                     {% else %}
                         <a class="nav-link small fw-medium" href="/login">Login</a>
