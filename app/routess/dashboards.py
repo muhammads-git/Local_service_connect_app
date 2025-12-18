@@ -548,14 +548,12 @@ def provider_start_chat(job_id):
 def user_profile():
     # get user name , id
     userName = session.get('username')
-
     # db
     try:
-            
         cursor = mysql.connection.cursor()
         cursor.execute(' SELECT count(*) from bookings where user_id = %s',(session['user_id'],))
-        result = cursor.fetchall()
-        totalBookings = result
+        result = cursor.fetchone()
+        totalBookings = result[0]
         
     except Exception as e:
         flash(f'error occured {e}, try again!','warning')
