@@ -546,27 +546,26 @@ def provider_start_chat(job_id):
 # User Profiles
 @dashboards_bp.route('/user_profile',methods=['GET'])
 def user_profile():
-    # get user name , id
-    userName = session.get('username')
+
     # db
     try:
         cursor = mysql.connection.cursor()
-        cursor.execute(' SELECT count(*) from bookings where user_id = %s',(session['user_id'],))
-        result = cursor.fetchone()
-        totalBookings = result[0]
+        cursor.execute(' SELECT username,email,phone,address from users where id = %s',(session['user_id'],))
+        userData = cursor.fetchall()
+        cursor.close()
+        print(userData)
         
     except Exception as e:
         flash(f'error occured {e}, try again!','warning')
     
-    return render_template('dashboards/userProfilePage.html',userName=userName,totalBookings=totalBookings)
+    return render_template('dashboards/userProfilePage.html',userData=userData)
 
 
 # Provider Profile
 @dashboards_bp.route('/provider_profile',methods=['GET'])
 def provider_profile():
     # return render_template('dashboards/ProviderProfilePage.html')
-    for i in range(0,10):
-        message = 'You wil do it!'
+    message = 'You will do it!'
     return message
 
 
