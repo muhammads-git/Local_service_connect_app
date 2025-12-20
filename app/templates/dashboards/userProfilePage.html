@@ -10,24 +10,18 @@
    <title>Profile</title>
 </head>
 <body>
+   <h5>Personal Information</h5>
    {% for data in userData %}
-      {% if data %}
-         <p><b>Welcome to profile, {{ data[0] }}</b></p>
-         <p>Email: {{ data[1] }}</p>
-         {% if not data[2] %}
-         <!-- <form action="{{ url_for('auths_bp.complete_profile') }}",methods='GET'>
-            <button type="reset">Add Address</button>
-         </form> -->
-         <a href="{{ url_for('auths_bp.complete_profile')}}">Add Address</a>
-         {% else %}
-         <p>Address: {{ data[2] }}</p>
-         {% endif %}
-      <p><Address> {{ data[3] }}</Address></p>  
-      <p>No data available yet! Login! here: </p>
-      <a href="{{ url_for('auths_bp.user_login')}}">click</a>
-      {% endif %}
-   {% endfor %} 
-   
+   <p>{{ data[0] }}</p>
+   <p>📧 Email: {{ data[1] }}</p>
+   <p>📞 Phone: {{ data[2]}}</p>
+   <p>📍 Address: {{ data[3] }}</p>
+   {% endfor %}
+
+   <h5>Activities</h5>
+   <p>Services Requested: {{ servicesRequested }}</p>
+   <p>Services Accepted: {{ servicesAccepted }}</p>
+
 </body>
 </html>
 {% endblock %}

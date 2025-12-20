@@ -553,12 +553,19 @@ def user_profile():
         cursor.execute(' SELECT username,email,phone,address from users where id = %s',(session['user_id'],))
         userData = cursor.fetchall()
         cursor.close()
-        print(userData)
+        # activities data
+        cursor= mysql.connection.cursor()
+        cursor.execute(" SELECT COUNT(*) FROM bookings WHERE user_id= %s AND status='accepted'",(session.get('user_id'),))
+        servicesAccepted = cursor.fetchone()[0]
+
+        cursor.execute(" SELECT COUNT(*) FROM bookings WHERE user_id= %s",(session.get('user_id'),))
+        servicesRequested = cursor.fetchone()[0]
+        cursor.close()
         
     except Exception as e:
         flash(f'error occured {e}, try again!','warning')
     
-    return render_template('dashboards/userProfilePage.html',userData=userData)
+    return render_template('dashboards/userProfilePage.html',userData=userData,servicesAccepted=servicesAccepted,servicesRequested=servicesRequested)
 
 
 # Provider Profile
@@ -568,4 +575,5 @@ def provider_profile():
     message = 'You will do it!'
     return message
 
+# 
 
