@@ -10,9 +10,13 @@
    <title>Profile</title>
 </head>
 <body>
+   <!-- Edit your profile -->
+   <a href="{{ url_for('dashboards_bp.editUserProfile') }}">Edit Your Profile</a> 
+
+   <!-- Personal info -->
    <h5>Personal Information</h5>
    {% for data in userData %}
-   <p>{{ data[0] }}</p>
+   <p>Name: {{ data[0] }}</p>
    <p>📧 Email: {{ data[1] }}</p>
    <p>📞 Phone: {{ data[2]}}</p>
    <p>📍 Address: {{ data[3] }}</p>
@@ -21,6 +25,9 @@
    <h5>Activities</h5>
    <p>Services Requested: {{ servicesRequested }}</p>
    <p>Services Accepted: {{ servicesAccepted }}</p>
+   <p>Most Booked Service: {{ mostBooked }}</p>
+   <p>Most Recent Booking: {{ recentBooking }}</p>
+
 
 </body>
 </html>

@@ -546,28 +546,39 @@ def provider_start_chat(job_id):
 # User Profiles
 @dashboards_bp.route('/user_profile',methods=['GET'])
 def user_profile():
-
     # db
     try:
+        # user data
         cursor = mysql.connection.cursor()
         cursor.execute(' SELECT username,email,phone,address from users where id = %s',(session['user_id'],))
         userData = cursor.fetchall()
-        cursor.close()
+
         # activities data
-        cursor= mysql.connection.cursor()
-        cursor.execute(" SELECT COUNT(*) FROM bookings WHERE user_id= %s AND status='accepted'",(session.get('user_id'),))
+        cursor.execute(" SELECT COUNT(*) FROM bookings WHERE user_id = %s AND status='accepted'",(session.get('user_id'),))
         servicesAccepted = cursor.fetchone()[0]
 
-        cursor.execute(" SELECT COUNT(*) FROM bookings WHERE user_id= %s",(session.get('user_id'),))
+        # total services requested
+        cursor.execute(" SELECT COUNT(*) FROM bookings WHERE user_id = %s",(session.get('user_id'),))
         servicesRequested = cursor.fetchone()[0]
-        cursor.close()
+
+        # most booked services
+        cursor.execute(' SELECT MAX(service_type) FROM bookings WHERE user_id=%s',(session.get('user_id'),))
+        mostBooked = cursor.fetchone()[0]
         
+        #recent booking
+        cursor.execute(' SELECT service_type, created_at FROM bookings WHERE user_id=%s ORDER BY created_at DESC',(session.get('user_id'),))
+        recentBooking = cursor.fetchone()[0]
+        cursor.close()
+
     except Exception as e:
-        flash(f'error occured {e}, try again!','warning')
+        flash(f'error occured {str(e)}, try again!','warning')
     
-    return render_template('dashboards/userProfilePage.html',userData=userData,servicesAccepted=servicesAccepted,servicesRequested=servicesRequested)
+    return render_template('dashboards/userProfilePage.html',userData=userData,servicesAccepted=servicesAccepted,servicesRequested=servicesRequested,mostBooked=mostBooked,recentBooking=recentBooking)
 
-
+# user profile edit
+@dashboards_bp.route('/editYourProfile',methods=['POST','GET'])
+def editUserProfile():
+    return 'coming sooon....'
 # Provider Profile
 @dashboards_bp.route('/provider_profile',methods=['GET'])
 def provider_profile():
