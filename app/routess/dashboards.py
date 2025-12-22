@@ -1,7 +1,7 @@
 from flask import redirect,render_template,url_for,session,flash,get_flashed_messages,request
 from flask import Blueprint
 from app.__init__ import mysql
-from app.forms.forms import BookingForm,BookServiceForm
+from app.forms.forms import BookingForm,BookServiceForm,UserEditProfile
 from app.utils.mail import sendBookingNotifications
 from app.utils.mail import create_notifcations
 
@@ -578,7 +578,41 @@ def user_profile():
 # user profile edit
 @dashboards_bp.route('/editYourProfile',methods=['POST','GET'])
 def editUserProfile():
-    return 'coming sooon....'
+    # fetch data
+    try:
+        cursor = mysql.connection.cursor(dictionary=True)
+        cursor.execute(" SELECT username,email,phone FROM users WHERE id=%s",(session.get('user_id'),))
+        UserData = cursor.fetchone()
+        cursor.close()
+
+        return redirect(url_for('dashboards_bp.UpdateProfile'))
+    
+    except Exception as e:
+        flash(f'error occured {str(e)}, try again!','warning')
+        return render_template('dashboards/userProfilePage.html')
+    
+
+@dashboards_bp.route('/UpdateProfile',methods=['GET'])
+def UpdateProfile():
+    profileEditForm = UserEditProfile()
+
+    if profileEditForm.validate_on_submit():
+        editName = profileEditForm.user_name.data
+        editEmail = profileEditForm.user_email.data
+        editPhone = profileEditForm.user_phone.data
+
+        # db 
+        try:
+            cursor = mysql.connection.cursor()
+            cursor.execute(' UPDATE users SET username=%s,email=%s,phone=%s WHERE id=%s',(editName,editEmail,editPhone,session.get('user_id')))
+            mysql.connection.commit()
+            return render_template('dashboards/userPrfoilePage.html')
+        
+        except Exception as e:
+            flash(f'error occured {str(e)}, try again!','warning')
+            return redirect(url_for('dashboards_bp.editYourProfile',profileEditForm=profileEditForm))
+        
+
 # Provider Profile
 @dashboards_bp.route('/provider_profile',methods=['GET'])
 def provider_profile():

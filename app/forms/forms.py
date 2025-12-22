@@ -108,8 +108,6 @@ class BookServiceForm(FlaskForm):
    # service_address = TextAreaField('Write Your Address',validators=[InputRequired()])
    
    service_description = TextAreaField('Describe Your Specific Needs', validators=[DataRequired()])
-   # contact = StringField('Contact', validators=[InputRequired(), Length(min=10,max=15)])
-   # date = DateTimeField('DateTime',validators=[InputRequired()],format='%Y-%m-%d %H:%M', default=datetime.now())
    submit = SubmitField('Request')
 
 
@@ -117,3 +115,11 @@ class BookServiceForm(FlaskForm):
 class CompleteProfileForm(FlaskForm):
    address = TextAreaField('Provide address',validators=[InputRequired(), Length(max=100)])
    submit = SubmitField('Submit')
+
+class UserEditProfile(FlaskForm):
+   user_name = StringField('Full Name',validators=[InputRequired(),Length(min=6,max=20)])
+   user_email = EmailField('Email',validators=[InputRequired(),Email()])
+   user_phone = StringField('Contact',validators=[InputRequired(),Length(max=10)])
+   user_password = PasswordField('Password',validators=[InputRequired(),Length(min=6,max=20)])
+   confirm_password = PasswordField('Confirm Password',validators=[InputRequired(),EqualTo('user_password',message='Password must match.')])
+   submit = SubmitField('Register As User')

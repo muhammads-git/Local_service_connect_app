@@ -11,7 +11,9 @@
 </head>
 <body>
    <!-- Edit your profile -->
-   <a href="{{ url_for('dashboards_bp.editUserProfile') }}">Edit Your Profile</a> 
+   <form action="{{ url_for('dashboards_bp.editUserProfile') }}" methods="POST">
+      <button type="reset">💻 Edit Profile</button>
+   </form>
 
    <!-- Personal info -->
    <h5>Personal Information</h5>
@@ -22,6 +24,8 @@
    <p>📍 Address: {{ data[3] }}</p>
    {% endfor %}
 
+
+   <!-- Activities -->
    <h5>Activities</h5>
    <p>Services Requested: {{ servicesRequested }}</p>
    <p>Services Accepted: {{ servicesAccepted }}</p>
