@@ -576,23 +576,26 @@ def user_profile():
     return render_template('dashboards/userProfilePage.html',userData=userData,servicesAccepted=servicesAccepted,servicesRequested=servicesRequested,mostBooked=mostBooked,recentBooking=recentBooking)
 
 # user profile edit
-@dashboards_bp.route('/editYourProfile',methods=['POST','GET'])
+@dashboards_bp.route('/editYourProfile',methods=['GET'])
 def editUserProfile():
+    profileEditForm = UserEditProfile()
     # fetch data
     try:
-        cursor = mysql.connection.cursor(dictionary=True)
+        cursor = mysql.connection.cursor()
         cursor.execute(" SELECT username,email,phone FROM users WHERE id=%s",(session.get('user_id'),))
         UserData = cursor.fetchone()
         cursor.close()
+        print('RUnnn')
 
-        return redirect(url_for('dashboards_bp.UpdateProfile'))
+        # return redirect(url_for('dashboards_bp.UpdateProfile'),profileEditForm=profileEditForm)
+        return render_template('dashboards/updateprofiledata.html',profileEditForm=profileEditForm,UserData=UserData)
     
     except Exception as e:
         flash(f'error occured {str(e)}, try again!','warning')
         return render_template('dashboards/userProfilePage.html')
     
 
-@dashboards_bp.route('/UpdateProfile',methods=['GET'])
+@dashboards_bp.route('/UpdateProfile',methods=['POST'])
 def UpdateProfile():
     profileEditForm = UserEditProfile()
 
@@ -606,11 +609,13 @@ def UpdateProfile():
             cursor = mysql.connection.cursor()
             cursor.execute(' UPDATE users SET username=%s,email=%s,phone=%s WHERE id=%s',(editName,editEmail,editPhone,session.get('user_id')))
             mysql.connection.commit()
-            return render_template('dashboards/userPrfoilePage.html')
+
+            return render_template('dashboards/userPrfoilePage.html',profileEditForm=profileEditForm)
         
         except Exception as e:
             flash(f'error occured {str(e)}, try again!','warning')
-            return redirect(url_for('dashboards_bp.editYourProfile',profileEditForm=profileEditForm))
+            # return redirect(url_for('dashboards_bp.editYourPrfile'))
+            return render_template('dashboards/userProfilePage.html')
         
 
 # Provider Profile

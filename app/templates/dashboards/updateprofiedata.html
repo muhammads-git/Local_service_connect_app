@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=
+   , initial-scale=1.0">
+   <title>UpdateProfile</title>
+</head>
+<body>
+      <form action="{{ url_for('dashboards_bp.UpdateProfile') }}" methods="POST">
+         {{ profileEditForm.hidden_tag() }} 
+         
+         {{ profileEditForm.user_name.label() }} <br>
+         {{ profileEditForm.user_name(size=23,placeholder='Change Name') }} <br>
+
+         {{ profileEditForm.user_email.label() }} <br>
+         {{ profileEditForm.user_email(size=23,placeholder='Change Email') }} <br>
+
+         {{ profileEditForm.user_phone.label() }} <br>
+         {{ profileEditForm.user_phone(size=23,placeholder='Change phone') }} <br>
+
+         {{ profileEditForm.submit() }}
+      </form>
+</body>
+</html>
+{% endblock %}

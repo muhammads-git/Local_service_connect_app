@@ -11,9 +11,7 @@
 </head>
 <body>
    <!-- Edit your profile -->
-   <form action="{{ url_for('dashboards_bp.editUserProfile') }}" methods="POST">
-      <button type="reset">💻 Edit Profile</button>
-   </form>
+   <a href="{{ url_for('dashboards_bp.editUserProfile') }}">Edit Profile</a>
 
    <!-- Personal info -->
    <h5>Personal Information</h5>
