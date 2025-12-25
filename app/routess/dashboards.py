@@ -574,27 +574,26 @@ def user_profile():
         flash(f'error occured {str(e)}, try again!','warning')
     
     return render_template('dashboards/userProfilePage.html',userData=userData,servicesAccepted=servicesAccepted,servicesRequested=servicesRequested,mostBooked=mostBooked,recentBooking=recentBooking)
-
-# user profile edit
-@dashboards_bp.route('/editYourProfile',methods=['GET'])
+# edit profile
+@dashboards_bp.route('/editYourProfile', methods=['GET'])
 def editUserProfile():
     profileEditForm = UserEditProfile()
-    # fetch data
-    try:
-        cursor = mysql.connection.cursor()
-        cursor.execute(" SELECT username,email,phone FROM users WHERE id=%s",(session.get('user_id'),))
-        UserData = cursor.fetchone()
-        cursor.close()
-        print('RUnnn')
-
-        # return redirect(url_for('dashboards_bp.UpdateProfile'),profileEditForm=profileEditForm)
-        return render_template('dashboards/updateprofiledata.html',profileEditForm=profileEditForm,UserData=UserData)
     
-    except Exception as e:
-        flash(f'error occured {str(e)}, try again!','warning')
-        return render_template('dashboards/userProfilePage.html')
+    # fetch data to pre-write it in forms
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT username, email, phone FROM users WHERE id = %s', 
+                   (session['user_id'],))
+    user_data = cursor.fetchone()
+    cursor.close()
     
-
+    if user_data:
+        profileEditForm.user_name.data = user_data[0]   # pre-populate forms
+        profileEditForm.user_email.data = user_data[1]
+        profileEditForm.user_phone.data = user_data[2]
+    
+    return render_template('dashboards/updateprofiledata.html', 
+                         profileEditForm=profileEditForm)
+# update profile
 @dashboards_bp.route('/UpdateProfile',methods=['POST'])
 def UpdateProfile():
     profileEditForm = UserEditProfile()
@@ -604,26 +603,21 @@ def UpdateProfile():
         editEmail = profileEditForm.user_email.data
         editPhone = profileEditForm.user_phone.data
 
-        # db 
-        try:
-            cursor = mysql.connection.cursor()
-            cursor.execute(' UPDATE users SET username=%s,email=%s,phone=%s WHERE id=%s',(editName,editEmail,editPhone,session.get('user_id')))
-            mysql.connection.commit()
-
-            return render_template('dashboards/userPrfoilePage.html',profileEditForm=profileEditForm)
-        
-        except Exception as e:
-            flash(f'error occured {str(e)}, try again!','warning')
-            # return redirect(url_for('dashboards_bp.editYourPrfile'))
-            return render_template('dashboards/userProfilePage.html')
-        
-
+        cursor = mysql.connection.cursor()
+        cursor.execute('UPDATE users SET username=%s,email=%s,phone=%s WHERE id=%s',(editName,editEmail,editPhone,session.get('user_id')))
+        mysql.connection.commit()
+        rowsAffected = cursor.rowcount # row count check if data has changed 
+        # print('debugg')
+        if rowsAffected > 0:
+            flash('Profile Updated!','success')
+        else:
+            flash('error occured, try again!','warning')
+    return redirect(url_for('dashboards_bp.user_profile'))
+    
 # Provider Profile
 @dashboards_bp.route('/provider_profile',methods=['GET'])
 def provider_profile():
-    # return render_template('dashboards/ProviderProfilePage.html')
     message = 'You will do it!'
     return message
 
-# 
 

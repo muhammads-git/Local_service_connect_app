@@ -11,7 +11,12 @@
 </head>
 <body>
    <!-- Edit your profile -->
-   <a href="{{ url_for('dashboards_bp.editUserProfile') }}">Edit Profile</a>
+   <!-- <a href="{{ url_for('dashboards_bp.editUserProfile') }}">Edit Profile</a> -->
+   <form action="{{ url_for('dashboards_bp.editUserProfile') }}" method="GET">
+      <!-- including csrf token , coz of using flask-wtf -->
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" style="display:inline;">
+      <button type="submit" style="background:none;border:none;color:blue;text-decoration:underline;cursor:pointer;padding:0;font:inherit;">Edit Profile</button>
+   </form>
 
    <!-- Personal info -->
    <h5>Personal Information</h5>
@@ -21,8 +26,6 @@
    <p>📞 Phone: {{ data[2]}}</p>
    <p>📍 Address: {{ data[3] }}</p>
    {% endfor %}
-
-
    <!-- Activities -->
    <h5>Activities</h5>
    <p>Services Requested: {{ servicesRequested }}</p>
