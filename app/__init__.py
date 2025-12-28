@@ -1,4 +1,4 @@
-from flask import Flask,g,render_template,redirect,session,url_for,flash
+from flask import Flask,g,render_template,redirect,session,url_for,flash,request,jsonify
 from flask_mysqldb import MySQL
 from flask_wtf import CSRFProtect
 from dotenv import load_dotenv
@@ -12,6 +12,7 @@ mysql = MySQL()
 csrf = CSRFProtect() 
 
 app = Flask(__name__)
+
 
 @app.before_request
 def notifications():    
@@ -83,9 +84,12 @@ def create_app():
     from app.routess.auths import auths_bp
     from app.routess.dashboards import dashboards_bp
     from app.routess.admins_panel import admins_bp
+    # api rout testing.......
+    from app.routess.api.api_routes import api_bp
 
     app.register_blueprint(auths_bp)   
     app.register_blueprint(dashboards_bp)
     app.register_blueprint(admins_bp)
+    app.register_blueprint(api_bp) # for testing.....
 
     return app
