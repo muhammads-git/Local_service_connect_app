@@ -172,9 +172,10 @@ def bookingsByUserid(user_id):
 
 
 # for specific user with status
-@api_bp.route('/api/bookings/<int:user_id>/status/<string:status>')
-def bookingsByStatus(user_id,status):
+@api_bp.route('/api/bookings/<int:user_id>/')
+def bookingsByStatus(user_id):
    # first make conn with db()
+   status = request.args.get('status')
    username = session.get('username')
    try:
       cursor = mysql.connection.cursor()
