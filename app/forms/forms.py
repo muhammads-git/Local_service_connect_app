@@ -117,6 +117,7 @@ class CompleteProfileForm(FlaskForm):
    submit = SubmitField('Submit')
 
 class UserEditProfile(FlaskForm):
+   # in_app_name = StringField('App Name',validators=[InputRequired(),Length(max=20)])
    user_name = StringField('Full Name',validators=[InputRequired(),Length(min=6,max=20)])
    user_email = EmailField('Email',validators=[InputRequired(),Email()])
    user_phone = StringField('Contact',validators=[InputRequired(),Length(max=10)])

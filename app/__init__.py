@@ -58,6 +58,8 @@ def create_app():
     # Session 
     app.config['SESSION_PERMANENT'] = True
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
+    # disabling CSRF protection for apis
+   #  app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
     app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'localhost')
     app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
@@ -91,5 +93,8 @@ def create_app():
     app.register_blueprint(dashboards_bp)
     app.register_blueprint(admins_bp)
     app.register_blueprint(api_bp) # for testing.....
+   
+   # apply csrf protections to all blueprints except apisss
+    csrf.exempt(api_bp)
 
     return app

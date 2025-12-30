@@ -141,7 +141,7 @@ def getBookingsData():
       }),401
 
 # for specific user
-@api_bp.route('/api/bookings/<int:user_id>')
+@api_bp.route('/api/bookingsByUserId/<int:user_id>')
 def bookingsByUserid(user_id):
    # first make conn with db()
    username = session.get('username')
@@ -171,8 +171,8 @@ def bookingsByUserid(user_id):
    
 
 
-# for specific user with status
-@api_bp.route('/api/bookings/<int:user_id>/')
+# for specific user with status GET request
+@api_bp.route('/api/bookings/<int:user_id>')
 def bookingsByStatus(user_id):
    # first make conn with db()
    status = request.args.get('status')
@@ -201,3 +201,70 @@ def bookingsByStatus(user_id):
          'success': False,
          'error' : str(e)
       }),401
+   
+
+@api_bp.route('/api/createBooking/<int:user_id>',methods=['POST'])
+def createBooking(user_id):
+    # Session check should return JSON for API, not redirect
+    # when trigorred, show 
+    print(user_id)
+    print(session.get("username"))
+    print('Request came, !')
+    if user_id not in session:
+        return jsonify({
+            'success': False,
+            'error': 'User not authenticated'
+        }), 401  # Unauthorized
+    
+    # Check if JSON data exists
+    if not request.is_json:
+        return jsonify({
+            'success': False,
+            'error': 'Request must be JSON'
+        }), 400  # Bad Request
+    
+   
+    data = request.get_json()
+    service_type = data.get('service_type')
+    service_description = data.get('service_description')
+    address = data.get('address')
+    status = data.get('status', 'pending')  # Default status
+    
+    #  Validate required fields
+    if not all([service_type, service_description, address]):
+        return jsonify({
+            'success': False,
+            'error': 'Missing required fields: service_type, service_description, address'
+        }), 400
+    
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            'INSERT INTO bookings (user_id, service_type, service_description, address, status) VALUES (%s, %s, %s, %s, %s)',
+            (user_id, service_type, service_description, address, status)
+        )
+        mysql.connection.commit()
+        
+        # Get the auto-incremented booking ID
+        booking_id = cursor.lastrowid
+        cursor.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Booking created successfully',
+            'booking': {
+                'booking_id': booking_id, 
+                'user_id': user_id,
+                'service_type': service_type,
+                'service_description': service_description,
+                'address': address,
+                'status': status
+            }
+        }), 201
+        
+    except Exception as e:
+        mysql.connection.rollback()  # Rollback on error
+        return jsonify({
+            'success': False,
+            'error': 'Database error: ' + str(e)
+        }), 500  # Changed to 500 (Internal Server Error)
