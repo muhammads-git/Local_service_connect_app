@@ -35,10 +35,24 @@ def api_docs():
         'created_by': 'Muhammad Hammad'
     })
 
+
+# how to get local service api
+@api_bp.rouet('/api/api_key')
+def get_api_key():
+   #
+   pass
+
 # show all users API: 1
 @api_bp.route('/api/users')
 def get_users():
-   # connection 
+   # api key 
+   api_key = request.headers.get('X-api-key')
+   if api_key != os.getenv('API_KEY'):
+      return jsonify({
+         'success': False,
+         'error' : 'Unauthorized api_key!'
+      }),401
+   
    try:
       cursor = mysql.connection.cursor()
       print('runnn')
@@ -85,6 +99,14 @@ def getUser(user_id):
 # services api
 @api_bp.route('/api/services')
 def getServices():
+      # api key 
+   api_key = request.headers.get('X-api-key')
+   if api_key != os.getenv('API_KEY'):
+      return jsonify({
+         'success': False,
+         'error' : 'Unauthorized api_key!'
+      }),401
+   
    # connection
    try:
 
@@ -116,6 +138,14 @@ def getServices():
 # for all bookings
 @api_bp.route('/api/bookings')
 def getBookingsData():
+      # api key 
+   api_key = request.headers.get('X-api-key')
+   if api_key != os.getenv('API_KEY'):
+      return jsonify({
+         'success': False,
+         'error' : 'Unauthorized api_key!'
+      }),401
+   
    # first make conn with db()
    try:
       cursor = mysql.connection.cursor()
@@ -143,6 +173,14 @@ def getBookingsData():
 # for specific user
 @api_bp.route('/api/bookingsByUserId/<int:user_id>')
 def bookingsByUserid(user_id):
+      # api key 
+   api_key = request.headers.get('X-api-key')
+   if api_key != os.getenv('API_KEY'):
+      return jsonify({
+         'success': False,
+         'error' : 'Unauthorized api_key!'
+      }),401
+   
    # first make conn with db()
    username = session.get('username')
    try:
@@ -174,6 +212,14 @@ def bookingsByUserid(user_id):
 # for specific user with status GET request
 @api_bp.route('/api/bookings/<int:user_id>')
 def bookingsByStatus(user_id):
+      # api key 
+   api_key = request.headers.get('X-api-key')
+   if api_key != os.getenv('API_KEY'):
+      return jsonify({
+         'success': False,
+         'error' : 'Unauthorized api_key!'
+      }),401
+   
    # first make conn with db()
    status = request.args.get('status')
    username = session.get('username')
@@ -205,24 +251,21 @@ def bookingsByStatus(user_id):
 
 @api_bp.route('/api/createBooking/<int:user_id>',methods=['POST'])
 def createBooking(user_id):
-    # Session check should return JSON for API, not redirect
-    # when trigorred, show 
-    print(user_id)
-    print(session.get("username"))
-    print('Request came, !')
-    if user_id not in session:
-        return jsonify({
-            'success': False,
-            'error': 'User not authenticated'
-        }), 401  # Unauthorized
-    
+    # condition, api_key == secretkey 
+    # get api key from body
+    api_key = request.headers.get('X-api-key')
+    if api_key != os.getenv('API_KEY'):
+       return jsonify({
+          'success' : False,
+          'error' : 'Unauthorized api_key!'
+       }),401 # bad request
+
     # Check if JSON data exists
     if not request.is_json:
         return jsonify({
             'success': False,
             'error': 'Request must be JSON'
         }), 400  # Bad Request
-    
    
     data = request.get_json()
     service_type = data.get('service_type')
