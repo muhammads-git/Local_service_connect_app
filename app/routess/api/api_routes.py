@@ -37,7 +37,7 @@ def api_docs():
 
 
 # how to get local service api
-@api_bp.rouet('/api/api_key')
+@api_bp.route('/api/api_key')
 def get_api_key():
    #
    pass
