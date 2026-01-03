@@ -22,6 +22,8 @@ def user_register():
       user_phone = user_form.user_phone.data
       confirm_password = user_form.confirm_password.data
 
+      # check duplicate emai
+
       # hash the pass before storing
       hash_password = bcyrpt.generate_password_hash(confirm_password).decode('utf-8')
       # open up db 

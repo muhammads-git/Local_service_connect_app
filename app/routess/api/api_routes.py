@@ -32,15 +32,67 @@ def api_docs():
             }
         },
         'base_url': 'http://localhost:5000',
-        'created_by': 'Muhammad Hammad'
+        'created_by': 'Muhammad Hammad',
+        'market_place': 'Local Service Connect'
     })
 
 
 # how to get local service api
-@api_bp.route('/api/api_key')
+@api_bp.route('/api/api_key_request',methods=['POST'])
 def get_api_key():
-   #
-   pass
+   if not request.is_json:
+      return jsonify({
+         'success':False,
+         'error':"Data must be in JSON"
+      }),400
+   
+   # get data
+   data = request.get_json()
+   email = data.get('email')
+   app_name = data.get('app_name')
+
+   # make api_key 
+   import uuid
+   api_key = str(uuid.uuid4()).replace('-','')[:16]
+
+   try:
+      cursor = mysql.connection.cursor()
+      cursor.execute(""" INSERT INTO api_keys (email,app_name,api_key,is_active) 
+                     VALUES (%s,%s,%s,TRUE)
+                     ON DUPLICATE KEY UPDATE api_key=%s, created_at=NOW() """,
+                     (email,app_name,api_key,api_key))
+      mysql.connection.commit()
+      cursor.close()
+      return jsonify({
+         'success':True,
+         'api_key': api_key,
+         'message':'Make sure to keep safe YOUR API_KEY!'
+      }),201
+   
+       # we can email user with api key , we have his/her email
+      # from app.utils.mail import Mail,Message
+      # mail= Mail()
+
+      # msg = Message(subject="API_KEY",sender=[os.getenv('MAIL_DEFAULT_SENDER')],recipients=[email])
+      
+      # msg.body(f"""
+      #    LOCAL SERVICE CONNECT - API MANAGEMENT
+      #          yourapi={api_key}
+
+      #    -ServiConnect Team
+      #    """)
+      # # send mail
+      # mail.send(msg)
+
+      # return jsonify
+
+   # else 
+   except Exception as e:
+      return jsonify({
+         'success':False,
+         'error' : f"{str(e)}"
+      })
+    
 
 # show all users API: 1
 @api_bp.route('/api/users')
@@ -55,7 +107,6 @@ def get_users():
    
    try:
       cursor = mysql.connection.cursor()
-      print('runnn')
 
       # get users data
       cursor.execute(' SELECT id,username,email FROM users LIMIT 10')
@@ -210,19 +261,20 @@ def bookingsByUserid(user_id):
 
 
 # for specific user with status GET request
-@api_bp.route('/api/bookings/<int:user_id>')
+@api_bp.route('/api/bookingsByStatus/<int:user_id>')
 def bookingsByStatus(user_id):
       # api key 
-   api_key = request.headers.get('X-api-key')
-   if api_key != os.getenv('API_KEY'):
-      return jsonify({
-         'success': False,
-         'error' : 'Unauthorized api_key!'
-      }),401
-   
    # first make conn with db()
-   status = request.args.get('status')
-   username = session.get('username')
+   if not request.is_json:
+      return jsonify({
+         "success":False,
+         "message":"Data must be in JSON"
+      })
+   # data
+   data = request.get_json()
+   status = data.get('status')
+   username = data.get('username')
+
    try:
       cursor = mysql.connection.cursor()
       # fetch
@@ -251,15 +303,38 @@ def bookingsByStatus(user_id):
 
 @api_bp.route('/api/createBooking/<int:user_id>',methods=['POST'])
 def createBooking(user_id):
-    # condition, api_key == secretkey 
-    # get api key from body
+   # auths api-key
+   # AUTHENTICATIONS
     api_key = request.headers.get('X-api-key')
-    if api_key != os.getenv('API_KEY'):
-       return jsonify({
-          'success' : False,
-          'error' : 'Unauthorized api_key!'
-       }),401 # bad request
+   
+    try:
+      cursor = mysql.connection.cursor()
+      cursor.execute('SELECT email FROM api_keys WHERE api_key=%s',(api_key,))
+      email = cursor.fetchone()[0]
+      cursor.close()
+      
 
+      if not email:
+         return jsonify({
+            'success':False,
+            'error':'Unauthorized api-key!'
+         })
+      
+      # update req count
+      cursor=mysql.connection.cursor()
+      cursor.execute(" UPDATE api_keys SET request_count = request_count + 1 WHERE email = %s",(email,))
+      mysql.connection.commit()
+      cursor.close()
+
+
+    except Exception as e:
+       return jsonify({
+          'success':False,
+          'error':f"{str(e)}"
+       })
+    
+   
+   # PROCESS 
     # Check if JSON data exists
     if not request.is_json:
         return jsonify({
