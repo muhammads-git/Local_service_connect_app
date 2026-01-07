@@ -66,12 +66,13 @@ def create_app():
    #  app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', '')
    #  app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'serviconnect')
       # NEW WAY (Using Railway's injected variables)
-    app.config['MYSQL_HOST'] = os.getenv('DB_HOST')  # railway.internal address
-    app.config['MYSQL_USER'] = os.getenv('DB_USER')  # root
-    app.config['MYSQL_PASSWORD'] = os.getenv('DB_PASSWORD')  # the long password
-    app.config['MYSQL_DB'] = os.getenv('DB_NAME')  # railway
-    app.config['MYSQL_PORT'] = int(os.getenv('DB_PORT', 3306))  # important: convert to int
-    
+   # ✅ NEW CODE (Connects to Railway cloud)
+
+    app.config['MYSQL_HOST'] = os.getenv('DB_HOST', 'switchyard.proxy.rlwy.net')
+    app.config['MYSQL_PORT'] = int(os.getenv('DB_PORT', 49423))  # CRITICAL: Add this line
+    app.config['MYSQL_USER'] = os.getenv('DB_USER', 'root')
+    app.config['MYSQL_PASSWORD'] = os.getenv('DB_PASSWORD', 'JkBFoZOTIMdAUzpoXhsbrftfHyHmasvX')
+    app.config['MYSQL_DB'] = os.getenv('DB_NAME', 'railway')
     # Mail config
     app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
     app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
