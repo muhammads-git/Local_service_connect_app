@@ -569,6 +569,10 @@ def user_profile():
         cursor.execute(' SELECT service_type, created_at FROM bookings WHERE user_id=%s ORDER BY created_at DESC',(session.get('user_id'),))
         recentBooking = cursor.fetchone()[0]
         cursor.close()
+        if not recentBooking:
+            recentBooking='No recent booking data yet'
+        recentBooking=recentBooking
+        print(recentBooking)
 
     except Exception as e:
         flash(f'error occured {str(e)}, try again!','warning')

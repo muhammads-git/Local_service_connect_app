@@ -61,10 +61,16 @@ def create_app():
     # disabling CSRF protection for apis
    #  app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
-    app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'localhost')
-    app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
-    app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', '')
-    app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'serviconnect')
+   #  app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'localhost')
+   #  app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
+   #  app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', '')
+   #  app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'serviconnect')
+      # NEW WAY (Using Railway's injected variables)
+    app.config['MYSQL_HOST'] = os.getenv('DB_HOST')  # railway.internal address
+    app.config['MYSQL_USER'] = os.getenv('DB_USER')  # root
+    app.config['MYSQL_PASSWORD'] = os.getenv('DB_PASSWORD')  # the long password
+    app.config['MYSQL_DB'] = os.getenv('DB_NAME')  # railway
+    app.config['MYSQL_PORT'] = int(os.getenv('DB_PORT', 3306))  # important: convert to int
     
     # Mail config
     app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')

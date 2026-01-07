@@ -386,3 +386,4 @@ def createBooking(user_id):
             'success': False,
             'error': 'Database error: ' + str(e)
         }), 500  # Changed to 500 (Internal Server Error)
+    
