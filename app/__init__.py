@@ -35,15 +35,7 @@ def notifications():
          notifications = cursor.fetchall()
       except Exception as e:
          flash(f"error {e} occured, try again!",'warning')
-
-      # # for is _read 
-      # try:
-      #    cursor.execute(' SELECT job_id, message,created_at,is_read from notifications WHERE recipient_id = %s',(recipient_id,)) 
-      #    resultIsRead = cursor.fetchall()
-      #    cursor.close()
-      # except Exception as e:
-      #    flash(f'error {e} occured, try again!','warning')
-      
+         
       unread_count = sum(1 for note in notifications if note[4] == 0)
 
       # make available for all the routes
