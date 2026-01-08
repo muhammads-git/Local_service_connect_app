@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 
 @app.before_request
-def notifications():    
+def fetch_notifications():    
    if 'user_id' in session or 'provider_id' in session:
       cursor = mysql.connection.cursor()
       # User or Provider
@@ -33,9 +33,12 @@ def notifications():
             GROUP BY job_id
             ORDER BY latest_time DESC """ ,(recipient_id,))
          notifications = cursor.fetchall()
+
       except Exception as e:
          flash(f"error {e} occured, try again!",'warning')
-         
+
+      if not notifications:
+         notifications = 0   #default   
       unread_count = sum(1 for note in notifications if note[4] == 0)
 
       # make available for all the routes
