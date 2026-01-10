@@ -14,36 +14,46 @@ csrf = CSRFProtect()
 app = Flask(__name__)
 
 
-# @app.before_request
-# def fetch_notifications():    
-#    if 'user_id' in session or 'provider_id' in session:
-#       cursor = mysql.connection.cursor()
-#       # User or Provider
-#       recipient_id = session.get('user_id') or session.get('provider_id')
+@app.before_request
+def fetch_notifications():   
+   g.unread_count = 0
+   g.notifications = []
+
+   if 'user_id' in session or 'provider_id' in session:
+      cursor = mysql.connection.cursor()
+      # User or Provider
+      recipient_id = session.get('user_id') or session.get('provider_id')
       
-#       try:
-#          cursor.execute(""" SELECT
-#             job_id,  
-#             COUNT(*) as message_count, 
-#             MAX(created_at) as latest_time, 
-#             GROUP_CONCAT(message SEPARATOR ' | ') as messages_combined,
-#             MIN(is_read) as unread
-#             FROM notifications 
-#             WHERE recipient_id = %s 
-#             GROUP BY job_id
-#             ORDER BY latest_time DESC """ ,(recipient_id,))
-#          notifications = cursor.fetchall()
+      try:
+         cursor.execute(""" SELECT
+            job_id,  
+            COUNT(*) as message_count, 
+            MAX(created_at) as latest_time, 
+            GROUP_CONCAT(message SEPARATOR ' | ') as messages_combined,
+            MIN(is_read) as unread
+            FROM notifications 
+            WHERE recipient_id = %s 
+            GROUP BY job_id
+            ORDER BY latest_time DESC """ ,(recipient_id,))
+         notifications = cursor.fetchall()
+         #  check if notifications
+         if notifications:
+            g.notifications = notifications
+            g.unread_count = sum(1 for note in notifications if note[4] == 0)
+         else:
+            g.notifications = []
+            g.unread_count = 0
 
-#       except Exception as e:
-#          flash(f"error {e} occured, try again!",'warning')
+      except Exception as e:
+         # log the error 
+         app.logger.error('Something went wrong, while fetching notifications')
+         
+      finally:
+         cursor.close()
 
-#       if not notifications:
-#          notifications = 0   #default   
-#       unread_count = sum(1 for note in notifications if note[4] == 0)
-
-#       # make available for all the routes
-#       g.unread_count = unread_count
-#       g.notifications = notifications                  
+      # make available for all the routes
+      # g.unread_count = unread_count
+      # g.notifications = notifications                  
 
 # creating app
 def create_app():
