@@ -4,7 +4,7 @@ from flask_wtf import CSRFProtect
 from dotenv import load_dotenv
 import os
 from datetime import timedelta
-import time
+
 
 
 # Load .env once at the top
@@ -18,8 +18,6 @@ app = Flask(__name__)
 
 @app.before_request  # before request trigorrs before every req....
 def fetch_notifications():   
-   START_TIME = time.time()
-
    g.unread_count = 0
    g.notifications = []
 
@@ -41,13 +39,6 @@ def fetch_notifications():
             ORDER BY latest_time DESC """ ,(recipient_id,))
          notifications = cursor.fetchall()
 
-         END_TIME = time.time()
-         # diff
-         total_durations  = START_TIME - END_TIME
-         if total_durations > 1.0:
-            print(f"Warning you are too sloww: {total_durations}")
-         else:
-            print(f"Noramllll")
          #  check if notifications
          if notifications:
             g.notifications = notifications
