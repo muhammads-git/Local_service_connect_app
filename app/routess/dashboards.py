@@ -543,6 +543,13 @@ def provider_start_chat(job_id):
     return redirect(url_for('dashboards_bp.provider_chat_box',job_id=job_id))
 
 
+# booking completed routes
+@dashboards_bp.route('/booking_completed/<int:job_id>',methods=['POST'])
+def booking_completed(job_id):
+    pass
+
+
+
 # User Profiles
 @dashboards_bp.route('/user_profile',methods=['GET'])
 def user_profile():
@@ -623,5 +630,4 @@ def UpdateProfile():
 def provider_profile():
     message = 'You will do it!'
     return message
-
 
