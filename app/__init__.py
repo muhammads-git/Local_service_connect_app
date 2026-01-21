@@ -9,9 +9,8 @@ from datetime import timedelta
 
 # Load .env once at the top
 load_dotenv()
-
+# mysql instance
 mysql = MySQL()
-csrf = CSRFProtect() 
 
 app = Flask(__name__)
 
@@ -66,8 +65,6 @@ def create_app():
     # Session 
     app.config['SESSION_PERMANENT'] = True
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
-    # disabling CSRF protection for apis
-   #  app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
    #  app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'localhost')
    #  app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
@@ -89,9 +86,6 @@ def create_app():
     app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD', '')
     app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'Ibuild@serviconnect.com')
 
-    # Initialize extensions
-    mysql.init_app(app)
-    csrf.init_app(app)
     
     # Initialize mail
     from app.utils.mail import init_mail
@@ -109,6 +103,11 @@ def create_app():
     app.register_blueprint(admins_bp)
     app.register_blueprint(api_bp) # for testing.....
    
+   # csrf at last,
+    csrf = CSRFProtect(app) 
+   
+   # initialize
+    mysql.init_app(app)
    # apply csrf protections to all blueprints except apisss
     csrf.exempt(api_bp)
 

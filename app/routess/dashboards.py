@@ -543,10 +543,80 @@ def provider_start_chat(job_id):
     return redirect(url_for('dashboards_bp.provider_chat_box',job_id=job_id))
 
 
-# booking completed routes
-@dashboards_bp.route('/booking_completed/<int:job_id>',methods=['POST'])
-def booking_completed(job_id):
-    pass
+# active jobs
+@dashboards_bp.route('/active_jobs',methods=['GET'])
+def active_jobs():
+    if 'provider_id' not in session:
+        return redirect(url_for('auths_bp.provider_login'))
+    
+    # Fetch all jobs
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute(""" SELECT 
+                       b.id,b.service_type,b.service_description,u.username as customer_name,b.created_at,b.status
+                       FROM bookings b
+                       LEFT JOIN users u ON b.user_id=u.id
+                       WHERE b.provider_id=%s AND b.status= %s
+                """,(session['provider_id'],'accepted'))
+        
+        active_jobs = cursor.fetchall()
+        
+        
+        return render_template('dashboards/active_jobs.html',active_jobs=active_jobs)        
+
+    except Exception as e:
+        flash('Something went wrong','warning')
+        print('Error occured while fetching active jobs data.',e)
+        
+        return redirect(url_for('dashboards_bp.provider_dashboard'))
+
+# chat
+@dashboards_bp.route('/chat/<int:job_id>')
+def chat(job_id):
+    # return redirect(url_for("dashboards.provider_chat_box",job_id=job_id))
+    return 'chat'
+
+
+    
+    
+
+# complete job
+@dashboards_bp.route('/complete_job/<int:job_id>',methods=["POST"])
+def complete_job(job_id):
+    if 'provider_id' not in session:
+        return redirect(url_for('auths_bp.provider_login'))
+
+    try:
+            # fetch user id,
+            cursor = mysql.connection.cursor()
+            cursor.execute('SELECT user_id FROM bookings WHERE provider_id=%s AND id=%s',(session['provider_id'],job_id))
+            user_id = cursor.fetchone()[0]
+
+            if not user_id:
+                flash('Job not found','warning')
+                print(f'No such job {user_id} Found!')
+
+
+            # update job status to completed
+            cursor = mysql.connection.cursor()
+            cursor.execute('UPDATE bookings SET status =%s WHERE provider_id=%s AND id=%s ',('completed',session['provider_id'],job_id))
+            flash('Job has done!','success')
+                 # send a notification to user as well
+            create_notifcations(user_id,job_id,message=f'Job {job_id} has been marked done, verify has it?')
+
+    except Exception as e:
+            mysql.connection.rollback()
+            flash('Something went wrong','warning')
+            print('error occured while connecting to db',e)
+
+    finally:
+            mysql.connection.commit()
+            cursor.close()
+
+    return redirect(url_for('dashboards_bp.active_jobs',job_id=job_id))
+
+
+
 
 
 
@@ -579,7 +649,6 @@ def user_profile():
         if not recentBooking:
             recentBooking='No recent booking data yet'
         recentBooking=recentBooking
-        print(recentBooking)
 
     except Exception as e:
         flash(f'error occured {str(e)}, try again!','warning')
