@@ -161,7 +161,7 @@
         padding: 12px 16px;
         border-bottom: 1px solid #f8f9fa;
         transition: background-color 0.2s ease;
-        color: #212529 !important; /* Force text color in light theme */
+        color: #212529 !important;
     }
 
     .notifications-dropdown .dropdown-item:hover {
@@ -180,12 +180,12 @@
     .notification-message {
         font-size: 0.875rem;
         margin-bottom: 4px;
-        color: #212529 !important; /* Force dark text in light theme */
+        color: #212529 !important;
     }
 
     .notification-time {
         font-size: 0.75rem;
-        color: #6c757d !important; /* Force muted color */
+        color: #6c757d !important;
     }
 
     .notification-actions {
@@ -199,7 +199,7 @@
     }
 
     [data-theme="dark"] .notifications-dropdown .dropdown-item {
-        color: #ffffff !important; /* White text in dark theme */
+        color: #ffffff !important;
         border-bottom-color: #404040 !important;
         background-color: #2d2d2d !important;
     }
@@ -209,11 +209,11 @@
     }
 
     [data-theme="dark"] .notification-message {
-        color: #ffffff !important; /* White text in dark theme */
+        color: #ffffff !important;
     }
 
     [data-theme="dark"] .notification-time {
-        color: #cccccc !important; /* Light gray in dark theme */
+        color: #cccccc !important;
     }
 
     [data-theme="dark"] .notification-unread {
@@ -279,7 +279,7 @@
                     <i class="bi bi-sun-fill"></i>
                 </button>
 
-                <!-- ACTIVE JOBS BUTTON (Modern Placement - Before notifications) -->
+                <!-- ACTIVE JOBS BUTTON -->
                 {% if session.get('role') == 'provider' and session.get('provider_id') %}
                 <a href="{{ url_for('dashboards_bp.active_jobs') }}" class="nav-active-jobs-btn">
                     <i class="bi bi-check2-square"></i>
@@ -287,7 +287,7 @@
                 </a>
                 {% endif %}
 
-                <!-- NOTIFICATIONS DROPDOWN - MOVED INSIDE NAVBAR -->
+                <!-- USER NOTIFICATIONS -->
                 {% if session.get('role') == 'user' and session.get('user_id') %}
                 <div class="nav-item dropdown notifications-dropdown">
                     <a class="nav-link dropdown-toggle position-relative" href="#" role="button" data-bs-toggle="dropdown">
@@ -315,66 +315,86 @@
                                 {% for notification in g.notifications %}
                                 <div class="dropdown-item notification-item {% if not notification[3] %}notification-unread{% endif %}">
                                     <div class="notification-content">
+                                        <small>{{ notification[3] }}</small>
                                         <div class="notification-message">
                                             <small>{{ notification[2].strftime('%b %d, %I:%M %p') if notification[3] else 'Recently' }}</small>
-                                            </div>
-                                        <div class="notification-time">
-                                            <!-- not showing messages just a string "message" -->
-                                            {% if notification[3] %}
-                                                message
+                                            
+                                            
+                                            <!-- ACCEPT/REJECT BUTTONS ADDED HERE -->
+                                            {% if notification[0] and notification[4] == 0 %}
+                                                <div class="notification-actions mt-2">
+                                                    <!-- Accept Button -->
+                                                    <form method="POST" 
+                                                          action="{{ url_for('dashboards_bp.acceptJobDone', job_id=notification[0]) }}"
+                                                          class="d-inline">
+                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                        <button type="submit" 
+                                                                class="btn btn-success btn-sm"
+                                                                onclick="return confirm('Accept this job as completed?')">
+                                                            <i class="bi bi-check-lg"></i> Accept
+                                                        </button>
+                                                    </form>
+                                                    
+                                                    <!-- Reject Button -->
+                                                    <form method="POST" 
+                                                          action="{{ url_for('dashboards_bp.rejectJobDone', job_id=notification[0]) }}"
+                                                          class="d-inline ms-1">
+                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                        <button type="submit" 
+                                                                class="btn btn-danger btn-sm"
+                                                                onclick="return confirm('Reject this job?')">
+                                                            <i class="bi bi-x-lg"></i> Reject
+                                                        </button>
+                                                    </form>
+                                                    
+                                                    <!-- Chat Button for non-completion notifications -->
+                                                    {% if not 'completed' in notification[1]|lower %}
+                                                    <form action="{{ url_for('dashboards_bp.start_chat', job_id=notification[0]) }}" 
+                                                          method="GET" class="d-inline ms-1">
+                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                        <button type="submit" class="btn btn-primary btn-sm">
+                                                            <i class="bi bi-chat"></i> Chat
+                                                        </button>
+                                                    </form>
+                                                    {% endif %}
+                                                </div>
                                             {% endif %}
-                                            <!--  -->
+                                            <!-- END OF BUTTONS -->
+                                            
                                         </div>
-                                            {% if notification[0] %}
-                                            <!-- start chat button  -->
-                                            <form action="{{ url_for('dashboards_bp.start_chat', job_id=notification[0] ) }}" method="GET" class="d-inline">
+                                        
+                                        <!-- Keep Mark Read button -->
+                                        <div class="notification-actions mt-2">
+                                            {% if notification[4] == 0 and notification[0] %}
+                                            <form action="{{ url_for('dashboards_bp.mark_as_read_single', job_id=notification[0]) }}" 
+                                                  method="POST" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                <input type="hidden" name="job_id" value="{{ job_id }}">
-                                                <button type="submit" class="btn btn-sm btn-success">
-                                                    <i class="bi bi-check-lg"></i> Start Chat
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                                    <i class="bi bi-check-lg"></i> Mark Read
                                                 </button>
                                             </form>
-                                        {% else %}
-                                            <button disabled>NO JOB ID</button>
-                                        {% endif %}
-
-
-                        
-                                        <div class="notification-actions mt-2">
-                                            {% if notification[4] == 0 %}
-                                                {% if notification[0] %}
-                                                <form action="{{ url_for('dashboards_bp.mark_as_read_single', job_id=notification[0]) }}" method="POST" class="d-inline">
-                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                    <button type="submit" class="btn btn-sm btn-success">
-                                                        <i class="bi bi-check-lg"></i> Mark Read
-                                                    </button>
-                                                </form>
-                                                {% endif %}
                                             {% endif %}
-                                        
                                         </div>
                                     </div>
-                                        
-                                    </div>
-                                    {% endfor %}
-                                {% else %}
-                                    <div class="dropdown-item text-center py-4">
-                                        <i class="bi bi-bell-slash text-muted fs-1 mb-2"></i>
-                                        <p class="text-muted mb-0">No notifications yet</p>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="dropdown-footer text-center p-2 border-top">
-                                <small class="text-muted">You have {{ g.unread_count }} unread notifications</small>
-                            </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="dropdown-item text-center py-4">
+                                    <i class="bi bi-bell-slash text-muted fs-1 mb-2"></i>
+                                    <p class="text-muted mb-0">No notifications yet</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="dropdown-footer text-center p-2 border-top">
+                            <small class="text-muted">You have {{ g.unread_count }} unread notifications</small>
                         </div>
                     </div>
-                    {% endif %}
+                </div>
+                {% endif %}
 
-                <!-- provider side notification bar -->
+                <!-- PROVIDER NOTIFICATIONS -->
                 {% if session.get('role') == 'provider' and session.get('provider_id') %}
-                <!-- NOTIFICATIONS DROPDOWN FOR PROVIDER - MOVED INSIDE NAVBAR -->
                 <div class="nav-item dropdown notifications-dropdown">
                     <a class="nav-link dropdown-toggle position-relative" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="bi bi-bell fs-5"></i>
@@ -401,38 +421,33 @@
                                 {% for notification in g.notifications %}
                                 <div class="dropdown-item notification-item {% if not notification[3] %}notification-unread{% endif %}">
                                     <div class="notification-content">
-                                        <div class="notification-message"><small>{{ notification[2].strftime('%b %d, %I:%M %p') if notification[3] else 'Recently' }}</small></div>
-                                        <div class="notification-time">
-                                            {% if notification[3] %}
-                                            message
-                                            {% endif %}
+                                        <div class="notification-message">
+                                            <small>{{ notification[2].strftime('%b %d, %I:%M %p') if notification[3] else 'Recently' }}</small>
                                         </div>
+                                        
                                         {% if notification[0] %}
-                                            <!-- start chat button  -->
-                                            <form action="{{ url_for('dashboards_bp.provider_start_chat', job_id=notification[0] ) }}" method="GET" class="d-inline">
-                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                <input type="hidden" name="job_id" value="{{ job_id }}">
-                                                <button type="submit" class="btn btn-sm btn-success">
-                                                    <i class="bi bi-check-lg"></i> Start Chat
-                                                </button>
-                                            </form>
-                                        {% else %}
-                                            <button disabled>NO JOB ID</button>
-                                        {% endif %}
-                                        
-                                        
-                                        <div class="notification-actions mt-2">
-                                            {% if notification[4]== 0 %}
-                                                {% if notification[0] %}
-                                                <form action="{{ url_for('dashboards_bp.provider_mark_one_read' , job_id=notification[0]) }}" method="POST" class="d-inline">
+                                            <div class="notification-actions mt-2">
+                                                <!-- Provider Chat Button -->
+                                                <form action="{{ url_for('dashboards_bp.provider_start_chat', job_id=notification[0]) }}" 
+                                                      method="GET" class="d-inline">
                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                    <button type="submit" class="btn btn-sm btn-success">
+                                                    <button type="submit" class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-chat"></i> Chat
+                                                    </button>
+                                                </form>
+                                                
+                                                <!-- Provider Mark Read -->
+                                                {% if notification[4] == 0 %}
+                                                <form action="{{ url_for('dashboards_bp.provider_mark_one_read', job_id=notification[0]) }}" 
+                                                      method="POST" class="d-inline ms-1">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary">
                                                         <i class="bi bi-check-lg"></i> Mark Read
                                                     </button>
                                                 </form>
                                                 {% endif %}
-                                            {% endif %}
-                                        </div>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 {% endfor %}

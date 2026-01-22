@@ -615,6 +615,65 @@ def complete_job(job_id):
 
     return redirect(url_for('dashboards_bp.active_jobs',job_id=job_id))
 
+# USER DASHBOARD
+# user verifications
+#
+@dashboards_bp.route('/acceptJobDone/<int:job_id>',methods=['POST'])
+def acceptJobDone(job_id):
+    if "user_id" not in session:
+        return redirect(url_for('auths_bp.user_login'))
+    print("rannn")
+    
+    try:
+        print("Updating data.......")
+        cursor = mysql.connection.cursor()
+        cursor.execute('UPDATE bookings SET status = %s WHERE id=%s AND user_id = %s',('completed',job_id,session['user_id']))
+        # flash
+        print("Up-to-date!")
+        flash('Job verified!','success')
+
+
+    except Exception as e:
+        mysql.connection.rollback()
+        flash('Something went wrong','warning')
+        print('Something went wrong with ',e)
+
+    
+    finally:
+        mysql.connection.commit()
+        cursor.close()
+
+    return redirect(url_for('dashboards_bp.user_dashboard',job_id=job_id))
+
+# reject verification
+@dashboards_bp.route('/rejectJobDone/<int:job_id>',methods=["POST"])
+def rejectJobDone(job_id):
+    if "user_id" not in session:
+        return redirect(url_for('auths_bp.user_login'))
+    
+    
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute('UPDATE bookings SET status = %s WHERE id=%s AND user_id = %s',('rejected',job_id,session['user_id']))
+        # flash
+        flash('Job Rejected!','success')
+
+    except Exception as e:
+        mysql.connection.rollback()
+        flash('Something went wrong','warning')
+        print('Something went wrong with ',e)
+
+    
+    finally:
+        mysql.connection.commit()
+        cursor.close()
+
+    return redirect(url_for('dashboards_bp.user_dashboard',job_id=job_id))
+        
+
+
+
+
 
 
 
