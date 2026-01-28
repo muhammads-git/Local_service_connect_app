@@ -299,6 +299,7 @@
                         {% endif %}
                     </a>
                     
+                    
                     <div class="dropdown-menu dropdown-menu-end">
                         <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
                             <h6 class="mb-0 fw-semibold">Notifications</h6>
@@ -321,7 +322,7 @@
                                             
                                             
                                             <!-- ACCEPT/REJECT BUTTONS ADDED HERE -->
-                                            {% if notification[0] and notification[4] == 0 %}
+                                            {% if notification[0] %}
                                                 <div class="notification-actions mt-2">
                                                     <!-- Accept Button -->
                                                     <form method="POST" 
@@ -331,6 +332,7 @@
                                                         <button type="submit" 
                                                                 class="btn btn-success btn-sm"
                                                                 onclick="return confirm('Accept this job as completed?')">
+                                                                <!-- onclick="return= confirm('Accept this job as completed')"> -->
                                                             <i class="bi bi-check-lg"></i> Accept
                                                         </button>
                                                     </form>

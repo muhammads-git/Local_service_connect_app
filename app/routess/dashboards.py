@@ -446,8 +446,10 @@ def accept_job(job_id):
     # provider name 
     provider_name = session.get('provider_name')
 
+    # notificaions type
+    notification_type = "chat"
     # send notification to user
-    create_notifcations(customer_id,job_id,f'A Provider {provider_name} accepted your request.')
+    create_notifcations(customer_id,job_id,f'A Provider {provider_name} accepted your request.',notification_type)
 
     return redirect(url_for('dashboards_bp.provider_chat_box',job_id=job_id))
 
@@ -499,8 +501,9 @@ def provider_send_messages():
         mysql.connection.commit()
         cursor.close()
         flash('Sent!','success')
+
         # create notification
-        create_notifcations(user_id,job_id,'New Message!')
+        create_notifcations(user_id,job_id,'New Message!',"chat")
         
     except Exception as e:
         flash(f'Error {e} while sending this message','danger')
@@ -589,8 +592,14 @@ def complete_job(job_id):
     try:
             # fetch user id,
             cursor = mysql.connection.cursor()
-            cursor.execute('SELECT user_id FROM bookings WHERE provider_id=%s AND id=%s',(session['provider_id'],job_id))
-            user_id = cursor.fetchone()[0]
+            cursor.execute('SELECT user_id,status FROM bookings WHERE provider_id=%s AND id=%s',(session['provider_id'],job_id))
+            data = cursor.fetchone()
+            user_id =data[0]
+            status = data[1]
+
+            # save current job status into sessions stotage
+            if 'status' not in session:
+                session['current_job_status'] = status
 
             if not user_id:
                 flash('Job not found','warning')
@@ -601,8 +610,9 @@ def complete_job(job_id):
             cursor = mysql.connection.cursor()
             cursor.execute('UPDATE bookings SET status =%s WHERE provider_id=%s AND id=%s ',('completed',session['provider_id'],job_id))
             flash('Job has done!','success')
+            notification_type ="job_completion"
                  # send a notification to user as well
-            create_notifcations(user_id,job_id,message=f'Job {job_id} has been marked done, verify has it?')
+            create_notifcations(user_id,job_id,f'Job {job_id} has been marked done, verify has it?',notification_type)
 
     except Exception as e:
             mysql.connection.rollback()
@@ -622,10 +632,8 @@ def complete_job(job_id):
 def acceptJobDone(job_id):
     if "user_id" not in session:
         return redirect(url_for('auths_bp.user_login'))
-    print("rannn")
     
     try:
-        print("Updating data.......")
         cursor = mysql.connection.cursor()
         cursor.execute('UPDATE bookings SET status = %s WHERE id=%s AND user_id = %s',('completed',job_id,session['user_id']))
         # flash

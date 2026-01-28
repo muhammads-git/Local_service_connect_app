@@ -51,10 +51,10 @@ def sendBookingNotifications(username,service_type,proivder_mail,address,booking
 
    # create notifications funtion
 
-def create_notifcations(recipient_id,job_id,message):
+def create_notifcations(recipient_id,job_id,message,notification_type):
     # send messages/db store
     cursor = mysql.connection.cursor()
-    cursor.execute(' INSERT INTO notifications (recipient_id,job_id,message) VALUES(%s,%s,%s)',(recipient_id,job_id,message))
+    cursor.execute(' INSERT INTO notifications (recipient_id,job_id,message,notification_types) VALUES(%s,%s,%s,%s)',(recipient_id,job_id,message,notification_type))
     mysql.connection.commit()
     cursor.close()
 

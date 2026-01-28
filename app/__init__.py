@@ -32,6 +32,7 @@ def fetch_notifications():
             MAX(created_at) as latest_time, 
             GROUP_CONCAT(message SEPARATOR ' | ') as messages_combined,
             MIN(is_read) as unread
+            notification_types
             FROM notifications 
             WHERE recipient_id = %s 
             GROUP BY job_id
@@ -71,7 +72,7 @@ def create_app():
    #  app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', '')
    #  app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'serviconnect')
       # NEW WAY (Using Railway's injected variables)
-   # ✅ NEW CODE (Connects to Railway cloud)
+   #  NEW CODE (Connects to Railway cloud)
 
     app.config['MYSQL_HOST'] = os.getenv('DB_HOST', 'switchyard.proxy.rlwy.net')
     app.config['MYSQL_PORT'] = int(os.getenv('DB_PORT', 49423))  # CRITICAL: Add this line
