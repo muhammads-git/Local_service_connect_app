@@ -322,7 +322,7 @@
                                             
                                             
                                             <!-- ACCEPT/REJECT BUTTONS ADDED HERE -->
-                                            {% if notification[0] %}
+                                            {% if notification[0] and notification[5] == 'job_completion' %}
                                                 <div class="notification-actions mt-2">
                                                     <!-- Accept Button -->
                                                     <form method="POST" 
@@ -332,7 +332,7 @@
                                                         <button type="submit" 
                                                                 class="btn btn-success btn-sm"
                                                                 onclick="return confirm('Accept this job as completed?')">
-                                                                <!-- onclick="return= confirm('Accept this job as completed')"> -->
+
                                                             <i class="bi bi-check-lg"></i> Accept
                                                         </button>
                                                     </form>

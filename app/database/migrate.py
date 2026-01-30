@@ -5,14 +5,20 @@ from mysql.connector import Error
 
 def runMigrations():
     db_config = {
-    'host': os.getenv('DB_HOST', 'switchyard.proxy.rlwy.net'), 
-    'user': os.getenv('DB_USER', 'root'),
-    'port':  int(os.getenv('DB_PORT', 49423)),   # ← ADD _ 
-    'password': os.getenv('DB_PASSWORD', 'JkBFoZOTIMdAUzpoXhsbrftfHyHmasvX'),  # ← ADD _
-    'database': os.getenv('DB_NAME', 'railway'),  # ← ADD _
+    'host': os.getenv('MYSQL_HOST', '127.0.0.1'), 
+    'user': os.getenv('MYSQL_USER', 'muhammad'),
+    # 'port':  int(os.getenv('MYSQL_PORT', 6000)),   # ← ADD _ 
+    'password': os.getenv('MYSQL_PASSWORD', 'Shahzib123!'),  # ← ADD _
+    'database': os.getenv('MYSQL_DB', 'lsc_practice'),  # ← ADD _
     'connection_timeout': 30
     }
-    
+    # 'host': os.getenv('MYSQL_HOST', 'switchyard.proxy.rlwy.net'), 
+    # 'user': os.getenv('MYSQL_USER', 'root'),
+    # 'port':  int(os.getenv('MYSQL_PORT', 49423)),   # ← ADD _ 
+    # 'password': os.getenv('MYSQL_PASSWORD', 'JkBFoZOTIMdAUzpoXhsbrftfHyHmasvX'),  # ← ADD _
+    # 'database': os.getenv('MYSQL_DB', 'railway'),  # ← ADD _
+    # 'connection_timeout': 30
+    # }
     attempts = 0
     max_attempts = 5
     db = None
@@ -51,7 +57,7 @@ def runMigrations():
                 """)
     # Get already applied migration
     cursor.execute(" SELECT filename FROM migrations_history ")
-    all = cursor.fetchall()
+    # all = cursor.fetchall()
     applied = [ row[0] for row in cursor.fetchall() ]
 
     # Run new migrations
@@ -61,11 +67,11 @@ def runMigrations():
 
             # Read SQL file
             with open(os.path.join(migrationFolder,filename), 'r') as f:
-                sql = f.read()
+                sqlQuery = f.read()
     
 
             # Run sql commands
-            for statement in sql.split(';'):
+            for statement in sqlQuery.split(';'):   # 
                 if statement.strip():
                     try:
                         cursor.execute(statement)

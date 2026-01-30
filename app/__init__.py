@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 
 @app.before_request  # before request trigorrs before every req....
-def fetch_notifications():   
+def fetchNotifications():   
    g.unread_count = 0
    g.notifications = []
 
@@ -31,11 +31,11 @@ def fetch_notifications():
             COUNT(*) as message_count, 
             MAX(created_at) as latest_time, 
             GROUP_CONCAT(message SEPARATOR ' | ') as messages_combined,
-            MIN(is_read) as unread
-            notification_types
+            MIN(is_read) as unread,
+            notifications_types
             FROM notifications 
             WHERE recipient_id = %s 
-            GROUP BY job_id
+            GROUP BY job_id, notifications_types
             ORDER BY latest_time DESC """ ,(recipient_id,))
          notifications = cursor.fetchall()
 
@@ -49,7 +49,7 @@ def fetch_notifications():
 
       except Exception as e:
          # log the error 
-         app.logger.error('Something went wrong, while fetching notifications')
+         app.logger.error('Something went wrong, while fetching notifications',e)
 
       finally:
          cursor.close()
@@ -67,18 +67,18 @@ def create_app():
     app.config['SESSION_PERMANENT'] = True
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 
-   #  app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'localhost')
-   #  app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
-   #  app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', '')
-   #  app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'serviconnect')
+    app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'localhost')
+    app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
+    app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', '')
+    app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'serviconnect')
       # NEW WAY (Using Railway's injected variables)
    #  NEW CODE (Connects to Railway cloud)
 
-    app.config['MYSQL_HOST'] = os.getenv('DB_HOST', 'switchyard.proxy.rlwy.net')
-    app.config['MYSQL_PORT'] = int(os.getenv('DB_PORT', 49423))  # CRITICAL: Add this line
-    app.config['MYSQL_USER'] = os.getenv('DB_USER', 'root')
-    app.config['MYSQL_PASSWORD'] = os.getenv('DB_PASSWORD', 'JkBFoZOTIMdAUzpoXhsbrftfHyHmasvX')
-    app.config['MYSQL_DB'] = os.getenv('DB_NAME', 'railway')
+   #  app.config['MYSQL_HOST'] = os.getenv('DB_HOST', 'switchyard.proxy.rlwy.net')
+   #  app.config['MYSQL_PORT'] = int(os.getenv('DB_PORT', 49423))  # CRITICAL: Add this line
+   #  app.config['MYSQL_USER'] = os.getenv('DB_USER', 'root')
+   #  app.config['MYSQL_PASSWORD'] = os.getenv('DB_PASSWORD', 'JkBFoZOTIMdAUzpoXhsbrftfHyHmasvX')
+   #  app.config['MYSQL_DB'] = os.getenv('DB_NAME', 'railway')
     # Mail config
     app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
     app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))

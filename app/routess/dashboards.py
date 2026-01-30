@@ -560,9 +560,9 @@ def active_jobs():
                        FROM bookings b
                        LEFT JOIN users u ON b.user_id=u.id
                        WHERE b.provider_id=%s AND b.status= %s
+                       ORDER BY created_at DESC
                 """,(session['provider_id'],'accepted'))
         
-        active_jobs = cursor.fetchall()
         
         
         return render_template('dashboards/active_jobs.html',active_jobs=active_jobs)        
@@ -610,8 +610,9 @@ def complete_job(job_id):
             cursor = mysql.connection.cursor()
             cursor.execute('UPDATE bookings SET status =%s WHERE provider_id=%s AND id=%s ',('completed',session['provider_id'],job_id))
             flash('Job has done!','success')
+
             notification_type ="job_completion"
-                 # send a notification to user as well
+            # send a notification to user as well
             create_notifcations(user_id,job_id,f'Job {job_id} has been marked done, verify has it?',notification_type)
 
     except Exception as e:
