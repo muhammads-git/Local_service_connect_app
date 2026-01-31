@@ -27,15 +27,27 @@ def fetchNotifications():
       
       try:
          cursor.execute(""" SELECT
-            job_id,  
+            n.job_id,  
             COUNT(*) as message_count, 
-            MAX(created_at) as latest_time, 
-            GROUP_CONCAT(message SEPARATOR ' | ') as messages_combined,
-            MIN(is_read) as unread,
-            notifications_types
-            FROM notifications 
-            WHERE recipient_id = %s 
-            GROUP BY job_id, notifications_types
+            MAX(n.created_at) as latest_time, 
+                        
+            GROUP_CONCAT(
+                        CASE 
+                        WHEN n.notifications_types = 'job_completion'
+                        THEN 'Job Done?'
+                        ELSE n.message
+                        END
+                           SEPARATOR ' | '
+                        ) as messages_combined,
+
+            MIN(n.is_read) as unread,
+            n.notifications_types,
+            b.status  
+            FROM notifications n
+            LEFT JOIN bookings b 
+            ON n.job_id = b.id 
+            WHERE n.recipient_id = %s
+            GROUP BY n.job_id, n.notifications_types
             ORDER BY latest_time DESC """ ,(recipient_id,))
          notifications = cursor.fetchall()
 

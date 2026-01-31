@@ -322,7 +322,7 @@
                                             
                                             
                                             <!-- ACCEPT/REJECT BUTTONS ADDED HERE -->
-                                            {% if notification[0] and notification[5] == 'job_completion' %}
+                                            {% if notification[0] and notification[5] == 'job_completion' and notification[6] not in ['completed','rejected'] %}
                                                 <div class="notification-actions mt-2">
                                                     <!-- Accept Button -->
                                                     <form method="POST" 

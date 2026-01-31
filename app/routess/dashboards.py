@@ -562,6 +562,7 @@ def active_jobs():
                        WHERE b.provider_id=%s AND b.status= %s
                        ORDER BY created_at DESC
                 """,(session['provider_id'],'accepted'))
+        active_jobs = cursor.fetchall()
         
         
         
