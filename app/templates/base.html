@@ -322,14 +322,14 @@
                                             
                                             
                                             <!-- ACCEPT/REJECT BUTTONS ADDED HERE -->
-                                            {% if notification[0] and notification[5] == 'job_completion' and notification[6] not in ['completed','rejected'] %}
+                                            {% if notification[5] == 'job_completion' and notification[6] == 'in_progress' %}
                                                 <div class="notification-actions mt-2">
                                                     <!-- Accept Button -->
                                                     <form method="POST" 
                                                           action="{{ url_for('dashboards_bp.acceptJobDone', job_id=notification[0]) }}"
                                                           class="d-inline">
-                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                        <button type="submit" 
+                                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                         <button type="submit" 
                                                                 class="btn btn-success btn-sm"
                                                                 onclick="return confirm('Accept this job as completed?')">
 

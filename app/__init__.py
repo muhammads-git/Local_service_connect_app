@@ -34,7 +34,7 @@ def fetchNotifications():
             GROUP_CONCAT(
                         CASE 
                         WHEN n.notifications_types = 'job_completion'
-                        THEN 'Job Done?'
+                        THEN 'Job Verification message!'
                         ELSE n.message
                         END
                            SEPARATOR ' | '

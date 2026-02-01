@@ -607,10 +607,10 @@ def complete_job(job_id):
                 print(f'No such job {user_id} Found!')
 
 
-            # update job status to completed
+            # # update job status to completed
             cursor = mysql.connection.cursor()
-            cursor.execute('UPDATE bookings SET status =%s WHERE provider_id=%s AND id=%s ',('completed',session['provider_id'],job_id))
-            flash('Job has done!','success')
+            cursor.execute('UPDATE bookings SET status =%s WHERE provider_id=%s AND id=%s ',('in_progress',session['provider_id'],job_id))
+            flash('A notification has sent to Customer for job complete verfication!','success')
 
             notification_type ="job_completion"
             # send a notification to user as well
