@@ -50,7 +50,6 @@ def fetchNotifications():
             GROUP BY n.job_id, n.notifications_types
             ORDER BY latest_time DESC """ ,(recipient_id,))
          notifications = cursor.fetchall()
-
          #  check if notifications
          if notifications:
             g.notifications = notifications
@@ -110,11 +109,13 @@ def create_app():
     from app.routess.admins_panel import admins_bp
     # api rout testing.......
     from app.routess.api.api_routes import api_bp
+    from app.routess.payments.payment import payment_bp
 
     app.register_blueprint(auths_bp)   
     app.register_blueprint(dashboards_bp)
     app.register_blueprint(admins_bp)
     app.register_blueprint(api_bp) # for testing.....
+    app.register_blueprint(payment_bp)  # payment blueprint
    
    # csrf at last,
     csrf = CSRFProtect(app) 

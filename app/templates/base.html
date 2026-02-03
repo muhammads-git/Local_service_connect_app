@@ -320,7 +320,28 @@
                                         <div class="notification-message">
                                             <small>{{ notification[2].strftime('%b %d, %I:%M %p') if notification[3] else 'Recently' }}</small>
                                             
-                                            
+                                            <!-- # ADDING PAY BUTTON JUST AFTER THE JOB TURNS TO COMPLETED -->
+                                            {% if notification[6] == 'completed' %}
+                                                <div class="notification-actions mt-2">
+                                                        <div class="alert alert-danger p-2 mb-2" style="font-size: 0.8rem;">
+                                                            <i class="bi bi-clock"></i> 
+                                                             Complete payment within 24 hours
+                                                        </div>
+    
+                                                    <form action="{{ url_for('payment_bp.pay_now')}}"
+                                                    class="d-inline">
+                                                    <input type="hidden" name="csrf_token" id="{{ csrf_token() }}">
+                                                    <button type="submit"
+                                                        class="btn btn-success btn-sm">
+
+                                                        <i class="bi bi-check-lg"></i> Click to Pay
+                                                    </button>
+                                                        
+                                                    </form>
+
+                                                </div>
+                                            {% endif %}
+
                                             <!-- ACCEPT/REJECT BUTTONS ADDED HERE -->
                                             {% if notification[5] == 'job_completion' and notification[6] == 'in_progress' %}
                                                 <div class="notification-actions mt-2">

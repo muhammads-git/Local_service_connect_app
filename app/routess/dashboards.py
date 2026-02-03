@@ -581,8 +581,6 @@ def chat(job_id):
     return 'chat'
 
 
-    
-    
 
 # complete job
 @dashboards_bp.route('/complete_job/<int:job_id>',methods=["POST"])
@@ -643,6 +641,27 @@ def acceptJobDone(job_id):
         flash('Job verified!','success')
 
 
+        # start timer payment due date
+        cursor = mysql.connection.cursor()
+        # cursor.execute('SELECT payment_status FROM bookings WHERE id = %s AND user_id = %s',())
+        cursor.execute('UPDATE bookings SET payment_due_date = NOW() + INTERVAL 24 HOUR WHERE id=%s AND user_id=%s',(job_id,session.get('user_id')))
+        # flash msg
+        mysql.connection.commit()
+        cursor.close()
+        #######################################33
+        # import datetime for calculating time from now 
+        from datetime import datetime,timedelta
+        deadline = datetime.now() + timedelta(hours=24)
+
+        remaining_time = deadline - datetime.now()
+        remaining_time_hourly = int(remaining_time.total_seconds) 
+        ############################3
+         
+
+        flash('Job is completed,Pay Now','success')
+
+    
+
     except Exception as e:
         mysql.connection.rollback()
         flash('Something went wrong','warning')
@@ -653,7 +672,7 @@ def acceptJobDone(job_id):
         mysql.connection.commit()
         cursor.close()
 
-    return redirect(url_for('dashboards_bp.user_dashboard',job_id=job_id))
+    return redirect(url_for('dashboards_bp.user_dashboard',job_id=job_id,remaining_time=remaining_time))
 
 # reject verification
 @dashboards_bp.route('/rejectJobDone/<int:job_id>',methods=["POST"])
@@ -679,6 +698,10 @@ def rejectJobDone(job_id):
         cursor.close()
 
     return redirect(url_for('dashboards_bp.user_dashboard',job_id=job_id))
+
+
+# PAYMENT ROUTES // IF JOB VERFICATIONS GOT ACCEPTED
+# try to make another blueprints
         
 
 
