@@ -648,19 +648,19 @@ def acceptJobDone(job_id):
         # flash msg
         mysql.connection.commit()
         cursor.close()
-        #######################################33
+        
+        #  calculate remaining time for deadlines..
         # import datetime for calculating time from now 
         from datetime import datetime,timedelta
         deadline = datetime.now() + timedelta(hours=24)
 
         remaining_time = deadline - datetime.now()
-        remaining_time_hourly = int(remaining_time.total_seconds) 
-        ############################3
+        remaining_seconds = int(remaining_time.total_seconds()) 
+        hours = remaining_seconds // 36000
+        minutes = (remaining_seconds % 3600) // 60
+
          
-
         flash('Job is completed,Pay Now','success')
-
-    
 
     except Exception as e:
         mysql.connection.rollback()
@@ -672,7 +672,8 @@ def acceptJobDone(job_id):
         mysql.connection.commit()
         cursor.close()
 
-    return redirect(url_for('dashboards_bp.user_dashboard',job_id=job_id,remaining_time=remaining_time))
+    # return redirect(url_for('dashboards_bp.user_dashboard',job_id=job_id,remaining_time=remaining_time))
+    return render_template('dashboards/user_dashboard.html',job_id=job_id,hours=hours,minutes=minutes)
 
 # reject verification
 @dashboards_bp.route('/rejectJobDone/<int:job_id>',methods=["POST"])
