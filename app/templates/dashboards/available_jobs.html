@@ -42,19 +42,19 @@
                         <div class="col-md-4">
                             <p class="mb-2 small">
                                 <strong class="text-muted">Customer:</strong><br>
-                                {{ selected_job[1] }}
+                                <small>{{ selected_job[1] }}</small>
                             </p>
                         </div>
                         <div class="col-md-4">
                             <p class="mb-2 small">
                                 <strong class="text-muted">Service Date:</strong><br>
-                                {{ selected_job[4] }}
+                                <small>{{ selected_job[4] }}</small>
                             </p>
                         </div>
                         <div class="col-md-4">
                             <p class="mb-2 small">
                                 <strong class="text-muted">Address:</strong><br>
-                                {{ selected_job[5] }}
+                                <small>{{ selected_job[5] }}</small>
                             </p>
                         </div>
                     </div>
@@ -62,10 +62,20 @@
                         <div class="col-12">
                             <p class="mb-2 small">
                                 <strong class="text-muted">Service Description:</strong><br>
-                                {{ selected_job[2] }}
+                                <small>{{ selected_job[2] }}</small>
                             </p>
                         </div>
                     </div>
+                     <div class="col-md-4">
+                            <p class="mb-2 small">
+                                <strong class="text-muted">Service Base Price:</strong><br>
+                                <small>{% if not selected_job[6]  %}
+                                    500 PKR
+                                {% else %}
+                                    {{ selected_job[6] }}
+                                {% endif %}</small>
+                            </p>
+                        </div>
                     
                     <!-- Action Buttons -->
                     {% if selected_job[3] == 'available' %}

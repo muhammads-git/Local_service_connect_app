@@ -251,11 +251,17 @@ def request_a_service():
         user_adress = cursor.fetchone()[0]
         cursor.close()
 
+        ### calculate the plateform percentage and then insert total price in bookings table
+        # base price for all service is DEFAULT 500.00
+        services_price = 500.00
+        totalPrice = services_price * (10 / 100) 
+        
+
         # check if user address is not null
         if user_adress is not None:
             # db 
             cursor = mysql.connection.cursor()
-            cursor.execute('INSERT INTO bookings (user_id,status,service_type,service_description) VALUES (%s,%s,%s,%s)', (session['user_id'],'available',type,description))
+            cursor.execute('INSERT INTO bookings (user_id,status,service_type,service_description,total_price) VALUES (%s,%s,%s,%s,%s)', (session['user_id'],'available',type,description,totalPrice))
             mysql.connection.commit()
             cursor.close()
 
@@ -263,7 +269,7 @@ def request_a_service():
             flash('Service request has been sent, You will get provider soon!','success')
             return redirect(url_for('dashboards_bp.request_a_service'))
         else:
-            flash('Complete your profile before submitting service form','warning')
+            flash('Complete your profile before submitting service form!','warning')
             # url
             return redirect(url_for('auths_bp.complete_profile'))
         
