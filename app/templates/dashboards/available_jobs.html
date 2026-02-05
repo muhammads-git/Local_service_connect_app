@@ -178,6 +178,10 @@
                                     <th class="small fw-medium text-muted py-2 px-3">Service Description</th>
                                     <th class="small fw-medium text-muted py-2 px-3">Status</th>
                                     <th class="small fw-medium text-muted py-2 px-3 text-center">Actions</th>
+                                    <th class="small fw-medium text-muted py-2 px-3">Base Price</th>
+                                    <th class="small fw-medium text-muted py-2 px-3">Plateform Fee</th>
+                                     <th class="small fw-medium text-muted py-2 px-3">Total Price</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -216,6 +220,34 @@
                                         {% else %}
                                             <span class="badge status-badge status-other">{{ booking[3] }}</span>
                                         {% endif %}
+                                    </td>
+                                    <td class="py-2 px-3">
+                                        <div>
+                                            <!-- <span class="small">{{ booking[4] }}</span> -->
+                                            <div class="mt-1">
+                                                <span class="badge bg-light text-dark small">{{ booking[4]}}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-2 px-3">
+                                        <div>
+                                            <!-- <span class="small">{{ booking[5] }}</span> -->
+                                            <div class="mt-1">
+                                                {% if not booking[5] %}
+                                                <span class="badge bg-light text-dark small">10 %</span>
+                                                {% else %}
+                                                <span class="badge bg-light text-dark small">{{ booking[5] }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-2 px-3">
+                                        <div>
+                                            <!-- <span class="small">{{ booking[6] }}</span> -->
+                                            <div class="mt-1">
+                                                <span class="badge bg-light text-dark small">{{ booking[6]}}</span>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td class="py-2 px-3">
                                         <div class="d-flex gap-1 justify-content-center">

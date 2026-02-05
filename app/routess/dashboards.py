@@ -251,17 +251,18 @@ def request_a_service():
         user_adress = cursor.fetchone()[0]
         cursor.close()
 
-        ### calculate the plateform percentage and then insert total price in bookings table
-        # base price for all service is DEFAULT 500.00
+        # CALCUALTING SERVICE PRICES
         services_price = 500.00
-        totalPrice = services_price * (10 / 100) 
-        
+        plateform_commission = 10.00
+
+        plateform_fee = services_price * (plateform_commission / 100) 
+        totalPrice = services_price + plateform_fee
 
         # check if user address is not null
         if user_adress is not None:
             # db 
             cursor = mysql.connection.cursor()
-            cursor.execute('INSERT INTO bookings (user_id,status,service_type,service_description,total_price) VALUES (%s,%s,%s,%s,%s)', (session['user_id'],'available',type,description,totalPrice))
+            cursor.execute('INSERT INTO bookings (user_id,status,service_type,service_description,total_price,service_price,plateform_percentage) VALUES (%s,%s,%s,%s,%s,%s,%s)', (session['user_id'],'available',type,description,totalPrice,services_price,plateform_commission))
             mysql.connection.commit()
             cursor.close()
 
@@ -399,7 +400,7 @@ def reject_booking(booking_id):
 def available_jobs():
     # think .............
     cursor = mysql.connection.cursor()
-    cursor.execute(' SELECT b.id, u.username, b.service_description, b.status FROM users u JOIN bookings b ON u.id = b.user_id WHERE b.status ="available" ORDER BY b.id DESC')
+    cursor.execute(' SELECT b.id, u.username, b.service_description, b.status,b.service_price,b.plateform_percentage,b.total_price FROM users u JOIN bookings b ON u.id = b.user_id WHERE b.status ="available" ORDER BY b.id DESC')
     available_jobs_data = cursor.fetchall()
     cursor.close()
 
@@ -418,7 +419,7 @@ def available_jobs():
 def get_view_jobs_id(job_id):
     # get selected job data from db
     cursor = mysql.connection.cursor()
-    cursor.execute(' SELECT b.id, u.username, b.service_description, b.status, b.service_date, b.address FROM users u JOIN bookings b ON u.id =b.user_id WHERE b.id = %s AND b.status =%s',(job_id,'available'))
+    cursor.execute(' SELECT b.id, u.username, b.service_description, b.status, b.created_at, b.address,b.service_price,b.plateform_percentage,total_price FROM users u JOIN bookings b ON u.id =b.user_id WHERE b.id = %s AND b.status =%s',(job_id,'available'))
     selected_job_data = cursor.fetchone()
     cursor.close()
 
