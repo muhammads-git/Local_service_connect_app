@@ -235,6 +235,16 @@ def book_service(provider_id):
                         provider_name=provider_name,
                         provider_profession=provider_profession)
 
+SERVICE_PRICES = {
+    'plumbing': 2000.00,
+    'electrical': 1800.00,
+    'cleaning': 1200.00,
+    'tutoring': 800.00,
+    'carpentry': 1500.00,
+    'painting': 1400.00,
+    'gardening': 900.00,
+    'other': 1000.00
+}
 
 #### Request a service 
 @dashboards_bp.route('/request_a_service',methods=['POST','GET'])
@@ -275,7 +285,7 @@ def request_a_service():
             return redirect(url_for('auths_bp.complete_profile'))
         
     # GET
-    return render_template('dashboards/bookservice_form.html',request_service_form=request_service_form)
+    return render_template('dashboards/bookservice_form.html',request_service_form=request_service_form,SERVICE_PRICES=SERVICE_PRICES)
         
     
 @dashboards_bp.route('/provider')
