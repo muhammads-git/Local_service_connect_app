@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h3>Your Profile</h3>
+    
+    <!-- Display Current Profile Info -->
+    <div class="card">
+        <div class="card-body">
+         {% for data in provider_data %}
+            <h5>{{ data[0] }}</h5>
+            <p>Email: {{ data[1] }}</p>
+            <p>Phone: {{ data[2] or 'Not set' }}</p>
+            <p>Description: {{ data[3] or 'Not set' }}</p>
+            <p>Service Price: {{ data[4] or 'Not set' }} PKR</p>
+         {% endfor %}
+            
+            <!-- EDIT BUTTON THAT WORKS -->
+            <form action="{{ url_for('dashboards_bp.editProviderProfile') }}" method="GET">
+                     <!-- CSRF Token  -->
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-pencil"></i> Edit Profile
+                </button>
+            </form>
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}

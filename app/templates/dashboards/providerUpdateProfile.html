@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+    <h3>Update Your Profile</h3>
+    
+    <form action="{{ url_for('dashboards_bp.UpdateProviderProfile') }}" method="POST">
+        <!-- CSRF Token  -->
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <div class="mb-3">
+            {{ provider_edit_form.p_name.label(class="form-label") }}
+            {{ provider_edit_form.p_name(class="form-control", size=22, placeholder='Username') }}
+        </div>
+        
+        <div class="mb-3">
+            {{ provider_edit_form.p_email.label(class="form-label") }}
+            {{ provider_edit_form.p_email(class="form-control", size=22, placeholder='Email') }}
+        </div>
+        
+        <div class="mb-3">
+            {{ provider_edit_form.p_phone.label(class="form-label") }}
+            {{ provider_edit_form.p_phone(class="form-control", size=22, placeholder='Phone') }}
+        </div>
+        
+        <div class="mb-3">
+            {{ provider_edit_form.p_description.label(class="form-label") }}
+            {{ provider_edit_form.p_description(class="form-control", rows=4, placeholder='Tell customers about your services...') }}
+        </div>
+        
+        <div class="mb-3">
+            {{ provider_edit_form.p_prices.label(class="form-label") }}
+            <div class="input-group">
+                <span class="input-group-text">PKR</span>
+                {{ provider_edit_form.p_prices(class="form-control", placeholder='Your service price') }}
+            </div>
+        </div>
+        
+        {{ provider_edit_form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+
+{% endblock %}

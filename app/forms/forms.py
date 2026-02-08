@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import Length,Email,DataRequired,InputRequired,EqualTo
-from wtforms import SearchField,StringField,PasswordField,SubmitField,EmailField,SelectField,TextAreaField,IntegerField,DateTimeField,HiddenField
+from wtforms import SearchField,StringField,PasswordField,SubmitField,EmailField,SelectField,TextAreaField,IntegerField,DateTimeField,HiddenField,DecimalField
 from datetime import datetime # for DateField
 # user
 class User_RegisterForms(FlaskForm):
@@ -124,3 +124,13 @@ class UserEditProfile(FlaskForm):
    # user_password = PasswordField('Password',validators=[InputRequired(),Length(min=6,max=20)])
    # confirm_password = PasswordField('Confirm Password',validators=[InputRequired(),EqualTo('user_password',message='Password must match.')])
    submit = SubmitField('Update Changes')
+
+class ProviderEditProfile(FlaskForm):
+   p_name = StringField('Full Name',validators=[InputRequired(),Length(min=6,max=20)])
+   p_email = EmailField('Email',validators=[InputRequired(),Email()])
+   p_phone = StringField('Contact',validators=[InputRequired(),Length(max=10)])
+#  
+   p_description = TextAreaField('Description',validators=[InputRequired(),Length(max=50)])
+   p_prices = DecimalField('Price',validators=[InputRequired()])
+
+   submit = SubmitField('Update')

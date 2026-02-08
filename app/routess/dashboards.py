@@ -1,7 +1,7 @@
 from flask import redirect,render_template,url_for,session,flash,get_flashed_messages,request
 from flask import Blueprint
 from app.__init__ import mysql
-from app.forms.forms import BookingForm,BookServiceForm,UserEditProfile
+from app.forms.forms import BookingForm,BookServiceForm,UserEditProfile,ProviderEditProfile
 from app.utils.mail import sendBookingNotifications
 from app.utils.mail import create_notifcations
 
@@ -805,8 +805,101 @@ def UpdateProfile():
     return redirect(url_for('dashboards_bp.user_profile'))
     
 # Provider Profile
-@dashboards_bp.route('/provider_profile',methods=['GET'])
+@dashboards_bp.route('/provider_profile')
 def provider_profile():
-    message = 'You will do it!'
-    return message
+    # fetch provider data from db and return
+    if 'provider_id' not in session:
+        return redirect(url_for('auths_bp.provider_profile'))
+    
+    # provider edit profile form instance
+    provider_edit_form = ProviderEditProfile()
+    provider_data = None
+    
+    try:
+        # // make db conn
+        cur = mysql.connection.cursor()
+        cur.execute(""" SELECT sp.username, sp.email, sp.phone, s.description, s.price 
+                    FROM service_providers as sp 
+                    LEFT JOIN services as s
+                    ON sp.id = s.provider_id 
+                    WHERE sp.id = %s""",(session.get('provider_id'),))
+        provider_data = cur.fetchall()
+        
+    except Exception as e:
+        flash('something went wrong, try again!','warning')
+        print(f'Error occured : {e}')
 
+
+    return render_template('dashboards/providerProfilePage.html',provider_edit_form=provider_edit_form,provider_data=provider_data)
+
+
+@dashboards_bp.route('/editProvider_Profile',methods=['GET'])
+def editProviderProfile():
+    provider_edit_form = ProviderEditProfile()
+
+    try:
+        # // make db conn
+        cur = mysql.connection.cursor()
+        cur.execute(""" SELECT sp.username, sp.email, sp.phone, s.description, s.price 
+                    FROM service_providers as sp 
+                    LEFT JOIN services as s
+                    ON sp.id = s.provider_id 
+                    WHERE sp.id = %s""",(session.get('provider_id'),))
+        provider_dataf = cur.fetchone()
+        
+    except Exception as e:
+        flash('something went wrong, try again!','warning')
+        print(f'Error occured : {e}')
+
+    if provider_dataf:
+        # prefill form
+        provider_edit_form.p_name.data = provider_dataf[0]
+        provider_edit_form.p_email.data = provider_dataf[1]
+        provider_edit_form.p_phone.data = provider_dataf[2]
+        provider_edit_form.p_description.data = provider_dataf[3]
+        provider_edit_form.p_prices.data = provider_dataf[4]
+        
+    # return redirect(url_for('dashboards_bp.updateProviderProfile',provider_edit_form=provider_edit_form,provider_dataf=provider_dataf))
+    return render_template('dashboards/providerUpdateProfle.html',provider_dataf=provider_dataf,provider_edit_form=provider_edit_form)
+@dashboards_bp.route('/updateProviderProfile',methods=['POST'])
+def updateProviderProfile():
+    provider_edit_form = ProviderEditProfile()
+
+    if provider_edit_form.validate_on_submit():
+        new_name = provider_edit_form.p_name.data
+        new_email = provider_edit_form.p_email.data
+        new_phone = provider_edit_form.p_phone.data
+        new_description = provider_edit_form.p_description.data
+        new_prices = provider_edit_form.p_prices.data
+
+        # make connection
+        try :
+            cursor = mysql.connection.cursor()
+            # update providers table data
+            cursor.execute(' UPDATE service_providers SET username=%s,email=%s,phone=%s WHERE id=%s',(new_name,new_email,new_phone,session.get('provider_id')))
+            # update services table
+            cursor.execute(' UPDATE services SET provider_id=%s,description=%s,price=%s WHERE id=%s',(new_description,new_prices,session.get('provider_id')))
+
+            flash('Profile Updated!','success')
+        
+        except Exception as e:
+            mysql.connection.rollback()
+            flash('something went wrong, try again!','warning')
+            print(f'Error while updating provider profile data: {e}')
+
+        finally:
+            mysql.connection.commit()
+            cursor.close()
+        
+        return redirect(url_for('dashboards_bp.provider_profile'))
+    
+    return render_template('dashboards/providerProfilePage.html')
+
+
+
+        
+
+        
+
+
+        

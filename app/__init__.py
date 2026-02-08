@@ -125,4 +125,5 @@ def create_app():
    # apply csrf protections to all blueprints except apisss
     csrf.exempt(api_bp)
 
+   
     return app
