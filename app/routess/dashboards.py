@@ -860,7 +860,7 @@ def editProviderProfile():
         provider_edit_form.p_prices.data = provider_dataf[4]
         
     # return redirect(url_for('dashboards_bp.updateProviderProfile',provider_edit_form=provider_edit_form,provider_dataf=provider_dataf))
-    return render_template('dashboards/providerUpdateProfle.html',provider_dataf=provider_dataf,provider_edit_form=provider_edit_form)
+    return render_template('dashboards/providerUpdateProfile.html',provider_dataf=provider_dataf,provider_edit_form=provider_edit_form)
 @dashboards_bp.route('/updateProviderProfile',methods=['POST'])
 def updateProviderProfile():
     provider_edit_form = ProviderEditProfile()
@@ -891,7 +891,7 @@ def updateProviderProfile():
             mysql.connection.commit()
             cursor.close()
         
-        return redirect(url_for('dashboards_bp.provider_profile'))
+        # return redirect(url_for('dashboards_bp.provider_profile'))
     
     return render_template('dashboards/providerProfilePage.html')
 
