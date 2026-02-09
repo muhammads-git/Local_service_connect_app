@@ -6,8 +6,8 @@
     
     <form action="{{ url_for('dashboards_bp.updateProviderProfile') }}" method="POST">
         <!-- CSRF Token  -->
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        
+        {{ provider_edit_form.hidden_tag() }}
+
         <div class="mb-3">
             {{ provider_edit_form.p_name.label(class="form-label") }}
             {{ provider_edit_form.p_name(class="form-control", size=22, placeholder='Username') }}

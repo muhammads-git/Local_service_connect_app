@@ -128,9 +128,8 @@ class UserEditProfile(FlaskForm):
 class ProviderEditProfile(FlaskForm):
    p_name = StringField('Full Name',validators=[InputRequired(),Length(min=6,max=20)])
    p_email = EmailField('Email',validators=[InputRequired(),Email()])
-   p_phone = StringField('Contact',validators=[InputRequired(),Length(max=10)])
-#  
-   p_description = TextAreaField('Description',validators=[InputRequired(),Length(max=50)])
+   p_phone = StringField('Contact',validators=[InputRequired(),Length(max=15)])
+   p_description = TextAreaField('Description',validators=[InputRequired(),Length(min=10,max=500)])
    p_prices = DecimalField('Price',validators=[InputRequired()])
 
    submit = SubmitField('Update')

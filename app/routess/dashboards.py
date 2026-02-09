@@ -877,24 +877,39 @@ def updateProviderProfile():
             cursor = mysql.connection.cursor()
             # update providers table data
             cursor.execute(' UPDATE service_providers SET username=%s,email=%s,phone=%s WHERE id=%s',(new_name,new_email,new_phone,session.get('provider_id')))
-            # update services table
-            cursor.execute(' UPDATE services SET provider_id=%s,description=%s,price=%s WHERE id=%s',(new_description,new_prices,session.get('provider_id')))
+            # fetch DATA TO CHECK WHETHER IT EXISTS OR NOT
+            cursor.execute(' SELECT id FROM services WHERE provider_id =%s',(session['provider_id'],))
 
+            service_exists = cursor.fetchone()
+            if service_exists:
+                # update services table - FIXED ORDER
+                cursor.execute(' UPDATE services SET description=%s,price=%s WHERE provider_id=%s',(new_description,new_prices,session['provider_id']))
+            else:
+                # insert new service
+                cursor.execute(' INSERT INTO services (provider_id,description,price) VALUES(%s,%s,%s)',(session['provider_id'],new_description,new_prices))
+            
+            mysql.connection.commit()
+            cursor.close()
             flash('Profile Updated!','success')
+            return redirect(url_for('dashboards_bp.provider_profile'))
         
         except Exception as e:
             mysql.connection.rollback()
-            flash('something went wrong, try again!','warning')
-            print(f'Error while updating provider profile data: {e}')
-
-        finally:
-            mysql.connection.commit()
-            cursor.close()
+            flash('Error updating profile, try again!','warning')
+            print(f'Error: {e}')
+            return render_template('dashboards/providerUpdateProfile.html', provider_edit_form=provider_edit_form)
         
-        # return redirect(url_for('dashboards_bp.provider_profile'))
+        finally:
+            cursor.close()
     
-    return render_template('dashboards/providerProfilePage.html')
-
+    else:
+        # Form validation failed - show errors to user
+        print(f"Validation failed. Errors: {provider_edit_form.errors}")
+        
+        for field, errors in provider_edit_form.errors.items():
+            for error in errors:
+                flash(f"{field}: {error}", 'danger')
+        return render_template('dashboards/providerUpdateProfile.html', provider_edit_form=provider_edit_form)
 
 
         
