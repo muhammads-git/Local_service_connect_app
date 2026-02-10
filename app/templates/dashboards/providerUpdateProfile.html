@@ -1,43 +1,302 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="container mt-4">
-    <h3>Update Your Profile</h3>
-    
-    <form action="{{ url_for('dashboards_bp.updateProviderProfile') }}" method="POST">
-        <!-- CSRF Token  -->
-        {{ provider_edit_form.hidden_tag() }}
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 30px auto;
+    }
 
-        <div class="mb-3">
-            {{ provider_edit_form.p_name.label(class="form-label") }}
-            {{ provider_edit_form.p_name(class="form-control", size=22, placeholder='Username') }}
-        </div>
-        
-        <div class="mb-3">
-            {{ provider_edit_form.p_email.label(class="form-label") }}
-            {{ provider_edit_form.p_email(class="form-control", size=22, placeholder='Email') }}
-        </div>
-        
-        <div class="mb-3">
-            {{ provider_edit_form.p_phone.label(class="form-label") }}
-            {{ provider_edit_form.p_phone(class="form-control", size=22, placeholder='Phone') }}
-        </div>
-        
-        <div class="mb-3">
-            {{ provider_edit_form.p_description.label(class="form-label") }}
-            {{ provider_edit_form.p_description(class="form-control", rows=4, placeholder='Tell customers about your services...') }}
-        </div>
-        
-        <div class="mb-3">
-            {{ provider_edit_form.p_prices.label(class="form-label") }}
-            <div class="input-group">
-                <span class="input-group-text">PKR</span>
-                {{ provider_edit_form.p_prices(class="form-control", placeholder='Your service price') }}
+    .form-header {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        border-left: 4px solid #667eea;
+    }
+
+    .form-header h2 {
+        font-size: 22px;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+
+    .form-header p {
+        color: #999;
+        font-size: 13px;
+        margin-top: 5px;
+        margin-bottom: 0;
+    }
+
+    .form-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: block;
+        color: #333;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .form-label small {
+        color: #999;
+        font-weight: 400;
+        margin-left: 5px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-control::placeholder {
+        color: #bbb;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .input-group-container {
+        display: flex;
+        gap: 0;
+    }
+
+    .input-group-prefix {
+        background: #f8f9fa;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-right: none;
+        border-radius: 6px 0 0 6px;
+        color: #666;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .input-group-container .form-control {
+        border-radius: 0 6px 6px 0;
+        margin: 0;
+    }
+
+    .form-error {
+        color: #e74c3c;
+        font-size: 13px;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .form-control.is-invalid {
+        border-color: #e74c3c;
+    }
+
+    .form-control.is-invalid:focus {
+        box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+    }
+
+    .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+    }
+
+    .btn-submit {
+        flex: 1;
+        background: #667eea;
+        border: none;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+
+    .btn-submit:hover {
+        background: #764ba2;
+    }
+
+    .btn-cancel {
+        flex: 1;
+        background: #f0f0f0;
+        border: 1px solid #ddd;
+        color: #333;
+        padding: 12px 20px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    .btn-cancel:hover {
+        background: #e9ecef;
+    }
+
+    .alert-error {
+        background: #fff5f5;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        padding: 12px 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .required-note {
+        color: #999;
+        font-size: 12px;
+        margin-top: 20px;
+        text-align: center;
+    }
+</style>
+
+<div class="form-container">
+    <!-- HEADER -->
+    <div class="form-header">
+        <h2>Update Your Profile</h2>
+        <p>Keep your information up to date to attract more customers</p>
+    </div>
+
+    <!-- FORM -->
+    <div class="form-card">
+        {% if provider_edit_form.errors %}
+            <div class="alert-error">
+                <strong>Please fix the errors below:</strong>
+                <ul style="margin: 8px 0 0 20px; padding: 0;">
+                    {% for field, errors in provider_edit_form.errors.items() %}
+                        {% for error in errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
             </div>
-        </div>
-        
-        {{ provider_edit_form.submit(class="btn btn-primary") }}
-    </form>
+        {% endif %}
+
+        <form action="{{ url_for('dashboards_bp.updateProviderProfile') }}" method="POST" novalidate>
+            {{ provider_edit_form.hidden_tag() }}
+
+            <!-- NAME FIELD -->
+            <div class="form-group">
+                {{ provider_edit_form.p_name.label(class="form-label") }}
+                {% if provider_edit_form.p_name.errors %}
+                    {{ provider_edit_form.p_name(class="form-control is-invalid", placeholder='Enter your name') }}
+                {% else %}
+                    {{ provider_edit_form.p_name(class="form-control", placeholder='Enter your name') }}
+                {% endif %}
+                {% if provider_edit_form.p_name.errors %}
+                    {% for error in provider_edit_form.p_name.errors %}
+                        <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- EMAIL FIELD -->
+            <div class="form-group">
+                {{ provider_edit_form.p_email.label(class="form-label") }}
+                {% if provider_edit_form.p_email.errors %}
+                    {{ provider_edit_form.p_email(class="form-control is-invalid", placeholder='your@email.com') }}
+                {% else %}
+                    {{ provider_edit_form.p_email(class="form-control", placeholder='your@email.com') }}
+                {% endif %}
+                {% if provider_edit_form.p_email.errors %}
+                    {% for error in provider_edit_form.p_email.errors %}
+                        <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- PHONE FIELD -->
+            <div class="form-group">
+                {{ provider_edit_form.p_phone.label(class="form-label") }}
+                {% if provider_edit_form.p_phone.errors %}
+                    {{ provider_edit_form.p_phone(class="form-control is-invalid", placeholder='+92 300 1234567') }}
+                {% else %}
+                    {{ provider_edit_form.p_phone(class="form-control", placeholder='+92 300 1234567') }}
+                {% endif %}
+                {% if provider_edit_form.p_phone.errors %}
+                    {% for error in provider_edit_form.p_phone.errors %}
+                        <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- DESCRIPTION FIELD -->
+            <div class="form-group">
+                {{ provider_edit_form.p_description.label(class="form-label") }}
+                {% if provider_edit_form.p_description.errors %}
+                    {{ provider_edit_form.p_description(class="form-control is-invalid", placeholder='Write about your services, experience, and expertise...') }}
+                {% else %}
+                    {{ provider_edit_form.p_description(class="form-control", placeholder='Write about your services, experience, and expertise...') }}
+                {% endif %}
+                {% if provider_edit_form.p_description.errors %}
+                    {% for error in provider_edit_form.p_description.errors %}
+                        <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- PRICE FIELD -->
+            <div class="form-group">
+                {{ provider_edit_form.p_prices.label(class="form-label") }}
+                <div class="input-group-container">
+                    <span class="input-group-prefix">PKR</span>
+                    {% if provider_edit_form.p_prices.errors %}
+                        {{ provider_edit_form.p_prices(class="form-control is-invalid", placeholder='0.00') }}
+                    {% else %}
+                        {{ provider_edit_form.p_prices(class="form-control", placeholder='0.00') }}
+                    {% endif %}
+                </div>
+                {% if provider_edit_form.p_prices.errors %}
+                    {% for error in provider_edit_form.p_prices.errors %}
+                        <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="button-group">
+                <button type="submit" class="btn-submit">
+                    💾 Save Changes
+                </button>
+                <a href="{{ url_for('dashboards_bp.provider_profile') }}" class="btn-cancel">
+                    Cancel
+                </a>
+            </div>
+
+            <p class="required-note">
+                All fields are required to complete your profile
+            </p>
+        </form>
+    </div>
 </div>
 
 {% endblock %}
