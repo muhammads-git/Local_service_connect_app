@@ -601,7 +601,7 @@ def chat(job_id):
 
 # complete job
 @dashboards_bp.route('/complete_job/<int:job_id>',methods=["POST"])
-def complete_job(job_id):
+def complete_job_request(job_id):
     if 'provider_id' not in session:
         return redirect(url_for('auths_bp.provider_login'))
 

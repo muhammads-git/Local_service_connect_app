@@ -338,13 +338,14 @@
                                                         </div>
                                                     {% endif%}
                                                     <!-- Pay route -->
-                                                    <form action="{{ url_for('payment_bp.pay_now')}}"
+                                                    <form action="{{ url_for('payment_bp.pay_now', job_id=notification[0] )}}"
                                                     class="d-inline">
                                                     <input type="hidden" name="csrf_token" id="{{ csrf_token() }}">
                                                     <button type="submit"
-                                                        class="btn btn-success btn-sm">
-
-                                                        <i class="bi bi-check-lg"></i> Click to Pay
+                                                        class="btn btn-success btn-sm"
+                                                        onclick="return confirm('Are You Ready to Pay?')">
+                                                        
+                                                        <i class="bi bi-check-lg"></i> Click to Pay     
                                                     </button>
                                                         
                                                     </form>
