@@ -677,7 +677,7 @@ def acceptJobDone(job_id):
         minutes = (remaining_seconds % 3600) // 60
 
          
-        flash('Job is completed,Pay Now','success')
+        flash('Job is completed,Pay Now!','success')
 
     except Exception as e:
         mysql.connection.rollback()
@@ -720,6 +720,7 @@ def rejectJobDone(job_id):
 
 # PAYMENT ROUTES // IF JOB VERFICATIONS GOT ACCEPTED
 # try to make another blueprints
+
         
 
 
