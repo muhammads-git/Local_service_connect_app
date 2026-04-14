@@ -173,46 +173,6 @@ Local_service_connect_app/
 
 ---
 
-## ⚙️ Configuration
-
-Create a `.env` file in the root directory with the following variables:
-
-### **Database Configuration**
-```env
-MYSQL_HOST=localhost
-MYSQL_USER=root
-MYSQL_PASSWORD=your_password
-MYSQL_DB=serviconnect
-```
-
-### **Flask Configuration**
-```env
-SECRET_KEY=your-secret-key-here
-FLASK_ENV=development
-FLASK_DEBUG=True
-```
-
-### **Email Configuration** (for booking notifications)
-```env
-MAIL_SERVER=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USE_TLS=True
-MAIL_USERNAME=your-email@gmail.com
-MAIL_PASSWORD=your-app-password
-MAIL_DEFAULT_SENDER=Ibuild@serviconnect.com
-```
-
-### **Railway Deployment** (optional)
-```env
-DB_HOST=switchyard.proxy.rlwy.net
-DB_PORT=port_number
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=railway
-```
-
----
-
 ## 🗄️ Database
 
 ### Database Schema Overview
